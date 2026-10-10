@@ -8,6 +8,7 @@ import { FleetReadiness } from './components/FleetReadiness';
 import { OperationalAlerts } from './components/OperationalAlerts';
 import { DecisionFlowModal } from './components/DecisionFlowModal';
 import { StrategicIntelligence } from './components/StrategicIntelligence';
+import { PredictiveOptimization } from './components/PredictiveOptimization';
 import { api } from './services/api';
 import type {
   Location,
@@ -29,9 +30,10 @@ import {
   Truck,
   Bell,
   Cpu,
+  Brain,
 } from 'lucide-react';
 
-type TabView = 'map' | 'briefing' | 'inventory' | 'passes' | 'fleet' | 'alerts' | 'analytics';
+type TabView = 'map' | 'briefing' | 'inventory' | 'passes' | 'fleet' | 'alerts' | 'analytics' | 'optimization';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabView>('map');
@@ -325,6 +327,28 @@ export const App: React.FC = () => {
           <Cpu size={16} />
           <span>Priority & Terrain Physics Engines</span>
         </button>
+
+        <button
+          onClick={() => setActiveTab('optimization')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '12px 16px',
+            background: 'transparent',
+            border: 'none',
+            borderBottom: activeTab === 'optimization' ? '3px solid var(--accent-gold)' : '3px solid transparent',
+            color: activeTab === 'optimization' ? 'var(--accent-gold)' : 'var(--text-secondary)',
+            fontWeight: activeTab === 'optimization' ? 700 : 500,
+            fontSize: '0.85rem',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <Brain size={16} />
+          <span>Predictive ML & Fleet Optimizer</span>
+        </button>
       </div>
 
       {/* Main Body */}
@@ -412,6 +436,11 @@ export const App: React.FC = () => {
           />
         ) : activeTab === 'analytics' ? (
           <StrategicIntelligence
+            locations={locations}
+            supplies={supplies}
+          />
+        ) : activeTab === 'optimization' ? (
+          <PredictiveOptimization
             locations={locations}
             supplies={supplies}
           />

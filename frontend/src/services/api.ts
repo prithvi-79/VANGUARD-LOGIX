@@ -18,6 +18,9 @@ import type {
   PriorityScoreResult,
   RoutePhysicsResponse,
   RoutePhysicsOutput,
+  QuantileForecastResponse,
+  OptimizationResponse,
+  DecisionExplanationReport,
 } from '../types';
 
 const BASE_URL = '/api';
@@ -172,6 +175,43 @@ export const api = {
     weather_condition?: string;
   }): Promise<RoutePhysicsOutput> =>
     fetchJson(`${BASE_URL}/terrain/simulate`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  // Phase 4: Quantile Demand Forecasting
+  getQuantileForecast: (
+    locationId: string,
+    supplyId: string,
+    horizon = 14
+  ): Promise<QuantileForecastResponse> =>
+    fetchJson(`${BASE_URL}/forecast/quantile?location_id=${locationId}&supply_id=${supplyId}&horizon=${horizon}`),
+
+  simulateCustomForecast: (data: any): Promise<QuantileForecastResponse> =>
+    fetchJson(`${BASE_URL}/forecast/custom`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  // Phase 4: Multimodal Fleet Routing Optimizer
+  getFleetOptimization: (depotId = 'LOC-LEH'): Promise<OptimizationResponse> =>
+    fetchJson(`${BASE_URL}/optimize/fleet-dispatch?depot_id=${depotId}`),
+
+  simulateFleetOptimization: (data: any): Promise<OptimizationResponse> =>
+    fetchJson(`${BASE_URL}/optimize/simulate`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  // Phase 4: Causal Decision Explainability Engine
+  getDecisionExplanation: (
+    locationId: string,
+    supplyClass = 'CLASS_III'
+  ): Promise<DecisionExplanationReport> =>
+    fetchJson(`${BASE_URL}/explain/outpost/${locationId}?supply_class=${supplyClass}`),
+
+  explainCustomDecision: (data: any): Promise<DecisionExplanationReport> =>
+    fetchJson(`${BASE_URL}/explain/decision`, {
       method: 'POST',
       body: JSON.stringify(data),
     }),

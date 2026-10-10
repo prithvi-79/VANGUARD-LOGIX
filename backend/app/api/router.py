@@ -3,7 +3,20 @@ Master API Router for VANGUARD-LOGIX
 """
 
 from fastapi import APIRouter
-from app.api.endpoints import health, locations, supplies, routes, fleet, indents, risk, priority, terrain
+from app.api.endpoints import (
+    health,
+    locations,
+    supplies,
+    routes,
+    fleet,
+    indents,
+    risk,
+    priority,
+    terrain,
+    forecast,
+    optimize,
+    explain,
+)
 
 api_router = APIRouter()
 
@@ -16,3 +29,6 @@ api_router.include_router(indents.router)
 api_router.include_router(risk.router)
 api_router.include_router(priority.router)
 api_router.include_router(terrain.router)
+api_router.include_router(forecast.router)
+api_router.include_router(optimize.router)
+api_router.include_router(explain.router)

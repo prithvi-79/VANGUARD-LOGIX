@@ -125,3 +125,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - **Verification & QA Benchmarks:**
   - Full automated backend test suite: **35/35 tests passing in 5.81s (100% pass rate, 0 failures, 0 warnings)**.
   - Frontend production build (`npm run build`): **0 TypeScript errors, 2,484 modules bundled in 1.56s**.
+
+---
+
+## [Phase 4: Predictive & Optimization Features] — 2026-10-10
+
+### Completed Milestones
+- **Quantile Demand Forecasting Engine (`backend/app/services/forecasting.py`):**
+  - Quantile gradient-boosted regression for $P_{10}$ (conservative lull), $P_{50}$ (expected median), and $P_{90}$ (tactical winter surge) using `HistGradientBoostingRegressor` and empirical quantile models.
+  - Autoregressive feature engineering: lag-1, lag-7, lag-14, 7-day rolling mean/std, ambient temperature degradation, and cumulative snowfall accumulation.
+  - Walk-forward rolling evaluation metrics: WAPE (Weighted Absolute Percentage Error), MAE, and RMSE against a 7-day naive rolling baseline.
+  - Causal feature attribution coefficients (Sub-zero temperature impact, garrison headcount, altitude MSL).
+  - REST endpoints: `GET /api/forecast/quantile` and `POST /api/forecast/custom`.
+- **Multimodal Fleet Routing Optimizer (CVRPTW) (`backend/app/services/optimizer.py`):**
+  - High-altitude payload de-rating envelope ($1.0 - \max(0, (\text{elevation}-3000)/10000)$) applied to road convoys and helicopters.
+  - Strict daylight transit window enforcement (0600–1700 hrs, 11-hour single-day maximum).
+  - Automated contingency air-bridge deployment: detects pass choke-point severance and automatically deploys IAF Mi-17 V5 tactical airlift sorties.
+  - Route sequencing, arrival hour scheduling, and payload utilization tracking.
+  - REST endpoints: `GET /api/optimize/fleet-dispatch` and `POST /api/optimize/simulate`.
+- **Causal Decision Explainability Engine (`backend/app/services/explainability.py`):**
+  - Generates military causal trees with evidence, severity ratings (`CRITICAL`, `HIGH`, `MODERATE`), and influence percentages.
+  - Counterfactual trade-off analysis ("Why was Road Convoy rejected?", "Why was Mule Train rejected?") with casualty and garrison freezeout hazard analyses.
+  - Military doctrine compliance citations (`HQ Northern Command XIV Corps SOP / ASC-LOG-2026-CH7`).
+  - REST endpoints: `GET /api/explain/outpost/{id}` and `POST /api/explain/decision`.
+- **Predictive ML & Fleet Optimizer Frontend Dashboard (`PredictiveOptimization.tsx`):**
+  - Interactive Quantile fan band time-series trajectory with day-by-day $P_{10}/P_{50}/P_{90}$ forecast cards.
+  - Walk-forward WAPE accuracy comparison badges and causal feature attribution breakdown.
+  - Multimodal dispatch plan cards with route sequence steppers, payload utilization gauges, and daylight window badges.
+  - Interactive Causal Explanation drawer with counterfactual hazard analyses.
+  - Integrated via sticky top navigation tab `Brain Predictive ML & Fleet Optimizer`.
+- **Verification & QA Benchmarks:**
+  - Automated pytest suite: **46/46 tests passing in 20.26s (100% pass rate, 0 failures)**.
+  - Frontend production build (`npm run build`): **0 TypeScript errors, 2,485 modules bundled in 26.27s**.

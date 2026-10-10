@@ -239,3 +239,109 @@ export interface RoutePhysicsResponse {
   air_bridge_required_count: number;
   corridors: RoutePhysicsOutput[];
 }
+
+export interface QuantileForecastPoint {
+  day: number;
+  p10: number;
+  p50: number;
+  p90: number;
+  surge_delta: number;
+  unit: string;
+}
+
+export interface ForecastModelEvaluation {
+  wape: number;
+  mae: number;
+  rmse: number;
+  baseline_wape: number;
+  wape_improvement_pct: number;
+}
+
+export interface FeatureAttribution {
+  feature_name: string;
+  impact_pct: number;
+  direction: 'POSITIVE' | 'NEGATIVE';
+  explanation: string;
+}
+
+export interface QuantileForecastResponse {
+  location_id: string;
+  location_name: string;
+  supply_id: string;
+  supply_name: string;
+  supply_class: string;
+  horizon_days: number;
+  forecast_points: QuantileForecastPoint[];
+  total_projected_p50: number;
+  total_projected_p90: number;
+  evaluation: ForecastModelEvaluation;
+  confidence_score: number;
+  feature_attributions: FeatureAttribution[];
+}
+
+export interface DispatchStop {
+  stop_number: number;
+  location_id: string;
+  location_name: string;
+  arrival_hour: number;
+  delivered_kg: number;
+  supply_name: string;
+}
+
+export interface VehicleDispatchPlan {
+  vehicle_id: string;
+  callsign: string;
+  vehicle_type: string;
+  mode: string;
+  route_sequence: string[];
+  stops: DispatchStop[];
+  total_distance_km: number;
+  total_transit_hours: number;
+  nominal_payload_kg: number;
+  effective_payload_kg: number;
+  allocated_payload_kg: number;
+  payload_utilization_pct: number;
+  fits_daylight_window: boolean;
+  is_air_bridge: boolean;
+  status: string;
+  operational_notes: string;
+}
+
+export interface OptimizationResponse {
+  total_demands_count: number;
+  fulfilled_demands_count: number;
+  unassigned_demands_count: number;
+  total_allocated_kg: number;
+  road_convoys_count: number;
+  air_bridge_sorties_count: number;
+  dispatch_plans: VehicleDispatchPlan[];
+  solver_status: string;
+  total_mission_hours: number;
+}
+
+export interface CausalFactor {
+  factor_name: string;
+  evidence: string;
+  impact_weight_pct: number;
+  threat_severity: 'CRITICAL' | 'HIGH' | 'MODERATE' | 'LOW';
+}
+
+export interface CounterfactualOption {
+  rejected_alternative: string;
+  why_rejected: string;
+  projected_risk: string;
+  casualty_or_stockout_hazard: string;
+}
+
+export interface DecisionExplanationReport {
+  decision_id: string;
+  decision_type: string;
+  subject_location: string;
+  subject_supply: string;
+  primary_recommendation: string;
+  causal_factors: CausalFactor[];
+  counterfactual_tradeoffs: CounterfactualOption[];
+  confidence_score: number;
+  doctrine_compliance_ref: string;
+  decision_disclaimer: string;
+}
