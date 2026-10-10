@@ -6,9 +6,15 @@ interface CommandHeaderProps {
   dbStatus: DBStatusResponse | null;
   onRefresh: () => void;
   isLoading: boolean;
+  onOpenDecisionFlow: () => void;
 }
 
-export const CommandHeader: React.FC<CommandHeaderProps> = ({ dbStatus, onRefresh, isLoading }) => {
+export const CommandHeader: React.FC<CommandHeaderProps> = ({
+  dbStatus,
+  onRefresh,
+  isLoading,
+  onOpenDecisionFlow,
+}) => {
   const { theme, toggleTheme } = useTheme();
 
   return (
@@ -123,8 +129,19 @@ export const CommandHeader: React.FC<CommandHeaderProps> = ({ dbStatus, onRefres
       </div>
 
       {/* Decision Flow Strip */}
-      <div style={{ padding: '8px 24px', background: 'var(--bg-surface-elevated)' }}>
-        <div className="decision-strip">
+      <div
+        style={{
+          padding: '8px 24px',
+          background: 'var(--bg-surface-elevated)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          cursor: 'pointer',
+        }}
+        onClick={onOpenDecisionFlow}
+        title="Click to view Decision Pipeline Architecture"
+      >
+        <div className="decision-strip" style={{ border: 'none', background: 'transparent', padding: 0 }}>
           <span style={{ color: 'var(--text-secondary)', fontWeight: 700, marginRight: '4px' }}>
             OPERATIONAL PIPELINE:
           </span>
@@ -144,6 +161,17 @@ export const CommandHeader: React.FC<CommandHeaderProps> = ({ dbStatus, onRefres
           <span className="step-arrow">→</span>
           <span className="step-node">7. TACTICAL DISPATCH</span>
         </div>
+
+        <button
+          className="tactical-btn"
+          style={{ padding: '3px 10px', fontSize: '0.72rem', background: 'rgba(6, 182, 212, 0.15)', borderColor: 'var(--accent-cyan)', color: 'var(--accent-cyan)' }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onOpenDecisionFlow();
+          }}
+        >
+          Pipeline Guide ℹ️
+        </button>
       </div>
     </header>
   );

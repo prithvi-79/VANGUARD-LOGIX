@@ -59,9 +59,46 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   - Executed frontend production build (`npm run build`): **0 TypeScript errors, clean bundle generation in 17.5s**.
   - Verified local database initialization and seeding on disk (`vanguard.db`).
 
+## [Phase 2: Tactical Dashboard & UI] — 2026-10-10
+
+### Completed Milestones
+- **Tactical GIS Sector Map Component (`TacticalGISMap.tsx`):**
+  - Built high-performance, self-contained SVG topographic map of Northern Command XIV Corps (WGS-84 / MGRS Zone 43S/44R projection).
+  - Positioned 10 military logistics nodes (Bases: Leh, Srinagar, Thoise; Forward Outposts: Siachen Base Camp, Kumar Post 4,876m, DBO 5,065m, Galwan, Dras, Chushul, Demchok).
+  - Topographic contour ridges across the Karakoram, Ladakh, and Zanskar mountain ranges.
+  - Interactive route corridors with real-time status styling (solid cyan/green for OPEN, amber dashed for RESTRICTED, crimson dotted for CLOSED).
+  - Animated convoy pulse radar tracking along active supply axes.
+  - Mountain pass diamond markers with status indicators and quick-select interaction.
+  - Interactive node & pass inspection drawer displaying live elevation, MGRS grid, troop PAX count, and critical stockout ledgers.
+  - High-altitude elevation profile cross-section chart (AreaChart via Recharts) displaying elevation rise across the theater up to 5,359m MSL.
+- **Border Roads Organisation (BRO) Pass Monitor (`PassMonitor.tsx`):**
+  - Dedicated strategic choke point control panel for Zoji La, Khardung La, Chang La, Rohtang, and Marsimik La.
+  - Displays real-time temperatures, snow accumulation depths, reopen estimates, and BRO detachments (Projects Beacon, Himank, Deepak).
+  - Interactive status toggles allowing commanders to simulate blizzard closures or mark passes cleared by BRO with live downstream route propagation.
+- **Inventory & Days-of-Supply Registers (`InventoryRegisters.tsx`):**
+  - Searchable and filterable stock ledger audit across Army ASC/AOC Classes I–V.
+  - Days-of-Supply countdown progress bars with color progression (CRITICAL <5d, WARNING <12d, NORMAL >12d).
+  - Forward daily burn rate calculations and safety threshold monitors.
+- **Multimodal Fleet Readiness & Altitude De-Rating Calculator (`FleetReadiness.tsx`):**
+  - Comprehensive fleet register across road trucks, snowcats, tactical helicopters, and animal transport.
+  - Dynamic interactive commander slider (3,000m to 6,000m MSL) demonstrating physics-based air density loss and payload envelope degradation ($1.0 - \max(0, (\text{elevation}-3000)/10000)$).
+- **Operational Alerts & Cryptographic Indents Feed (`OperationalAlerts.tsx`):**
+  - Live situational feed alerting on critical stockout risks, severed passes, and pending IAF-Z-2096 vouchers.
+  - Cryptographic verification table displaying SHA-256 integrity signatures.
+- **Tactical Decision Pipeline Modal (`DecisionFlowModal.tsx`):**
+  - Interactive walkthrough of the 7-stage engine (`DATA → FORECAST → RISK → PRIORITY → ALLOCATION → ROUTE → DECISION`) detailing mathematical models and defense outputs.
+- **Navigation & Integration (`App.tsx` & `CommandHeader.tsx`):**
+  - Sticky tactical navigation tabs with live critical notification badges.
+  - Clickable operational pipeline stepper.
+  - Dual-theme support (Dark Command Center and High-Contrast Daylight Mode).
+- **Verification & Build Benchmarks:**
+  - Frontend production build (`npm run build`): **0 TypeScript errors, 2,483 modules bundled in 19.05s**.
+  - Backend pytest suite: **8/8 unit tests passing in 3.03s (100%)**.
+
 ---
 
-## [Phase 2: Tactical Dashboard & UI] — Planned
-- Northern Command interactive tactical GIS map and route visualization.
-- Real-time Border Roads Organisation (BRO) pass monitor integration.
-- Operational alerts ribbon and decision support flow.
+## [Phase 3: Logistics Business Logic & Risk Engines] — Planned
+- Days-of-Supply (DoS) burn-down engine with dynamic consumption scaling.
+- Multi-attribute Priority Scoring (0–100 scale) with non-linear stockout penalties.
+- Topographic and slope physics engine ($R_g = 1.0 + 0.035|\theta| + 0.002|\theta|^2$).
+- Backend API endpoints and pytest unit test coverage for logistics business logic.

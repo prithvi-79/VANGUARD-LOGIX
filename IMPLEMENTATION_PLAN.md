@@ -62,19 +62,20 @@ graph LR
 
 ## Phase 2: Core Application & Tactical UI
 **Target:** Responsive tactical dashboard with operational overview and live navigation.
+**Status:** **COMPLETED**
 
-- [ ] Implement tactical application layout (Top Command Header, Tactical Ribbon, Status Banner).
-- [ ] Build WCAG AA compliant dual-theme system (Dark Command Center and High-Contrast Light Mode).
-- [ ] Implement Command Dashboard:
+- [x] Implement tactical application layout (Top Command Header, Tactical Ribbon, Status Banner).
+- [x] Build WCAG AA compliant dual-theme system (Dark Command Center and High-Contrast Light Mode).
+- [x] Implement Command Dashboard:
   - System Decision Flow strip: `DATA → FORECAST → RISK → PRIORITY → ALLOCATION → ROUTE → DECISION`.
   - Command Briefing card: overall risk gauge, critical locations count, predicted shortages, fleet capacity.
   - Active operational alerts panel.
-- [ ] Implement Tactical GIS Map component:
+- [x] Implement Tactical GIS Map component:
   - Northern Command sector overlay (Leh, Siachen, DBO, Galwan, Dras, Chushul).
   - Interactive route corridors, pass choke points, and elevation profiles.
-- [ ] Implement Border Roads Organisation (BRO) Strategic Pass Monitor component with real-time passability toggles.
-- [ ] Connect dashboard components to FastAPI endpoints with realistic loading, error, and empty states.
-- [ ] **Phase 2 Checkpoint:** Run frontend build and typecheck, update state documents, create Git commit.
+- [x] Implement Border Roads Organisation (BRO) Strategic Pass Monitor component with real-time passability toggles.
+- [x] Connect dashboard components to FastAPI endpoints with realistic loading, error, and empty states.
+- [x] **Phase 2 Checkpoint:** Run frontend build and typecheck, update state documents, create Git commit.
 
 ---
 

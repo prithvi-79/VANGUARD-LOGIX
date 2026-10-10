@@ -2,8 +2,8 @@
 
 **Project:** Indian Army — Predictive Logistics & Forward Supply Chain (SIH PS 26251)  
 **System Name:** VANGUARD-LOGIX  
-**Phase Completed:** Phase 1 (Foundation & Architecture)  
-**Next Phase:** Phase 2 (Tactical Dashboard & UI)  
+**Phase Completed:** Phase 2 (Tactical Dashboard & UI)  
+**Next Phase:** Phase 3 (Logistics Business Logic & Risk Engines)  
 **Document Updated:** 2026-10-10  
 
 ---
@@ -77,13 +77,13 @@ In addition, the 4 source repositories remain fully downloaded and extracted in 
 
 ---
 
-## 5. Next Immediate Action for Phase 2
+## 5. Next Immediate Action for Phase 3
 Say:
-> **"PROCEED TO PHASE 2"**
+> **"PROCEED TO PHASE 3"**
 
-Phase 2 will implement:
-1. Tactical Command Dashboard with overall risk gauge and stockout countdowns.
-2. Northern Command Tactical GIS Sector Map (Leh, Siachen, DBO, Galwan, Dras, Chushul) with route corridors and elevation envelopes.
-3. Interactive BRO Strategic Mountain Pass Monitor with real-time passability toggles.
-4. Active operational alerts panel.
-5. End-to-end integration with FastAPI backend endpoints.
+Phase 3 will implement:
+1. Days-of-Supply (DoS) calculation and burn-down engine (`services/inventory_risk.py`).
+2. Multi-attribute priority scoring engine (0–100 scale) with weighted urgency, shortage volume, and route feasibility.
+3. Topographic and terrain physics engine (`services/terrain.py`) with empirical road slope grade resistance ($R_g$) and surface friction.
+4. CRUD and business logic endpoints for inventory burn-down adjustments, route updates, and priority queues.
+5. Pytest unit tests verifying all mathematical formulas and business rules.

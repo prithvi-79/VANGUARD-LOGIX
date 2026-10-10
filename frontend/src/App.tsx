@@ -1,13 +1,40 @@
 import React, { useEffect, useState } from 'react';
 import { CommandHeader } from './components/CommandHeader';
 import { CommandBriefing } from './components/CommandBriefing';
+import { TacticalGISMap } from './components/TacticalGISMap';
+import { InventoryRegisters } from './components/InventoryRegisters';
+import { PassMonitor } from './components/PassMonitor';
+import { FleetReadiness } from './components/FleetReadiness';
+import { OperationalAlerts } from './components/OperationalAlerts';
+import { DecisionFlowModal } from './components/DecisionFlowModal';
 import { api } from './services/api';
-import type { Location, StrategicPass, Vehicle, InventoryRecord, IndentVoucher, DBStatusResponse } from './types';
-import { AlertCircle, RefreshCw } from 'lucide-react';
+import type {
+  Location,
+  StrategicPass,
+  Route,
+  Vehicle,
+  InventoryRecord,
+  IndentVoucher,
+  DBStatusResponse,
+} from './types';
+import {
+  AlertCircle,
+  RefreshCw,
+  Compass,
+  LayoutDashboard,
+  Boxes,
+  Mountain,
+  Truck,
+  Bell,
+} from 'lucide-react';
+
+type TabView = 'map' | 'briefing' | 'inventory' | 'passes' | 'fleet' | 'alerts';
 
 export const App: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<TabView>('map');
   const [locations, setLocations] = useState<Location[]>([]);
   const [passes, setPasses] = useState<StrategicPass[]>([]);
+  const [routes, setRoutes] = useState<Route[]>([]);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [inventory, setInventory] = useState<InventoryRecord[]>([]);
   const [indents, setIndents] = useState<IndentVoucher[]>([]);
@@ -15,15 +42,17 @@ export const App: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [isDecisionFlowOpen, setIsDecisionFlowOpen] = useState<boolean>(false);
 
   const loadTheaterData = async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const [locsData, passesData, fleetData, invData, indentsData, statusData] =
+      const [locsData, passesData, routesData, fleetData, invData, indentsData, statusData] =
         await Promise.all([
           api.getLocations(),
           api.getPasses(),
+          api.getRoutes(),
           api.getFleet(),
           api.getInventory(),
           api.getIndents(),
@@ -32,6 +61,7 @@ export const App: React.FC = () => {
 
       setLocations(locsData);
       setPasses(passesData);
+      setRoutes(routesData);
       setVehicles(fleetData);
       setInventory(invData.items);
       setIndents(indentsData);
@@ -52,32 +82,224 @@ export const App: React.FC = () => {
     try {
       const isCurrentlyOpen = currentStatus === 'OPEN' || currentStatus === 'RESTRICTED_CONVOY';
       const newStatus = isCurrentlyOpen ? 'CLOSED_BLIZZARD' : 'OPEN';
-      const reason = isCurrentlyOpen ? 'Simulated blizzard: active snowstorm' : undefined;
+      const reason = isCurrentlyOpen
+        ? 'Simulated blizzard: heavy snow accumulation exceeding 80cm and zero visibility'
+        : undefined;
 
       await api.updatePassStatus(passId, {
         status: newStatus,
-        snow_accumulation_cm: isCurrentlyOpen ? 75.0 : 5.0,
-        temperature_c: isCurrentlyOpen ? -28.0 : -10.0,
+        snow_accumulation_cm: isCurrentlyOpen ? 85.0 : 8.0,
+        temperature_c: isCurrentlyOpen ? -31.0 : -11.0,
         closure_reason: reason,
-        predicted_reopen_hours: isCurrentlyOpen ? 12.0 : 0.0,
+        predicted_reopen_hours: isCurrentlyOpen ? 18.0 : 0.0,
       });
 
-      // Reload passes to reflect downstream route closures
-      const [updatedPasses, updatedStatus] = await Promise.all([
+      // Reload passes & routes to propagate downstream corridor changes
+      const [updatedPasses, updatedRoutes, updatedStatus] = await Promise.all([
         api.getPasses(),
+        api.getRoutes(),
         api.getDBStatus(),
       ]);
       setPasses(updatedPasses);
+      setRoutes(updatedRoutes);
       setDbStatus(updatedStatus);
     } catch (err: any) {
       alert(`Pass status update failed: ${err.message}`);
     }
   };
 
+  // Badge counts
+  const criticalCount = inventory.filter((i) => i.status === 'CRITICAL').length;
+  const blockedPassCount = passes.filter((p) => !p.is_passable).length;
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <CommandHeader dbStatus={dbStatus} onRefresh={loadTheaterData} isLoading={isLoading} />
+      {/* Top Tactical Header */}
+      <CommandHeader
+        dbStatus={dbStatus}
+        onRefresh={loadTheaterData}
+        isLoading={isLoading}
+        onOpenDecisionFlow={() => setIsDecisionFlowOpen(true)}
+      />
 
+      {/* Navigation Tabs Bar */}
+      <div
+        style={{
+          background: 'var(--bg-surface)',
+          borderBottom: '1px solid var(--border-subtle)',
+          padding: '0 24px',
+          display: 'flex',
+          gap: '4px',
+          overflowX: 'auto',
+          position: 'sticky',
+          top: '73px',
+          zIndex: 40,
+        }}
+      >
+        <button
+          onClick={() => setActiveTab('map')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '12px 16px',
+            background: 'transparent',
+            border: 'none',
+            borderBottom: activeTab === 'map' ? '3px solid var(--accent-cyan)' : '3px solid transparent',
+            color: activeTab === 'map' ? 'var(--accent-cyan)' : 'var(--text-secondary)',
+            fontWeight: activeTab === 'map' ? 700 : 500,
+            fontSize: '0.85rem',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <Compass size={16} />
+          <span>Tactical GIS Sector Map</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('briefing')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '12px 16px',
+            background: 'transparent',
+            border: 'none',
+            borderBottom: activeTab === 'briefing' ? '3px solid var(--accent-cyan)' : '3px solid transparent',
+            color: activeTab === 'briefing' ? 'var(--accent-cyan)' : 'var(--text-secondary)',
+            fontWeight: activeTab === 'briefing' ? 700 : 500,
+            fontSize: '0.85rem',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <LayoutDashboard size={16} />
+          <span>Theater Overview & Briefing</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('inventory')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '12px 16px',
+            background: 'transparent',
+            border: 'none',
+            borderBottom: activeTab === 'inventory' ? '3px solid var(--accent-cyan)' : '3px solid transparent',
+            color: activeTab === 'inventory' ? 'var(--accent-cyan)' : 'var(--text-secondary)',
+            fontWeight: activeTab === 'inventory' ? 700 : 500,
+            fontSize: '0.85rem',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <Boxes size={16} />
+          <span>Inventory & DoS Ledgers</span>
+          {criticalCount > 0 && (
+            <span
+              style={{
+                background: '#ef4444',
+                color: '#ffffff',
+                fontSize: '0.65rem',
+                fontWeight: 800,
+                padding: '1px 6px',
+                borderRadius: '999px',
+                fontFamily: 'var(--font-mono)',
+              }}
+            >
+              {criticalCount}
+            </span>
+          )}
+        </button>
+
+        <button
+          onClick={() => setActiveTab('passes')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '12px 16px',
+            background: 'transparent',
+            border: 'none',
+            borderBottom: activeTab === 'passes' ? '3px solid var(--accent-cyan)' : '3px solid transparent',
+            color: activeTab === 'passes' ? 'var(--accent-cyan)' : 'var(--text-secondary)',
+            fontWeight: activeTab === 'passes' ? 700 : 500,
+            fontSize: '0.85rem',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <Mountain size={16} />
+          <span>BRO Strategic Passes</span>
+          {blockedPassCount > 0 && (
+            <span
+              style={{
+                background: '#ef4444',
+                color: '#ffffff',
+                fontSize: '0.65rem',
+                fontWeight: 800,
+                padding: '1px 6px',
+                borderRadius: '999px',
+                fontFamily: 'var(--font-mono)',
+              }}
+            >
+              {blockedPassCount} Severed
+            </span>
+          )}
+        </button>
+
+        <button
+          onClick={() => setActiveTab('fleet')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '12px 16px',
+            background: 'transparent',
+            border: 'none',
+            borderBottom: activeTab === 'fleet' ? '3px solid var(--accent-cyan)' : '3px solid transparent',
+            color: activeTab === 'fleet' ? 'var(--accent-cyan)' : 'var(--text-secondary)',
+            fontWeight: activeTab === 'fleet' ? 700 : 500,
+            fontSize: '0.85rem',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <Truck size={16} />
+          <span>Multimodal Fleet Readiness</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('alerts')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '12px 16px',
+            background: 'transparent',
+            border: 'none',
+            borderBottom: activeTab === 'alerts' ? '3px solid var(--accent-cyan)' : '3px solid transparent',
+            color: activeTab === 'alerts' ? 'var(--accent-cyan)' : 'var(--text-secondary)',
+            fontWeight: activeTab === 'alerts' ? 700 : 500,
+            fontSize: '0.85rem',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <Bell size={16} />
+          <span>Operational Alerts & Indents</span>
+        </button>
+      </div>
+
+      {/* Main Body */}
       <main style={{ flex: 1, padding: '24px', maxWidth: '1440px', margin: '0 auto', width: '100%' }}>
         {error ? (
           <div
@@ -115,16 +337,27 @@ export const App: React.FC = () => {
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              height: '350px',
+              height: '420px',
               gap: '16px',
             }}
           >
-            <div className="pulse-indicator" style={{ width: '20px', height: '20px', background: 'var(--accent-cyan)' }}></div>
+            <div
+              className="pulse-indicator"
+              style={{ width: '22px', height: '22px', background: 'var(--accent-cyan)' }}
+            />
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-              INITIALIZING TACTICAL SECURE STREAM • NORTHERN COMMAND XIV CORPS...
+              SYNCHRONIZING TACTICAL SECURE STREAM • NORTHERN COMMAND XIV CORPS...
             </div>
           </div>
-        ) : (
+        ) : activeTab === 'map' ? (
+          <TacticalGISMap
+            locations={locations}
+            routes={routes}
+            passes={passes}
+            inventory={inventory}
+            onTogglePass={handleTogglePass}
+          />
+        ) : activeTab === 'briefing' ? (
           <CommandBriefing
             locations={locations}
             passes={passes}
@@ -133,9 +366,39 @@ export const App: React.FC = () => {
             indents={indents}
             onTogglePass={handleTogglePass}
           />
+        ) : activeTab === 'inventory' ? (
+          <InventoryRegisters
+            inventory={inventory}
+            locations={locations}
+          />
+        ) : activeTab === 'passes' ? (
+          <PassMonitor
+            passes={passes}
+            routes={routes}
+            onTogglePass={handleTogglePass}
+          />
+        ) : activeTab === 'fleet' ? (
+          <FleetReadiness
+            vehicles={vehicles}
+            locations={locations}
+          />
+        ) : (
+          <OperationalAlerts
+            inventory={inventory}
+            passes={passes}
+            indents={indents}
+            locations={locations}
+          />
         )}
       </main>
 
+      {/* Decision Flow Modal */}
+      <DecisionFlowModal
+        isOpen={isDecisionFlowOpen}
+        onClose={() => setIsDecisionFlowOpen(false)}
+      />
+
+      {/* Military Intranet Footer */}
       <footer
         style={{
           padding: '16px 24px',
@@ -147,6 +410,8 @@ export const App: React.FC = () => {
           fontSize: '0.75rem',
           color: 'var(--text-tertiary)',
           fontFamily: 'var(--font-mono)',
+          flexWrap: 'wrap',
+          gap: '8px',
         }}
       >
         <div>
