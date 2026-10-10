@@ -81,18 +81,23 @@ graph LR
 
 ## Phase 3: Logistics Business Logic & Risk Engines
 **Target:** Deterministic inventory burn-down, multi-attribute priority scoring, and pass passability routing.
+**Status:** **COMPLETED**
 
-- [ ] Implement Days-of-Supply (DoS) calculation engine:
+- [x] Implement Days-of-Supply (DoS) calculation engine:
   - $\text{DoS} = \text{Current Stock} / \text{Forward Daily Demand Rate}$.
+  - Elevation-scaled burn multiplier: Class III surges +35%/1,000m above 3,000m; Class I surges +10%/1,000m.
   - Safety stock deficit scoring and status classification (`NORMAL`, `WARNING`, `CRITICAL`).
-- [ ] Implement multi-attribute Priority Scoring engine (0–100 scale):
-  - Weighted combination: urgency (30%), shortage volume (15%), stock deficit (15%), supply criticality (15%), lead-time pressure (10%), route feasibility (10%), transport capacity (5%).
-- [ ] Implement Topographic & Slope Physics engine:
-  - Road grade resistance formula ($R_g = 1.0 + 0.035|\theta| + 0.002|\theta|^2$).
-  - Surface friction multipliers (`HIGHWAY`, `MOUNTAIN_ROAD`, `UNPAVED_TRACK`).
-  - Dynamic route blockage when mountain passes are closed (`CLOSED_BLIZZARD`, `CLOSED_AVALANCHE`).
-- [ ] Build CRUD endpoints and unit tests for inventory adjustments, pass status changes, and priority queues.
-- [ ] **Phase 3 Checkpoint:** Run backend test suite, verify business rules, update handover documentation.
+  - Day-by-day forward inventory burn-down simulation trajectory.
+- [x] Implement multi-attribute Priority Scoring engine (0–100 scale):
+  - Weighted combination: urgency (30%), stock deficit (15%), supply class criticality (15%), lead-time pressure (10%), route feasibility (10%), environmental threat (10%), headcount vulnerability (10%).
+  - Priority tiers (`OP_IMMEDIATE`, `HIGH`, `MEDIUM`, `ROUTINE`) and transit mode recommendation (`ROAD`, `AIR_BRIDGE`, `ALL_TERRAIN`).
+- [x] Implement Topographic & Slope Physics engine:
+  - Empirical road grade resistance formula ($R_g = 1.0 + 0.035|\theta| + 0.002|\theta|^2$).
+  - Surface friction multipliers (`HIGHWAY`, `MOUNTAIN_ROAD`, `UNPAVED_TRACK`, `GLACIAL_SNOWCAT_TRAIL`).
+  - Dynamic route blockage when mountain passes are closed (`CLOSED_BLIZZARD`, `CLOSED_AVALANCHE`) triggering IAF Mi-17 V5 tactical air-bridge.
+- [x] Build REST endpoints and unit tests for inventory risk (`/api/risk`), priority queues (`/api/priority`), and terrain corridors (`/api/terrain`).
+- [x] Integrate interactive tactical decision intelligence and physics engine into frontend dashboard (`StrategicIntelligence.tsx`).
+- [x] **Phase 3 Checkpoint:** 35/35 pytest tests passing 100%, frontend compiles cleanly with 0 errors, Git checkpoint created.
 
 ---
 

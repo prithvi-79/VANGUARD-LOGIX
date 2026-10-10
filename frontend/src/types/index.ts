@@ -137,3 +137,105 @@ export interface DBStatusResponse {
   inventory_records_count: number;
   details?: Record<string, any>;
 }
+
+export interface RiskAssessment {
+  location_id: string;
+  supply_id: string;
+  supply_name: string;
+  supply_class: string;
+  current_stock: number;
+  daily_consumption_rate: number;
+  days_of_supply: number;
+  status: 'CRITICAL' | 'WARNING' | 'NORMAL';
+  safety_deficit: number;
+  reorder_deficit: number;
+  days_until_safety_breach: number;
+  requires_emergency_replenishment: boolean;
+  burn_rate_elevation_multiplier: number;
+  unit: string;
+}
+
+export interface RiskEvaluationResponse {
+  total_evaluated: number;
+  critical_count: number;
+  warning_count: number;
+  normal_count: number;
+  items: RiskAssessment[];
+}
+
+export interface BurnDownPoint {
+  day: number;
+  projected_stock: number;
+  days_of_supply: number;
+  status: 'NORMAL' | 'WARNING' | 'CRITICAL' | 'STOCKOUT';
+  safety_threshold: number;
+  reorder_point: number;
+}
+
+export interface BurnDownResponse {
+  location_id: string;
+  location_name: string;
+  elevation_m: number;
+  supply_id: string;
+  supply_name: string;
+  initial_stock: number;
+  unit: string;
+  horizon_days: number;
+  trajectory: BurnDownPoint[];
+}
+
+export interface PriorityScoreResult {
+  location_id: string;
+  location_name: string;
+  supply_id: string;
+  supply_name: string;
+  supply_class: string;
+  composite_score: number;
+  priority_tier: 'OP_IMMEDIATE' | 'HIGH' | 'MEDIUM' | 'ROUTINE';
+  factor_breakdown: {
+    urgency_dos: number;
+    safety_deficit: number;
+    supply_criticality: number;
+    lead_time_pressure: number;
+    route_feasibility: number;
+    environmental_threat: number;
+    headcount_vulnerability: number;
+  };
+  recommended_action: string;
+  recommended_mode: 'ROAD' | 'AIR_BRIDGE' | 'ALL_TERRAIN' | 'MULE_TRAIN';
+}
+
+export interface PriorityQueueResponse {
+  total_items: number;
+  op_immediate_count: number;
+  high_count: number;
+  medium_count: number;
+  routine_count: number;
+  items: PriorityScoreResult[];
+}
+
+export interface RoutePhysicsOutput {
+  route_id: string;
+  route_name: string;
+  distance_km: number;
+  max_slope_deg: number;
+  grade_resistance_factor: number;
+  surface_friction_factor: number;
+  weather_friction_factor: number;
+  composite_terrain_friction: number;
+  base_transit_hours: number;
+  effective_transit_hours: number;
+  is_passable: boolean;
+  status: 'OPEN' | 'RESTRICTED' | 'CLOSED';
+  contingency_fallback?: string;
+  notes: string;
+}
+
+export interface RoutePhysicsResponse {
+  total_corridors: number;
+  open_count: number;
+  restricted_count: number;
+  closed_count: number;
+  air_bridge_required_count: number;
+  corridors: RoutePhysicsOutput[];
+}

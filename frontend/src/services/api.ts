@@ -12,6 +12,12 @@ import type {
   StrategicPass,
   Vehicle,
   IndentVoucher,
+  RiskEvaluationResponse,
+  BurnDownResponse,
+  PriorityQueueResponse,
+  PriorityScoreResult,
+  RoutePhysicsResponse,
+  RoutePhysicsOutput,
 } from '../types';
 
 const BASE_URL = '/api';
@@ -115,5 +121,58 @@ export const api = {
     fetchJson(`${BASE_URL}/indents/sync`, {
       method: 'POST',
       body: JSON.stringify({ device_id: deviceId, indents }),
+    }),
+
+  // Phase 3: Risk & Burn-Down Engine
+  getRiskEvaluations: (params?: { location_id?: string; status?: string }): Promise<RiskEvaluationResponse> => {
+    const query = new URLSearchParams(params as any).toString();
+    return fetchJson(`${BASE_URL}/risk/evaluate${query ? `?${query}` : ''}`);
+  },
+
+  getBurnDownTrajectory: (locationId: string, supplyId: string, days = 14): Promise<BurnDownResponse> =>
+    fetchJson(`${BASE_URL}/risk/burn-down?location_id=${locationId}&supply_id=${supplyId}&days=${days}`),
+
+  // Phase 3: Multi-Attribute Priority Scoring & Queue
+  getPriorityQueue: (params?: {
+    tier?: string;
+    supply_class?: string;
+    location_id?: string;
+    limit?: number;
+  }): Promise<PriorityQueueResponse> => {
+    const query = new URLSearchParams(params as any).toString();
+    return fetchJson(`${BASE_URL}/priority/queue${query ? `?${query}` : ''}`);
+  },
+
+  scoreCustomPriority: (data: any): Promise<PriorityScoreResult> =>
+    fetchJson(`${BASE_URL}/priority/score`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  // Phase 3: Topographic & Terrain Physics Engine
+  getRoutePhysics: (params?: {
+    weather_condition?: string;
+    pass_id?: string;
+  }): Promise<RoutePhysicsResponse> => {
+    const query = new URLSearchParams(params as any).toString();
+    return fetchJson(`${BASE_URL}/terrain/route-physics${query ? `?${query}` : ''}`);
+  },
+
+  getRoutePhysicsById: (routeId: string, params?: { weather_condition?: string }): Promise<RoutePhysicsOutput> => {
+    const query = new URLSearchParams(params as any).toString();
+    return fetchJson(`${BASE_URL}/terrain/route-physics/${routeId}${query ? `?${query}` : ''}`);
+  },
+
+  simulateTerrainPhysics: (data: {
+    distance_km: number;
+    max_slope_deg: number;
+    surface_type?: string;
+    base_transit_hours?: number;
+    pass_status?: string;
+    weather_condition?: string;
+  }): Promise<RoutePhysicsOutput> =>
+    fetchJson(`${BASE_URL}/terrain/simulate`, {
+      method: 'POST',
+      body: JSON.stringify(data),
     }),
 };

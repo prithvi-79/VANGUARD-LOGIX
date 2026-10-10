@@ -7,6 +7,7 @@ import { PassMonitor } from './components/PassMonitor';
 import { FleetReadiness } from './components/FleetReadiness';
 import { OperationalAlerts } from './components/OperationalAlerts';
 import { DecisionFlowModal } from './components/DecisionFlowModal';
+import { StrategicIntelligence } from './components/StrategicIntelligence';
 import { api } from './services/api';
 import type {
   Location,
@@ -15,6 +16,7 @@ import type {
   Vehicle,
   InventoryRecord,
   IndentVoucher,
+  SupplyItem,
   DBStatusResponse,
 } from './types';
 import {
@@ -26,9 +28,10 @@ import {
   Mountain,
   Truck,
   Bell,
+  Cpu,
 } from 'lucide-react';
 
-type TabView = 'map' | 'briefing' | 'inventory' | 'passes' | 'fleet' | 'alerts';
+type TabView = 'map' | 'briefing' | 'inventory' | 'passes' | 'fleet' | 'alerts' | 'analytics';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabView>('map');
@@ -38,6 +41,7 @@ export const App: React.FC = () => {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [inventory, setInventory] = useState<InventoryRecord[]>([]);
   const [indents, setIndents] = useState<IndentVoucher[]>([]);
+  const [supplies, setSupplies] = useState<SupplyItem[]>([]);
   const [dbStatus, setDbStatus] = useState<DBStatusResponse | null>(null);
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -48,7 +52,7 @@ export const App: React.FC = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const [locsData, passesData, routesData, fleetData, invData, indentsData, statusData] =
+      const [locsData, passesData, routesData, fleetData, invData, indentsData, suppliesData, statusData] =
         await Promise.all([
           api.getLocations(),
           api.getPasses(),
@@ -56,6 +60,7 @@ export const App: React.FC = () => {
           api.getFleet(),
           api.getInventory(),
           api.getIndents(),
+          api.getSupplies(),
           api.getDBStatus(),
         ]);
 
@@ -65,6 +70,7 @@ export const App: React.FC = () => {
       setVehicles(fleetData);
       setInventory(invData.items);
       setIndents(indentsData);
+      setSupplies(suppliesData);
       setDbStatus(statusData);
     } catch (err: any) {
       console.error('Failed to load theater state:', err);
@@ -297,6 +303,28 @@ export const App: React.FC = () => {
           <Bell size={16} />
           <span>Operational Alerts & Indents</span>
         </button>
+
+        <button
+          onClick={() => setActiveTab('analytics')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '12px 16px',
+            background: 'transparent',
+            border: 'none',
+            borderBottom: activeTab === 'analytics' ? '3px solid var(--accent-cyan)' : '3px solid transparent',
+            color: activeTab === 'analytics' ? 'var(--accent-cyan)' : 'var(--text-secondary)',
+            fontWeight: activeTab === 'analytics' ? 700 : 500,
+            fontSize: '0.85rem',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <Cpu size={16} />
+          <span>Priority & Terrain Physics Engines</span>
+        </button>
       </div>
 
       {/* Main Body */}
@@ -381,6 +409,11 @@ export const App: React.FC = () => {
           <FleetReadiness
             vehicles={vehicles}
             locations={locations}
+          />
+        ) : activeTab === 'analytics' ? (
+          <StrategicIntelligence
+            locations={locations}
+            supplies={supplies}
           />
         ) : (
           <OperationalAlerts
