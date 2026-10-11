@@ -20,6 +20,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     document.documentElement.setAttribute('data-theme', theme);
     document.documentElement.classList.toggle('dark', theme === 'dark');
     document.documentElement.classList.toggle('light', theme === 'light');
+    document.body.setAttribute('data-theme', theme);
+    document.body.classList.toggle('dark', theme === 'dark');
+    document.body.classList.toggle('light', theme === 'light');
     localStorage.setItem('vanguard_tactical_theme', theme);
   }, [theme]);
 

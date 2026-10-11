@@ -273,23 +273,23 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
             }}
           >
             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '0px', background: '#24a148' }}></span>
+              <span style={{ width: '8px', height: '8px', borderRadius: '0px', background: 'var(--accent-emerald)' }}></span>
               Normal DoS (&gt;12d)
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '0px', background: '#b28600' }}></span>
+              <span style={{ width: '8px', height: '8px', borderRadius: '0px', background: 'var(--accent-amber)' }}></span>
               Warning (&lt;12d)
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '0px', background: '#da1e28' }}></span>
+              <span style={{ width: '8px', height: '8px', borderRadius: '0px', background: 'var(--accent-crimson)' }}></span>
               Critical (&lt;5d)
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <span style={{ width: '12px', height: '2px', background: '#0f62fe' }}></span>
+              <span style={{ width: '12px', height: '2px', background: 'var(--accent-primary)' }}></span>
               Corridor Open
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <span style={{ width: '12px', height: '2px', borderTop: '2px dashed #da1e28' }}></span>
+              <span style={{ width: '12px', height: '2px', borderTop: '2px dashed var(--accent-crimson)' }}></span>
               Pass Blocked
             </span>
           </div>
@@ -351,9 +351,9 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
                   const isRestricted = route.status === 'RESTRICTED';
 
                   const strokeColor = isClosed
-                    ? '#da1e28'
+                    ? 'var(--accent-crimson)'
                     : isRestricted
-                    ? '#b28600'
+                    ? 'var(--accent-amber)'
                     : 'url(#corridor-gradient-open)';
 
                   const strokeDash = isClosed ? '4,4' : isRestricted ? '6,3' : 'none';
@@ -377,7 +377,7 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
 
                       {/* Moving convoy pulse animation on open corridors */}
                       {showConvoyPulse && !isClosed && (
-                        <circle r="3.5" fill="#0f62fe" opacity="0.9">
+                        <circle r="3.5" fill="var(--accent-primary)" opacity="0.9">
                           <animateMotion
                             path={pathD}
                             dur={isRestricted ? '8s' : '5s'}
@@ -411,7 +411,7 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
                     {/* Pass Diamond Icon */}
                     <polygon
                       points="0,-11 11,0 0,11 -11,0"
-                      fill={isBlocked ? '#da1e28' : isRestricted ? '#b28600' : '#24a148'}
+                      fill={isBlocked ? 'var(--accent-crimson)' : isRestricted ? 'var(--accent-amber)' : 'var(--accent-emerald)'}
                       stroke={isSelected ? 'var(--accent-primary)' : 'var(--border-prominent)'}
                       strokeWidth={isSelected ? '2.5' : '1.5'}
                       filter={isBlocked ? 'url(#glow-crimson)' : 'none'}
@@ -430,7 +430,7 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
                     <text
                       x="14"
                       y="3"
-                      fill={isBlocked ? '#da1e28' : 'var(--map-node-label)'}
+                      fill={isBlocked ? 'var(--accent-crimson)' : 'var(--map-node-label)'}
                       fontSize="10"
                       fontWeight="700"
                       fontFamily="var(--font-mono)"
@@ -451,12 +451,12 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
                 const isWarning = !isCritical && node.minDoS <= 12;
 
                 const nodeColor = isCritical
-                  ? '#da1e28'
+                  ? 'var(--accent-crimson)'
                   : isWarning
-                  ? '#b28600'
+                  ? 'var(--accent-amber)'
                   : isBase
-                  ? '#0f62fe'
-                  : '#24a148';
+                  ? 'var(--accent-primary)'
+                  : 'var(--accent-emerald)';
 
                 const matchesFilter =
                   filterSector === 'ALL' || node.sector === filterSector;
@@ -478,7 +478,7 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
                       <circle
                         r="18"
                         fill="none"
-                        stroke="#da1e28"
+                        stroke="var(--accent-crimson)"
                         strokeWidth="1.5"
                         opacity="0.6"
                       >

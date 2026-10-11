@@ -4,13 +4,12 @@
    HQ XIV Corps, Northern Command (Operational Decision Support Platform)
    ========================================================================== */
 
+/* Carbon 4px Spacing Scale & Global Geometry */
 :root {
-  /* Typography Tokens */
   --font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
   --font-devanagari: 'Noto Sans Devanagari', 'IBM Plex Sans', sans-serif;
 
-  /* Carbon 4px Spacing Scale */
   --spacing-xxs: 4px;
   --spacing-xs: 8px;
   --spacing-sm: 12px;
@@ -20,7 +19,7 @@
   --spacing-xxl: 48px;
   --spacing-section: 96px;
 
-  /* Flat Geometry — Carbon Commitment: Corners Stay at 0px */
+  /* Carbon Flat Commitment: 0px Corners across all components */
   --radius-none: 0px;
   --radius-xs: 0px;
   --radius-sm: 0px;
@@ -29,40 +28,56 @@
   --radius-pill: 0px;
   --radius-full: 0px;
   --transition: all 0.12s ease-in-out;
+}
 
-  /* ==========================================================================
-     DEFAULT / DAYLIGHT OPERATIONAL MODE: Carbon Light Theme (White Canvas)
-     ========================================================================== */
-  --bg-app: #ffffff;                /* Canvas: Pure White */
-  --bg-surface: #ffffff;            /* Canvas */
-  --bg-surface-elevated: #f4f4f4;   /* Surface-1: Light Gray */
-  --bg-surface-active: #e0e0e0;     /* Surface-2: Hover/Pressed Fill */
+/* ==========================================================================
+   1. DAYLIGHT (LIGHT) OPERATIONAL MODE
+   - Main background: #ffffff
+   - Secondary backgrounds and panels: #f4f4f4
+   - Cards and tables: white with subtle #e0e0e0 borders
+   - Primary text: #161616
+   - Secondary text: #525252
+   - Primary buttons, links, active indicators: IBM Blue #0f62fe
+   ========================================================================== */
+:root,
+:root[data-theme='light'],
+html[data-theme='light'],
+body[data-theme='light'],
+body.light,
+.light {
+  /* Surfaces */
+  --bg-app: #ffffff;                /* Main background: pure white #ffffff */
+  --bg-surface: #ffffff;            /* Cards and tables: white */
+  --bg-surface-elevated: #f4f4f4;   /* Secondary backgrounds and panels: #f4f4f4 */
+  --bg-surface-active: #e0e0e0;     /* Selected / hovered controls / table row hover */
   --bg-glass: #ffffff;
 
-  --border-subtle: #e0e0e0;         /* Hairline: 1px subtle boundary */
-  --border-prominent: #8c8c8c;      /* Ink-Subtle */
-  --border-active: #0f62fe;         /* IBM Blue focus accent */
-  --border-strong: #161616;         /* Hairline Strong */
+  /* Borders: subtle #e0e0e0 */
+  --border-subtle: #e0e0e0;         /* Subtle #e0e0e0 borders */
+  --border-prominent: #8c8c8c;      /* Emphasized boundaries */
+  --border-active: #0f62fe;         /* IBM Blue focus border */
+  --border-strong: #161616;         /* Hairline strong */
 
-  --text-primary: #161616;          /* Ink: Charcoal */
-  --text-secondary: #525252;        /* Ink-Muted: Secondary body */
-  --text-tertiary: #8c8c8c;         /* Ink-Subtle: Helper / Meta */
-  --text-inverse: #ffffff;          /* Inverse Ink: White on Blue / Charcoal */
+  /* Text */
+  --text-primary: #161616;          /* Primary text: #161616 */
+  --text-secondary: #525252;        /* Secondary text: #525252 */
+  --text-tertiary: #8c8c8c;         /* Tertiary / helper text */
+  --text-inverse: #ffffff;          /* White on IBM Blue / Charcoal */
 
-  /* Single Confident Brand Accent: IBM Blue (#0f62fe) */
-  --accent-primary: #0f62fe;        /* IBM Blue */
-  --accent-primary-hover: #0050e6;  /* Blue Hover */
-  --accent-primary-pressed: #002d9c;/* Blue 80 */
-  --accent-blue-60: #0043ce;        /* Blue 60 */
+  /* Primary Accent: IBM Blue (#0f62fe) */
+  --accent-primary: #0f62fe;
+  --accent-primary-hover: #0050e6;
+  --accent-primary-pressed: #002d9c;
+  --accent-blue-60: #0043ce;
 
-  /* Carbon Semantic Status Signals */
+  /* Semantic Status Signals */
   --accent-emerald: #24a148;        /* Carbon Semantic Success (Green-50) */
-  --accent-amber: #b28600;          /* Carbon Semantic Warning (Yellow-30 / accessible contrast) */
+  --accent-amber: #b28600;          /* Carbon Semantic Warning (Accessible contrast) */
   --accent-crimson: #da1e28;        /* Carbon Semantic Error (Red-60) */
-  --accent-cyan: #0f62fe;           /* Semantic Info / Accent */
+  --accent-cyan: #0f62fe;
   --accent-gold: #b28600;
 
-  /* Carbon Status Badges (Flat 0px square badges with thin 1px border) */
+  /* Status Badges */
   --badge-normal-bg: #e8f7ee;
   --badge-normal-text: #198038;
   --badge-normal-border: #24a148;
@@ -79,9 +94,8 @@
   --badge-info-text: #0043ce;
   --badge-info-border: #0f62fe;
 
-  /* Flat Surface Elevation: Carbon avoids drop shadows */
   --card-shadow: none;
-  --table-stripe: #f4f4f4;
+  --table-stripe: #fcfcfc;
 
   /* Map Cartography (Light Theme) */
   --bg-map-canvas: #f4f4f4;
@@ -90,78 +104,93 @@
   --map-contour-stroke: rgba(15, 98, 254, 0.16);
   --map-node-label: #161616;
 
-  /* System Footer: Inverts to Charcoal (#161616) — Carbon Signature */
+  /* System Footer */
   --footer-bg: #161616;
   --footer-text: #c6c6c6;
   --footer-heading: #ffffff;
   --footer-border: #262626;
 }
 
-/* --------------------------------------------------------------------------
-   DARK THEME: Carbon Gray-100 Theme (High-Contrast Command Center Option)
-   -------------------------------------------------------------------------- */
+/* ==========================================================================
+   2. DARK OPERATIONAL MODE
+   - Genuine dark charcoal backgrounds: #161616 and #262626
+   - White or light-grey text with appropriate contrast
+   - IBM Blue #0f62fe as accent colour, NOT main background
+   - Suitable dark surfaces and borders so cards, tables, forms remain distinguishable
+   ========================================================================== */
 :root[data-theme='dark'],
+html[data-theme='dark'],
+body[data-theme='dark'],
+body.dark,
 .dark {
-  --bg-app: #161616;                /* Inverse Canvas (Charcoal #161616) */
-  --bg-surface: #262626;            /* Inverse Surface-1 */
-  --bg-surface-elevated: #393939;   /* Gray-80 */
-  --bg-surface-active: #525252;     /* Gray-60 */
+  /* Surfaces: Genuine Dark Charcoal */
+  --bg-app: #161616;                /* Main background: #161616 */
+  --bg-surface: #262626;            /* Cards and tables: #262626 */
+  --bg-surface-elevated: #333333;   /* Secondary backgrounds and panels: #333333 */
+  --bg-surface-active: #444444;     /* Selected / hovered controls / table row hover */
   --bg-glass: #262626;
 
-  --border-subtle: #393939;         /* 1px Hairline dark */
-  --border-prominent: #6f6f6f;
-  --border-active: #4589ff;
+  /* Distinctive Dark Borders */
+  --border-subtle: #393939;         /* Suitable dark borders (#393939) */
+  --border-prominent: #6f6f6f;      /* Emphasized boundaries */
+  --border-active: #0f62fe;         /* IBM Blue focus border */
   --border-strong: #ffffff;
 
-  --text-primary: #f4f4f4;          /* Inverse Ink */
-  --text-secondary: #c6c6c6;        /* Inverse Ink Muted */
-  --text-tertiary: #8c8c8c;
-  --text-inverse: #161616;
+  /* Text: High Contrast White & Light Grey */
+  --text-primary: #f4f4f4;          /* Primary text: white/light-grey #f4f4f4 */
+  --text-secondary: #c6c6c6;        /* Secondary text: #c6c6c6 */
+  --text-tertiary: #8c8c8c;         /* Tertiary / helper text */
+  --text-inverse: #161616;          /* Dark on light */
 
+  /* Accent: IBM Blue (#0f62fe) */
   --accent-primary: #0f62fe;
   --accent-primary-hover: #4589ff;
   --accent-primary-pressed: #002d9c;
   --accent-blue-60: #4589ff;
 
+  /* Semantic Status Signals */
   --accent-emerald: #42be65;
   --accent-amber: #f1c21b;
   --accent-crimson: #ff8389;
   --accent-cyan: #4589ff;
   --accent-gold: #f1c21b;
 
-  --badge-normal-bg: rgba(66, 190, 101, 0.15);
+  /* Badges */
+  --badge-normal-bg: rgba(66, 190, 101, 0.16);
   --badge-normal-text: #42be65;
   --badge-normal-border: #42be65;
 
-  --badge-warning-bg: rgba(241, 194, 27, 0.15);
+  --badge-warning-bg: rgba(241, 194, 27, 0.16);
   --badge-warning-text: #f1c21b;
   --badge-warning-border: #f1c21b;
 
-  --badge-critical-bg: rgba(255, 131, 137, 0.15);
+  --badge-critical-bg: rgba(255, 131, 137, 0.16);
   --badge-critical-text: #ff8389;
   --badge-critical-border: #ff8389;
 
-  --badge-info-bg: rgba(15, 98, 254, 0.18);
+  --badge-info-bg: rgba(15, 98, 254, 0.22);
   --badge-info-text: #78a9ff;
-  --badge-info-border: #4589ff;
+  --badge-info-border: #0f62fe;
 
   --card-shadow: none;
   --table-stripe: #262626;
 
+  /* Map Cartography (Dark Theme) */
   --bg-map-canvas: #161616;
   --bg-map-legend: #262626;
   --map-grid-stroke: rgba(255, 255, 255, 0.08);
-  --map-contour-stroke: rgba(69, 137, 255, 0.22);
+  --map-contour-stroke: rgba(69, 137, 255, 0.25);
   --map-node-label: #f4f4f4;
 
+  /* System Footer */
   --footer-bg: #121212;
   --footer-text: #8c8c8c;
   --footer-heading: #f4f4f4;
-  --footer-border: #262626;
+  --footer-border: #393939;
 }
 
 /* ==========================================================================
-   Base Elements & Carbon Typographic Baseline
+   Base Elements & Typographic Rules
    ========================================================================== */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -177,11 +206,10 @@ html, body {
   color: var(--text-primary);
   line-height: 1.5;
   font-size: 14px;
-  /* Carbon precision detail: 0.16px letter-spacing on body */
   letter-spacing: 0.16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
   overflow-x: hidden;
 }
 
@@ -189,9 +217,10 @@ html, body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: var(--bg-app);
 }
 
-/* Carbon Square Scrollbars */
+/* Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -208,7 +237,7 @@ html, body {
 }
 
 /* ==========================================================================
-   Typography & Hierarchy (Carbon: Light Display 300 / Body 400 / Emphasis 600)
+   Typography Classes
    ========================================================================== */
 .font-mono {
   font-family: var(--font-mono);
@@ -228,7 +257,7 @@ html, body {
 h1 {
   font-family: var(--font-sans);
   color: var(--text-primary);
-  font-weight: 300; /* Carbon brand signature: weight 300 for display headlines */
+  font-weight: 300;
   font-size: 32px;
   line-height: 1.25;
   letter-spacing: 0;
@@ -237,7 +266,7 @@ h1 {
 h2 {
   font-family: var(--font-sans);
   color: var(--text-primary);
-  font-weight: 400; /* Card title */
+  font-weight: 400;
   font-size: 20px;
   line-height: 1.33;
   letter-spacing: 0;
@@ -246,7 +275,7 @@ h2 {
 h3 {
   font-family: var(--font-sans);
   color: var(--text-primary);
-  font-weight: 400; /* Subhead */
+  font-weight: 400;
   font-size: 16px;
   line-height: 1.40;
   letter-spacing: 0;
@@ -255,7 +284,7 @@ h3 {
 h4, h5, h6 {
   font-family: var(--font-sans);
   color: var(--text-primary);
-  font-weight: 600; /* Body emphasis */
+  font-weight: 600;
   font-size: 14px;
   line-height: 1.29;
   letter-spacing: 0.16px;
@@ -277,7 +306,7 @@ p {
 .text-muted { color: var(--text-secondary); }
 
 /* ==========================================================================
-   Panels, Containers & Cards (Carbon Flat Geometry: 0px Radius, 1px Border)
+   Panels, Containers & Cards (0px Flat Geometry, Distinctive 1px Borders)
    ========================================================================== */
 .panel,
 .tactical-card {
@@ -285,7 +314,7 @@ p {
   border: 1px solid var(--border-subtle);
   border-radius: 0px;
   box-shadow: none;
-  transition: border-color 0.12s ease;
+  transition: border-color 0.12s ease, background-color 0.15s ease;
   position: relative;
 }
 
@@ -302,6 +331,7 @@ p {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
 .panel-body {
@@ -315,10 +345,11 @@ p {
   position: sticky;
   top: 0;
   z-index: 50;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
 /* ==========================================================================
-   Data Tables (Information-Dense, 0px Radius, Clean Gray Header)
+   Data Tables (0px Radius, Distinguishable Surface, Responsive)
    ========================================================================== */
 .enterprise-table-container {
   width: 100%;
@@ -326,6 +357,7 @@ p {
   border: 1px solid var(--border-subtle);
   border-radius: 0px;
   background: var(--bg-surface);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
 .enterprise-table {
@@ -364,7 +396,7 @@ p {
 }
 
 /* ==========================================================================
-   Status Badges & Indicators (Carbon: Flat 0px, 1px Border, Clean Colors)
+   Status Badges (Flat 0px, 1px Border, Readable in Both Themes)
    ========================================================================== */
 .tactical-badge,
 .badge-status {
@@ -413,7 +445,7 @@ p {
   border-color: var(--badge-warning-border);
 }
 
-/* Carbon Square Status Indicators */
+/* Square Status Dots */
 .status-dot {
   width: 7px;
   height: 7px;
@@ -427,7 +459,7 @@ p {
 .status-dot-info { background: var(--accent-primary); }
 
 /* ==========================================================================
-   Buttons (Carbon: Square 0px, 12px 16px Padding, IBM Blue Primary)
+   Buttons (Square 0px, IBM Blue Primary #0f62fe)
    ========================================================================== */
 .tactical-btn,
 .btn {
@@ -467,12 +499,12 @@ p {
   cursor: not-allowed;
 }
 
-/* button-primary: IBM Blue #0f62fe */
+/* Primary Button: IBM Blue #0f62fe */
 .tactical-btn-primary,
 .btn-primary {
   background: var(--accent-primary);
   border-color: var(--accent-primary);
-  color: var(--text-inverse);
+  color: #ffffff;
   font-weight: 400;
 }
 
@@ -488,22 +520,21 @@ p {
   border-color: var(--accent-primary-pressed);
 }
 
-/* button-secondary: Charcoal #161616 */
+/* Secondary Button: Charcoal / Inverted */
 .tactical-btn-secondary,
 .btn-secondary {
   background: var(--text-primary);
   border-color: var(--text-primary);
-  color: var(--text-inverse);
+  color: var(--bg-app);
   font-weight: 400;
 }
 
 .tactical-btn-secondary:hover,
 .btn-secondary:hover {
-  background: #262626;
-  border-color: #262626;
+  opacity: 0.9;
 }
 
-/* button-tertiary: Canvas with blue 1px border */
+/* Tertiary Button: Canvas with IBM Blue Border */
 .tactical-btn-tertiary,
 .btn-tertiary {
   background: var(--bg-surface);
@@ -517,12 +548,12 @@ p {
   background: var(--bg-surface-elevated);
 }
 
-/* button-danger: Carbon Red #da1e28 */
+/* Danger Button: Carbon Red #da1e28 */
 .tactical-btn-danger,
 .btn-danger {
   background: var(--accent-crimson);
   border-color: var(--accent-crimson);
-  color: var(--text-inverse);
+  color: #ffffff;
   font-weight: 400;
 }
 
@@ -539,7 +570,7 @@ p {
 }
 
 /* ==========================================================================
-   Form Controls (Carbon Input Chrome: Surface-1, 0px, 2px Blue Underline Focus)
+   Form Controls (Carbon Chrome: Surface-1, 0px, 2px Blue Focus Underline)
    ========================================================================== */
 .form-input,
 .form-select,
@@ -575,7 +606,7 @@ p {
 }
 
 /* ==========================================================================
-   Layout Grids (4px Scale Consistency)
+   Layout Grids
    ========================================================================== */
 .grid-kpi-4,
 .tactical-grid-4 {
@@ -597,7 +628,7 @@ p {
   gap: 20px;
 }
 
-/* Technical Metadata Pill */
+/* Metadata Pill */
 .elevation-tag {
   background: var(--bg-surface-elevated);
   border: 1px solid var(--border-subtle);
