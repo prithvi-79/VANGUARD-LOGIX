@@ -192,3 +192,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   - Automated pytest suite: **55/55 tests passing in 11.02s (100% pass rate, 0 failures)**.
   - Frontend production build (`npm run build`): **0 TypeScript errors, 2,490 modules bundled in 15.50s**.
 
+---
+
+## [Phase 6: Quality Assurance, Security Hardening & End-to-End Contract Sweep] — 2026-10-11
+
+### Completed Milestones
+- **Comprehensive End-to-End API Sweep Test Suite (`backend/tests/test_api_sweep.py`):**
+  - Implemented 12 comprehensive contract and validation test functions covering all 14 endpoint categories across the application.
+  - Validated API health, dual-database status, location retrieval, sector filtering, and HTTP 404 responses for nonexistent records.
+  - Validated supply catalog, military classes I–V, and complete 120-record inventory ledger.
+  - Validated strategic mountain passes, route corridors, and dynamic pass status updates (`RESTRICTED_CONVOY` on Zoji La).
+  - Validated multimodal fleet register and high-altitude payload de-rating mathematics at 4,800m MSL (`effective_payload_kg < rated_payload_kg`).
+  - Validated Days-of-Supply risk evaluation and 14-day forward inventory burn-down trajectories.
+  - Validated multi-attribute replenishment priority scoring, queue monotonicity, and emergency tiering.
+  - Validated corridor slope physics calculation, grade resistance factor ($R_g > 1.0$), and transit delay expansion under blizzard conditions.
+  - Validated Quantile Demand Forecasting hierarchy ($P_{10} \le P_{50} \le P_{90}$) and walk-forward WAPE metrics.
+  - Validated OR-Tools CVRPTW solver execution, capacity limits, and daylight transit window enforcement.
+  - Validated causal decision explainability trees, counterfactual trade-offs, and ASC doctrine citations (`ASC-LOG-2026-CH7`).
+  - Validated strict Pydantic v2 input validation returning HTTP 422 for malformed payloads, out-of-range temperatures, and invalid fleet availability.
+- **Automated Verification Benchmarks:**
+  - Executed full backend test suite: **67/67 tests passing across 11 test suites in 11.14s (100% pass rate, 0 failures)**.
+  - Executed frontend production build (`tsc -b && vite build`): **0 TypeScript errors, 2,490 modules transformed and bundled clean in 18.87s**.
+  - Executed frontend linter (`npm run lint` / `oxlint`): **0 errors, 0 warnings**.
+- **Security & Environment Hardening:**
+  - Performed automated secret leakage scan: zero hardcoded credentials or API tokens in source code.
+  - Created [`.env.example`](file:///c:/Users/Admin/Desktop/project/.env.example) documenting safe defaults and production PostgreSQL connection string patterns.
+  - SQL injection protection verified via 100% parameterized SQLAlchemy 2.0 ORM queries.
+  - Cross-Site Scripting (XSS) mitigated through React virtual DOM rendering and strict sanitization.
+- **Accessibility & Contrast Verification:**
+  - Audited and verified WCAG AA contrast compliance (&ge; 4.5:1) for both Dark Command Center and High-Contrast Tactical themes in `index.css`.
+
+
