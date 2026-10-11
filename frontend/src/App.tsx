@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
+import { useTheme } from './theme/ThemeContext';
 import { CommandHeader } from './components/CommandHeader';
 import { CommandBriefing } from './components/CommandBriefing';
 import { TacticalGISMap } from './components/TacticalGISMap';
@@ -70,6 +71,7 @@ interface NavDomain {
 }
 
 export const App: React.FC = () => {
+  const { theme } = useTheme();
   const [activeTab, setActiveTab] = useState<TabView>('map');
   const [locations, setLocations] = useState<Location[]>([]);
   const [passes, setPasses] = useState<StrategicPass[]>([]);
@@ -241,7 +243,19 @@ export const App: React.FC = () => {
   }, [navDomains, activeTab]);
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-app)' }}>
+    <div
+      id="vanguard-app-container"
+      data-theme={theme}
+      className={theme}
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        background: 'var(--bg-app)',
+        color: 'var(--text-primary)',
+        transition: 'background-color 0.15s ease, color 0.15s ease',
+      }}
+    >
       {/* Top Header */}
       <CommandHeader
         dbStatus={dbStatus}

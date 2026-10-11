@@ -43,6 +43,8 @@
 :root[data-theme='light'],
 html[data-theme='light'],
 body[data-theme='light'],
+#root[data-theme='light'],
+[data-theme='light'],
 body.light,
 .light {
   /* Surfaces */
@@ -104,11 +106,11 @@ body.light,
   --map-contour-stroke: rgba(15, 98, 254, 0.16);
   --map-node-label: #161616;
 
-  /* System Footer */
-  --footer-bg: #161616;
-  --footer-text: #c6c6c6;
-  --footer-heading: #ffffff;
-  --footer-border: #262626;
+  /* System Footer (Light Mode) */
+  --footer-bg: #f4f4f4;
+  --footer-text: #525252;
+  --footer-heading: #161616;
+  --footer-border: #e0e0e0;
 }
 
 /* ==========================================================================
@@ -121,6 +123,8 @@ body.light,
 :root[data-theme='dark'],
 html[data-theme='dark'],
 body[data-theme='dark'],
+#root[data-theme='dark'],
+[data-theme='dark'],
 body.dark,
 .dark {
   /* Surfaces: Genuine Dark Charcoal */

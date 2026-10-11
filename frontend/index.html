@@ -1,10 +1,22 @@
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vanguard Logistics Operations Portal — HQ XIV Corps</title>
+
+    <script>
+      (function() {
+        try {
+          var saved = localStorage.getItem('vanguard_tactical_theme');
+          var theme = saved === 'dark' ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', theme);
+          document.documentElement.dataset.theme = theme;
+          document.documentElement.classList.add(theme);
+        } catch (e) {}
+      })();
+    </script>
 
     <!-- Typography: IBM Plex Sans (Carbon Design UI), IBM Plex Mono (IDs/Code), Noto Sans Devanagari (Hindi) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

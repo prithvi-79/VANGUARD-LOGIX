@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useLayoutEffect, useState } from 'react';
 
-type ThemeMode = 'dark' | 'light';
+export type ThemeMode = 'dark' | 'light';
 
-interface ThemeContextType {
+export interface ThemeContextType {
   theme: ThemeMode;
   toggleTheme: () => void;
   setTheme: (mode: ThemeMode) => void;
@@ -10,27 +10,62 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setThemeState] = useState<ThemeMode>(() => {
-    const saved = localStorage.getItem('vanguard_tactical_theme');
-    return saved === 'dark' ? 'dark' : 'light';
-  });
+function applyThemeToDOM(theme: ThemeMode) {
+  if (typeof document === 'undefined') return;
+  document.documentElement.setAttribute('data-theme', theme);
+  document.documentElement.dataset.theme = theme;
+  document.documentElement.classList.toggle('dark', theme === 'dark');
+  document.documentElement.classList.toggle('light', theme === 'light');
 
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    document.documentElement.classList.toggle('dark', theme === 'dark');
-    document.documentElement.classList.toggle('light', theme === 'light');
+  if (document.body) {
     document.body.setAttribute('data-theme', theme);
+    document.body.dataset.theme = theme;
     document.body.classList.toggle('dark', theme === 'dark');
     document.body.classList.toggle('light', theme === 'light');
-    localStorage.setItem('vanguard_tactical_theme', theme);
+  }
+
+  const rootEl = document.getElementById('root');
+  if (rootEl) {
+    rootEl.setAttribute('data-theme', theme);
+    rootEl.dataset.theme = theme;
+    rootEl.classList.toggle('dark', theme === 'dark');
+    rootEl.classList.toggle('light', theme === 'light');
+  }
+}
+
+export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [theme, setThemeState] = useState<ThemeMode>(() => {
+    try {
+      const saved = localStorage.getItem('vanguard_tactical_theme');
+      return saved === 'dark' ? 'dark' : 'light';
+    } catch {
+      return 'light';
+    }
+  });
+
+  useLayoutEffect(() => {
+    applyThemeToDOM(theme);
+    try {
+      localStorage.setItem('vanguard_tactical_theme', theme);
+    } catch {}
   }, [theme]);
 
   const toggleTheme = () => {
-    setThemeState((prev) => (prev === 'dark' ? 'light' : 'dark'));
+    setThemeState((prev) => {
+      const next: ThemeMode = prev === 'dark' ? 'light' : 'dark';
+      applyThemeToDOM(next);
+      try {
+        localStorage.setItem('vanguard_tactical_theme', next);
+      } catch {}
+      return next;
+    });
   };
 
   const setTheme = (mode: ThemeMode) => {
+    applyThemeToDOM(mode);
+    try {
+      localStorage.setItem('vanguard_tactical_theme', mode);
+    } catch {}
     setThemeState(mode);
   };
 

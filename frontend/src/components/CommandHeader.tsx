@@ -119,6 +119,7 @@ export const CommandHeader: React.FC<CommandHeaderProps> = ({
           </button>
 
           <button
+            id="theme-toggle-btn"
             onClick={toggleTheme}
             className="tactical-btn"
             title={theme === 'dark' ? 'Switch to Daylight Ops Mode (Light)' : 'Switch to Command Center Mode (Dark)'}
