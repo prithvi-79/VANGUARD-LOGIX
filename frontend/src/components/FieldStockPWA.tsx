@@ -15,7 +15,6 @@ import { api } from '../services/api';
 import { translations, type Language } from '../services/translations';
 import type { Location, SupplyItem, InventoryRecord } from '../types';
 
-
 interface FieldStockPWAProps {
   locations: Location[];
   supplies: SupplyItem[];
@@ -172,7 +171,7 @@ export const FieldStockPWA: React.FC<FieldStockPWAProps> = ({
           items: itemsPayload,
           justification,
         });
-        setSyncFeedback('Voucher submitted directly to HQ XIV Corps ledger.');
+        setSyncFeedback('Voucher submitted directly to Corps ledger.');
         if (onIndentCreated) onIndentCreated();
       } catch (err: any) {
         // Fallback to offline queue if network fails
@@ -219,172 +218,147 @@ export const FieldStockPWA: React.FC<FieldStockPWAProps> = ({
   const locationInventory = inventory.filter((i) => i.location_id === selectedPostId);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      {/* Top Tactical Field Banner */}
-      <div
-        className="tactical-card"
-        style={{
-          padding: '20px 24px',
-          borderLeft: `4px solid ${isSimulatedOffline ? 'var(--accent-crimson)' : 'var(--accent-emerald)'}`,
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '16px',
-        }}
-      >
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.75rem',
-                color: isSimulatedOffline ? 'var(--accent-crimson)' : 'var(--accent-emerald)',
-                fontWeight: 700,
-                letterSpacing: '0.08em',
-              }}
-            >
-              {t.theaterSector}
-            </span>
-            <span className={`badge ${isSimulatedOffline ? 'badge-crimson' : 'badge-emerald'}`}>
-              {isSimulatedOffline ? t.signalOffline : t.signalOnline}
-            </span>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      {/* Top Field Banner */}
+      <div className="panel">
+        <div
+          className="panel-header"
+          style={{
+            flexWrap: 'wrap',
+            gap: '12px',
+          }}
+        >
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span className={`tactical-badge ${isSimulatedOffline ? 'badge-critical' : 'badge-normal'}`}>
+                {isSimulatedOffline ? t.signalOffline : t.signalOnline}
+              </span>
+              <h2 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 600 }}>{t.systemTitle}</h2>
+            </div>
+            <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', margin: '2px 0 0 0' }}>
+              {t.systemSubtitle}
+            </p>
           </div>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginTop: '4px' }}>{t.systemTitle}</h2>
-          <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
-            {t.systemSubtitle}
-          </p>
-        </div>
 
-        {/* Controls: Language Toggle & Offline Simulator */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-          {/* Language Switcher */}
-          <div
-            style={{
-              display: 'flex',
-              background: 'rgba(255, 255, 255, 0.05)',
-              borderRadius: '6px',
-              border: '1px solid var(--border-subtle)',
-              padding: '2px',
-            }}
-          >
+          {/* Controls: Language Toggle & Offline Simulator */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            {/* Language Switcher */}
+            <div style={{ display: 'flex', gap: '2px', background: 'var(--bg-surface-elevated)', padding: '2px', borderRadius: 'var(--radius-sm)' }}>
+              <button
+                onClick={() => setLang('en')}
+                className="tactical-btn"
+                style={{
+                  fontSize: '0.72rem',
+                  padding: '3px 8px',
+                  background: lang === 'en' ? 'var(--accent-primary)' : 'transparent',
+                  color: lang === 'en' ? 'var(--text-inverse)' : 'var(--text-secondary)',
+                  borderColor: 'transparent',
+                }}
+              >
+                English
+              </button>
+              <button
+                onClick={() => setLang('hi')}
+                className="tactical-btn"
+                style={{
+                  fontSize: '0.72rem',
+                  padding: '3px 8px',
+                  background: lang === 'hi' ? 'var(--accent-primary)' : 'transparent',
+                  color: lang === 'hi' ? 'var(--text-inverse)' : 'var(--text-secondary)',
+                  borderColor: 'transparent',
+                }}
+              >
+                हिन्दी
+              </button>
+            </div>
+
+            {/* Simulate No Signal Toggle */}
             <button
-              onClick={() => setLang('en')}
+              onClick={() => setIsSimulatedOffline(!isSimulatedOffline)}
               className="tactical-btn"
               style={{
                 fontSize: '0.75rem',
                 padding: '4px 10px',
-                background: lang === 'en' ? 'var(--accent-cyan)' : 'transparent',
-                color: lang === 'en' ? '#000000' : 'var(--text-secondary)',
-                fontWeight: lang === 'en' ? 700 : 500,
+                borderColor: isSimulatedOffline ? 'var(--accent-crimson)' : 'var(--border-subtle)',
+                color: isSimulatedOffline ? 'var(--accent-crimson)' : 'var(--text-secondary)',
               }}
             >
-              English
+              {isSimulatedOffline ? <WifiOff size={13} style={{ marginRight: '4px' }} /> : <Wifi size={13} style={{ marginRight: '4px' }} />}
+              {isSimulatedOffline ? t.simulateRestore : t.simulateNoSignal}
             </button>
+
+            {/* Sync Button */}
             <button
-              onClick={() => setLang('hi')}
+              onClick={handleSyncQueue}
+              disabled={queuedVouchers.length === 0 || isSimulatedOffline || isSyncing}
               className="tactical-btn"
               style={{
                 fontSize: '0.75rem',
                 padding: '4px 10px',
-                background: lang === 'hi' ? 'var(--accent-cyan)' : 'transparent',
-                color: lang === 'hi' ? '#000000' : 'var(--text-secondary)',
-                fontWeight: lang === 'hi' ? 700 : 500,
+                background: queuedVouchers.length > 0 && !isSimulatedOffline ? 'var(--accent-primary)' : 'transparent',
+                color: queuedVouchers.length > 0 && !isSimulatedOffline ? 'var(--text-inverse)' : 'var(--text-tertiary)',
+                borderColor: queuedVouchers.length > 0 && !isSimulatedOffline ? 'var(--accent-primary)' : 'var(--border-subtle)',
               }}
             >
-              हिन्दी (Hindi)
+              <CloudLightning size={13} style={{ marginRight: '4px' }} />
+              {t.syncButton} ({queuedVouchers.length})
             </button>
           </div>
-
-          {/* Simulate No Signal Toggle */}
-          <button
-            onClick={() => setIsSimulatedOffline(!isSimulatedOffline)}
-            className="tactical-btn"
-            style={{
-              background: isSimulatedOffline ? 'rgba(239, 68, 68, 0.15)' : 'rgba(255, 255, 255, 0.05)',
-              borderColor: isSimulatedOffline ? 'var(--accent-crimson)' : 'var(--border-subtle)',
-              color: isSimulatedOffline ? 'var(--accent-crimson)' : 'var(--text-primary)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-            }}
-          >
-            {isSimulatedOffline ? <WifiOff size={14} /> : <Wifi size={14} />}
-            {isSimulatedOffline ? t.simulateRestore : t.simulateNoSignal}
-          </button>
-
-          {/* Sync Button */}
-          <button
-            onClick={handleSyncQueue}
-            disabled={queuedVouchers.length === 0 || isSimulatedOffline || isSyncing}
-            className="tactical-btn tactical-btn-primary"
-            style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
-          >
-            <CloudLightning size={14} />
-            {t.syncButton} ({queuedVouchers.length})
-          </button>
         </div>
       </div>
 
       {syncFeedback && (
         <div
-          className="tactical-card"
+          className="panel"
           style={{
-            padding: '12px 16px',
-            background: 'rgba(6, 182, 212, 0.08)',
-            border: '1px solid var(--accent-cyan)',
-            fontSize: '0.8rem',
-            color: 'var(--accent-cyan)',
+            padding: '10px 14px',
+            background: 'var(--badge-info-bg)',
+            border: '1px solid var(--badge-info-border)',
+            fontSize: '0.78rem',
+            color: 'var(--badge-info-text)',
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
           }}
         >
-          <CheckCircle size={16} />
+          <CheckCircle size={15} />
           <span>{syncFeedback}</span>
         </div>
       )}
 
       {/* Main Grid: Requisition Form + Stocktake View */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '20px' }}>
         {/* Left Column: IAF-Z-2096 Requisition Form */}
-        <div className="tactical-card" style={{ padding: '24px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-            <FileText size={20} className="text-cyan" />
+        <div className="panel" style={{ padding: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
+            <FileText size={18} style={{ color: 'var(--accent-primary)' }} />
             <div>
-              <h3 style={{ fontSize: '1rem', fontWeight: 800 }}>{t.formTitle}</h3>
-              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t.formSubtitle}</p>
+              <h3 style={{ fontSize: '0.95rem', fontWeight: 600, margin: 0 }}>{t.formTitle}</h3>
+              <p style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', margin: '2px 0 0 0' }}>{t.formSubtitle}</p>
             </div>
           </div>
 
-          <form onSubmit={handleSubmitVoucher} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          <form onSubmit={handleSubmitVoucher} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <div>
-              <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 600, display: 'block', marginBottom: '4px' }}>
+              <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 500, display: 'block', marginBottom: '4px' }}>
                 {t.selectOutpost}
               </label>
               <select
                 value={selectedPostId}
                 onChange={(e) => setSelectedPostId(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  borderRadius: '4px',
-                  background: 'var(--bg-card)',
-                  color: 'var(--text-primary)',
-                  border: '1px solid var(--border-subtle)',
-                  fontSize: '0.85rem',
-                }}
+                className="form-select"
+                style={{ width: '100%', fontSize: '0.8rem' }}
               >
                 {forwardLocations.map((loc) => (
                   <option key={loc.id} value={loc.id}>
-                    {loc.name} ({loc.elevation_m}m MSL — {loc.sector})
+                    {loc.name} ({loc.elevation_m}m MSL — {loc.sector.replace(/_/g, ' ')})
                   </option>
                 ))}
               </select>
             </div>
 
             <div>
-              <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 600, display: 'block', marginBottom: '4px' }}>
+              <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 500, display: 'block', marginBottom: '4px' }}>
                 {t.unitLabel}
               </label>
               <input
@@ -393,21 +367,14 @@ export const FieldStockPWA: React.FC<FieldStockPWAProps> = ({
                 onChange={(e) => setUnit(e.target.value)}
                 required
                 placeholder={t.unitPlaceholder}
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  borderRadius: '4px',
-                  background: 'var(--bg-card)',
-                  color: 'var(--text-primary)',
-                  border: '1px solid var(--border-subtle)',
-                  fontSize: '0.85rem',
-                }}
+                className="form-input"
+                style={{ width: '100%', fontSize: '0.8rem' }}
               />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
               <div>
-                <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 600, display: 'block', marginBottom: '4px' }}>
+                <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 500, display: 'block', marginBottom: '4px' }}>
                   {t.officerServiceNo}
                 </label>
                 <input
@@ -416,20 +383,13 @@ export const FieldStockPWA: React.FC<FieldStockPWAProps> = ({
                   onChange={(e) => setOfficerNo(e.target.value)}
                   required
                   placeholder={t.officerPlaceholder}
-                  style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    borderRadius: '4px',
-                    background: 'var(--bg-card)',
-                    color: 'var(--text-primary)',
-                    border: '1px solid var(--border-subtle)',
-                    fontSize: '0.85rem',
-                  }}
+                  className="form-input"
+                  style={{ width: '100%', fontSize: '0.8rem' }}
                 />
               </div>
 
               <div>
-                <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 600, display: 'block', marginBottom: '4px' }}>
+                <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 500, display: 'block', marginBottom: '4px' }}>
                   {t.officerName}
                 </label>
                 <input
@@ -438,35 +398,21 @@ export const FieldStockPWA: React.FC<FieldStockPWAProps> = ({
                   onChange={(e) => setOfficerName(e.target.value)}
                   required
                   placeholder={t.officerNamePlaceholder}
-                  style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    borderRadius: '4px',
-                    background: 'var(--bg-card)',
-                    color: 'var(--text-primary)',
-                    border: '1px solid var(--border-subtle)',
-                    fontSize: '0.85rem',
-                  }}
+                  className="form-input"
+                  style={{ width: '100%', fontSize: '0.8rem' }}
                 />
               </div>
             </div>
 
             <div>
-              <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 600, display: 'block', marginBottom: '4px' }}>
+              <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 500, display: 'block', marginBottom: '4px' }}>
                 {t.priorityTier}
               </label>
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  borderRadius: '4px',
-                  background: 'var(--bg-card)',
-                  color: 'var(--text-primary)',
-                  border: '1px solid var(--border-subtle)',
-                  fontSize: '0.85rem',
-                }}
+                className="form-select"
+                style={{ width: '100%', fontSize: '0.8rem' }}
               >
                 <option value="OP_IMMEDIATE">{t.opImmediate}</option>
                 <option value="PRIORITY">{t.priority}</option>
@@ -474,34 +420,27 @@ export const FieldStockPWA: React.FC<FieldStockPWAProps> = ({
               </select>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '12px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '10px' }}>
               <div>
-                <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 600, display: 'block', marginBottom: '4px' }}>
+                <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 500, display: 'block', marginBottom: '4px' }}>
                   {t.selectSupply}
                 </label>
                 <select
                   value={selectedSupplyId}
                   onChange={(e) => setSelectedSupplyId(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    borderRadius: '4px',
-                    background: 'var(--bg-card)',
-                    color: 'var(--text-primary)',
-                    border: '1px solid var(--border-subtle)',
-                    fontSize: '0.85rem',
-                  }}
+                  className="form-select"
+                  style={{ width: '100%', fontSize: '0.8rem' }}
                 >
                   {supplies.map((s) => (
                     <option key={s.id} value={s.id}>
-                      {s.name} ({s.supply_class})
+                      {s.name} ({s.supply_class.replace(/_/g, ' ')})
                     </option>
                   ))}
                 </select>
               </div>
 
               <div>
-                <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 600, display: 'block', marginBottom: '4px' }}>
+                <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 500, display: 'block', marginBottom: '4px' }}>
                   {t.quantityRequested}
                 </label>
                 <input
@@ -509,22 +448,14 @@ export const FieldStockPWA: React.FC<FieldStockPWAProps> = ({
                   min="1"
                   value={quantity}
                   onChange={(e) => setQuantity(parseFloat(e.target.value) || 0)}
-                  style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    borderRadius: '4px',
-                    background: 'var(--bg-card)',
-                    color: 'var(--text-primary)',
-                    border: '1px solid var(--border-subtle)',
-                    fontSize: '0.85rem',
-                    fontFamily: 'var(--font-mono)',
-                  }}
+                  className="form-input"
+                  style={{ width: '100%', fontSize: '0.8rem', fontFamily: 'var(--font-mono)' }}
                 />
               </div>
             </div>
 
             <div>
-              <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 600, display: 'block', marginBottom: '4px' }}>
+              <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 500, display: 'block', marginBottom: '4px' }}>
                 {t.justification}
               </label>
               <textarea
@@ -533,81 +464,78 @@ export const FieldStockPWA: React.FC<FieldStockPWAProps> = ({
                 required
                 rows={3}
                 placeholder={t.justificationPlaceholder}
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  borderRadius: '4px',
-                  background: 'var(--bg-card)',
-                  color: 'var(--text-primary)',
-                  border: '1px solid var(--border-subtle)',
-                  fontSize: '0.85rem',
-                  resize: 'vertical',
-                }}
+                className="form-input"
+                style={{ width: '100%', fontSize: '0.8rem', resize: 'vertical' }}
               />
             </div>
 
             <button
               type="submit"
-              className="tactical-btn tactical-btn-primary"
+              className="tactical-btn"
               style={{
-                marginTop: '8px',
-                padding: '12px',
+                marginTop: '6px',
+                padding: '10px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
+                background: 'var(--accent-primary)',
+                color: 'var(--text-inverse)',
+                borderColor: 'var(--accent-primary)',
+                fontSize: '0.82rem',
+                fontWeight: 600,
               }}
             >
-              <Send size={16} />
+              <Send size={15} />
               {t.submitOfflineBtn}
             </button>
           </form>
         </div>
 
         {/* Right Column: Outpost Stocktake Ledger + Offline Queue */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {/* Outpost Live Stocktake Card */}
-          <div className="tactical-card" style={{ padding: '20px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+          <div className="panel">
+            <div className="panel-header">
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Boxes size={18} className="text-cyan" />
-                <h4 style={{ fontSize: '0.95rem', fontWeight: 700, margin: 0 }}>
+                <Boxes size={16} style={{ color: 'var(--accent-primary)' }} />
+                <h4 style={{ fontSize: '0.88rem', fontWeight: 600, margin: 0 }}>
                   {selectedLocation?.name} — {t.outpostStockSummary}
                 </h4>
               </div>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+              <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>
                 {t.troopHeadcount}: <strong>{selectedLocation?.current_headcount} PAX</strong>
               </span>
             </div>
 
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem' }}>
+            <div className="enterprise-table-container" style={{ border: 'none', borderRadius: 0 }}>
+              <table className="enterprise-table">
                 <thead>
-                  <tr style={{ borderBottom: '1px solid var(--border-subtle)', color: 'var(--text-muted)', textAlign: 'left' }}>
-                    <th style={{ padding: '6px' }}>{t.supplyItem}</th>
-                    <th style={{ padding: '6px' }}>{t.currentStock}</th>
-                    <th style={{ padding: '6px' }}>{t.dailyBurn}</th>
-                    <th style={{ padding: '6px' }}>{t.daysOfSupply}</th>
-                    <th style={{ padding: '6px' }}>{t.status}</th>
+                  <tr>
+                    <th>{t.supplyItem}</th>
+                    <th>{t.currentStock}</th>
+                    <th>{t.dailyBurn}</th>
+                    <th>{t.daysOfSupply}</th>
+                    <th>{t.status}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {locationInventory.map((item) => {
                     const isCrit = item.status === 'CRITICAL';
                     return (
-                      <tr key={item.id} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-                        <td style={{ padding: '8px 6px', fontWeight: 600 }}>{item.supply?.name || item.supply_id}</td>
-                        <td style={{ padding: '8px 6px', fontFamily: 'var(--font-mono)' }}>
+                      <tr key={item.id}>
+                        <td style={{ fontWeight: 500 }}>{item.supply?.name || item.supply_id}</td>
+                        <td style={{ fontFamily: 'var(--font-mono)' }}>
                           {item.current_stock.toLocaleString()}
                         </td>
-                        <td style={{ padding: '8px 6px', fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)' }}>
+                        <td style={{ fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)' }}>
                           {item.daily_consumption_rate}/d
                         </td>
-                        <td style={{ padding: '8px 6px', fontFamily: 'var(--font-mono)', fontWeight: 700, color: isCrit ? 'var(--accent-crimson)' : 'inherit' }}>
+                        <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, color: isCrit ? 'var(--accent-crimson)' : 'inherit' }}>
                           {item.days_of_supply}d
                         </td>
-                        <td style={{ padding: '8px 6px' }}>
-                          <span className={`badge ${isCrit ? 'badge-crimson' : item.status === 'WARNING' ? 'badge-amber' : 'badge-emerald'}`} style={{ fontSize: '0.65rem' }}>
+                        <td>
+                          <span className={`tactical-badge ${isCrit ? 'badge-critical' : item.status === 'WARNING' ? 'badge-warning' : 'badge-normal'}`} style={{ fontSize: '0.62rem' }}>
                             {item.status}
                           </span>
                         </td>
@@ -620,67 +548,70 @@ export const FieldStockPWA: React.FC<FieldStockPWAProps> = ({
           </div>
 
           {/* Local Device Queue */}
-          <div className="tactical-card" style={{ padding: '20px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+          <div className="panel">
+            <div className="panel-header">
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Clock size={16} className="text-amber" />
-                <h4 style={{ fontSize: '0.9rem', fontWeight: 700, margin: 0 }}>{t.queueTitle}</h4>
+                <Clock size={15} style={{ color: 'var(--accent-amber)' }} />
+                <h4 style={{ fontSize: '0.88rem', fontWeight: 600, margin: 0 }}>{t.queueTitle}</h4>
               </div>
-              <span className="badge badge-amber" style={{ fontSize: '0.65rem' }}>
+              <span className="tactical-badge badge-warning" style={{ fontSize: '0.65rem' }}>
                 {queuedVouchers.length} {t.queuedVouchers}
               </span>
             </div>
 
-            {queuedVouchers.length === 0 ? (
-              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontStyle: 'italic', padding: '12px 0' }}>
-                {t.queueEmpty}
-              </p>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {queuedVouchers.map((voucher) => (
-                  <div
-                    key={voucher.id}
-                    style={{
-                      padding: '12px',
-                      borderRadius: '6px',
-                      background: 'rgba(255, 255, 255, 0.02)',
-                      border: '1px solid var(--border-subtle)',
-                    }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', fontWeight: 700, color: 'var(--accent-cyan)' }}>
-                        {voucher.id}
-                      </span>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span className="badge badge-crimson" style={{ fontSize: '0.65rem' }}>
-                          {voucher.priority}
+            <div className="panel-body">
+              {queuedVouchers.length === 0 ? (
+                <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontStyle: 'italic', margin: 0, padding: '8px 0' }}>
+                  {t.queueEmpty}
+                </p>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {queuedVouchers.map((voucher) => (
+                    <div
+                      key={voucher.id}
+                      style={{
+                        padding: '10px 12px',
+                        borderRadius: 'var(--radius-sm)',
+                        background: 'var(--bg-surface-elevated)',
+                        border: '1px solid var(--border-subtle)',
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.74rem', fontWeight: 600, color: 'var(--accent-primary)' }}>
+                          {voucher.id}
                         </span>
-                        <button
-                          onClick={() => handleDiscardVoucher(voucher.id)}
-                          style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
-                        >
-                          <Trash2 size={14} />
-                        </button>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span className="tactical-badge badge-critical" style={{ fontSize: '0.62rem' }}>
+                            {voucher.priority.replace(/_/g, ' ')}
+                          </span>
+                          <button
+                            onClick={() => handleDiscardVoucher(voucher.id)}
+                            style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0 }}
+                            title="Discard"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div style={{ fontSize: '0.72rem', marginTop: '3px', color: 'var(--text-secondary)' }}>
+                        {voucher.originating_unit} &bull; Officer: {voucher.officer_service_number}
+                      </div>
+
+                      <div style={{ fontSize: '0.74rem', marginTop: '3px' }}>
+                        <strong>Items: </strong>
+                        {voucher.items.map((it) => `${it.supply_name} (${it.quantity_requested} ${it.unit})`).join(', ')}
+                      </div>
+
+                      <div style={{ marginTop: '6px', fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--accent-emerald)', wordBreak: 'break-all' }}>
+                        <Shield size={10} style={{ display: 'inline', marginRight: '4px' }} />
+                        SHA-256: {voucher.verification_hash}
                       </div>
                     </div>
-
-                    <div style={{ fontSize: '0.75rem', marginTop: '4px', color: 'var(--text-secondary)' }}>
-                      {voucher.originating_unit} &bull; Officer: {voucher.officer_service_number}
-                    </div>
-
-                    <div style={{ fontSize: '0.75rem', marginTop: '4px' }}>
-                      <strong>Items: </strong>
-                      {voucher.items.map((it) => `${it.supply_name} (${it.quantity_requested} ${it.unit})`).join(', ')}
-                    </div>
-
-                    <div style={{ marginTop: '8px', fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--accent-emerald)', wordBreak: 'break-all' }}>
-                      <Shield size={10} style={{ display: 'inline', marginRight: '4px' }} />
-                      SHA-256: {voucher.verification_hash}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

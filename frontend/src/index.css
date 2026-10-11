@@ -1,82 +1,167 @@
 /* ==========================================================================
-   VANGUARD-LOGIX — Tactical Military Design System & Tokens
-   Indian Army Northern Command XIV Corps Logistics Interface
+   VANGUARD-LOGIX — IBM Carbon Design System Architecture
+   Authoritative Design Spec: DESIGN.md (Carbon Design System)
+   HQ XIV Corps, Northern Command (Operational Decision Support Platform)
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
-
 :root {
-  /* Common Geometry */
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-full: 9999px;
-  --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Typography Tokens */
+  --font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-devanagari: 'Noto Sans Devanagari', 'IBM Plex Sans', sans-serif;
 
-  /* Status Accents (Unified) */
-  --accent-cyan: #06b6d4;
-  --accent-cyan-glow: rgba(6, 182, 212, 0.35);
-  --accent-emerald: #10b981;
-  --accent-emerald-glow: rgba(16, 185, 129, 0.35);
-  --accent-amber: #f59e0b;
-  --accent-amber-glow: rgba(245, 158, 11, 0.35);
-  --accent-crimson: #ef4444;
-  --accent-crimson-glow: rgba(239, 68, 68, 0.35);
-  --accent-purple: #8b5cf6;
+  /* Carbon 4px Spacing Scale */
+  --spacing-xxs: 4px;
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+  --spacing-section: 96px;
+
+  /* Flat Geometry — Carbon Commitment: Corners Stay at 0px */
+  --radius-none: 0px;
+  --radius-xs: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-pill: 0px;
+  --radius-full: 0px;
+  --transition: all 0.12s ease-in-out;
+
+  /* ==========================================================================
+     DEFAULT / DAYLIGHT OPERATIONAL MODE: Carbon Light Theme (White Canvas)
+     ========================================================================== */
+  --bg-app: #ffffff;                /* Canvas: Pure White */
+  --bg-surface: #ffffff;            /* Canvas */
+  --bg-surface-elevated: #f4f4f4;   /* Surface-1: Light Gray */
+  --bg-surface-active: #e0e0e0;     /* Surface-2: Hover/Pressed Fill */
+  --bg-glass: #ffffff;
+
+  --border-subtle: #e0e0e0;         /* Hairline: 1px subtle boundary */
+  --border-prominent: #8c8c8c;      /* Ink-Subtle */
+  --border-active: #0f62fe;         /* IBM Blue focus accent */
+  --border-strong: #161616;         /* Hairline Strong */
+
+  --text-primary: #161616;          /* Ink: Charcoal */
+  --text-secondary: #525252;        /* Ink-Muted: Secondary body */
+  --text-tertiary: #8c8c8c;         /* Ink-Subtle: Helper / Meta */
+  --text-inverse: #ffffff;          /* Inverse Ink: White on Blue / Charcoal */
+
+  /* Single Confident Brand Accent: IBM Blue (#0f62fe) */
+  --accent-primary: #0f62fe;        /* IBM Blue */
+  --accent-primary-hover: #0050e6;  /* Blue Hover */
+  --accent-primary-pressed: #002d9c;/* Blue 80 */
+  --accent-blue-60: #0043ce;        /* Blue 60 */
+
+  /* Carbon Semantic Status Signals */
+  --accent-emerald: #24a148;        /* Carbon Semantic Success (Green-50) */
+  --accent-amber: #b28600;          /* Carbon Semantic Warning (Yellow-30 / accessible contrast) */
+  --accent-crimson: #da1e28;        /* Carbon Semantic Error (Red-60) */
+  --accent-cyan: #0f62fe;           /* Semantic Info / Accent */
+  --accent-gold: #b28600;
+
+  /* Carbon Status Badges (Flat 0px square badges with thin 1px border) */
+  --badge-normal-bg: #e8f7ee;
+  --badge-normal-text: #198038;
+  --badge-normal-border: #24a148;
+
+  --badge-warning-bg: #fff8e1;
+  --badge-warning-text: #8a6100;
+  --badge-warning-border: #f1c21b;
+
+  --badge-critical-bg: #fdf2f2;
+  --badge-critical-text: #da1e28;
+  --badge-critical-border: #da1e28;
+
+  --badge-info-bg: #edf5ff;
+  --badge-info-text: #0043ce;
+  --badge-info-border: #0f62fe;
+
+  /* Flat Surface Elevation: Carbon avoids drop shadows */
+  --card-shadow: none;
+  --table-stripe: #f4f4f4;
+
+  /* Map Cartography (Light Theme) */
+  --bg-map-canvas: #f4f4f4;
+  --bg-map-legend: #ffffff;
+  --map-grid-stroke: rgba(22, 22, 22, 0.08);
+  --map-contour-stroke: rgba(15, 98, 254, 0.16);
+  --map-node-label: #161616;
+
+  /* System Footer: Inverts to Charcoal (#161616) — Carbon Signature */
+  --footer-bg: #161616;
+  --footer-text: #c6c6c6;
+  --footer-heading: #ffffff;
+  --footer-border: #262626;
 }
 
 /* --------------------------------------------------------------------------
-   DARK THEME: Tactical Command Center (Night Ops / Combat Ops)
+   DARK THEME: Carbon Gray-100 Theme (High-Contrast Command Center Option)
    -------------------------------------------------------------------------- */
 :root[data-theme='dark'],
 .dark {
-  --bg-app: #080d1a;
-  --bg-surface: #0f172a;
-  --bg-surface-elevated: #1e293b;
-  --bg-surface-active: #24344d;
-  --bg-glass: rgba(15, 23, 42, 0.75);
+  --bg-app: #161616;                /* Inverse Canvas (Charcoal #161616) */
+  --bg-surface: #262626;            /* Inverse Surface-1 */
+  --bg-surface-elevated: #393939;   /* Gray-80 */
+  --bg-surface-active: #525252;     /* Gray-60 */
+  --bg-glass: #262626;
 
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-prominent: rgba(255, 255, 255, 0.16);
-  --border-active: #06b6d4;
+  --border-subtle: #393939;         /* 1px Hairline dark */
+  --border-prominent: #6f6f6f;
+  --border-active: #4589ff;
+  --border-strong: #ffffff;
 
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-tertiary: #64748b;
-  --text-inverse: #0f172a;
+  --text-primary: #f4f4f4;          /* Inverse Ink */
+  --text-secondary: #c6c6c6;        /* Inverse Ink Muted */
+  --text-tertiary: #8c8c8c;
+  --text-inverse: #161616;
 
-  --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5), 0 0 1px 1px rgba(255, 255, 255, 0.05);
-  --glow-app: radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.12), transparent 45%);
-}
+  --accent-primary: #0f62fe;
+  --accent-primary-hover: #4589ff;
+  --accent-primary-pressed: #002d9c;
+  --accent-blue-60: #4589ff;
 
-/* --------------------------------------------------------------------------
-   LIGHT THEME: Tactical High-Contrast Daylight Mode (Field Ops WCAG AA)
-   -------------------------------------------------------------------------- */
-:root[data-theme='light'],
-.light {
-  --bg-app: #f1f5f9;
-  --bg-surface: #ffffff;
-  --bg-surface-elevated: #f8fafc;
-  --bg-surface-active: #e2e8f0;
-  --bg-glass: rgba(255, 255, 255, 0.85);
+  --accent-emerald: #42be65;
+  --accent-amber: #f1c21b;
+  --accent-crimson: #ff8389;
+  --accent-cyan: #4589ff;
+  --accent-gold: #f1c21b;
 
-  --border-subtle: #cbd5e1;
-  --border-prominent: #94a3b8;
-  --border-active: #0284c7;
+  --badge-normal-bg: rgba(66, 190, 101, 0.15);
+  --badge-normal-text: #42be65;
+  --badge-normal-border: #42be65;
 
-  --text-primary: #0f172a;
-  --text-secondary: #334155;
-  --text-tertiary: #64748b;
-  --text-inverse: #ffffff;
+  --badge-warning-bg: rgba(241, 194, 27, 0.15);
+  --badge-warning-text: #f1c21b;
+  --badge-warning-border: #f1c21b;
 
-  --card-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.08), 0 0 1px 1px rgba(15, 23, 42, 0.06);
-  --glow-app: radial-gradient(circle at 50% 0%, rgba(2, 132, 199, 0.08), transparent 45%);
+  --badge-critical-bg: rgba(255, 131, 137, 0.15);
+  --badge-critical-text: #ff8389;
+  --badge-critical-border: #ff8389;
+
+  --badge-info-bg: rgba(15, 98, 254, 0.18);
+  --badge-info-text: #78a9ff;
+  --badge-info-border: #4589ff;
+
+  --card-shadow: none;
+  --table-stripe: #262626;
+
+  --bg-map-canvas: #161616;
+  --bg-map-legend: #262626;
+  --map-grid-stroke: rgba(255, 255, 255, 0.08);
+  --map-contour-stroke: rgba(69, 137, 255, 0.22);
+  --map-node-label: #f4f4f4;
+
+  --footer-bg: #121212;
+  --footer-text: #8c8c8c;
+  --footer-heading: #f4f4f4;
+  --footer-border: #262626;
 }
 
 /* ==========================================================================
-   Base Elements & Reset
+   Base Elements & Carbon Typographic Baseline
    ========================================================================== */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -91,9 +176,12 @@ html, body {
   background-color: var(--bg-app);
   color: var(--text-primary);
   line-height: 1.5;
+  font-size: 14px;
+  /* Carbon precision detail: 0.16px letter-spacing on body */
+  letter-spacing: 0.16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
   overflow-x: hidden;
 }
 
@@ -103,230 +191,419 @@ html, body {
   flex-direction: column;
 }
 
-/* Scrollbars */
+/* Carbon Square Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--bg-app);
+  background: var(--bg-surface-elevated);
 }
 ::-webkit-scrollbar-thumb {
   background: var(--border-prominent);
-  border-radius: var(--radius-full);
+  border-radius: 0px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-tertiary);
+  background: var(--text-secondary);
 }
 
 /* ==========================================================================
-   Typography & Military Utilities
+   Typography & Hierarchy (Carbon: Light Display 300 / Body 400 / Emphasis 600)
    ========================================================================== */
 .font-mono {
   font-family: var(--font-mono);
-  letter-spacing: -0.02em;
+  font-feature-settings: "tnum" 1;
 }
 
 .font-sans {
   font-family: var(--font-sans);
 }
 
-.text-cyan { color: var(--accent-cyan); }
+.font-devanagari,
+.lang-hi {
+  font-family: var(--font-devanagari);
+  line-height: 1.6;
+}
+
+h1 {
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  font-weight: 300; /* Carbon brand signature: weight 300 for display headlines */
+  font-size: 32px;
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+
+h2 {
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  font-weight: 400; /* Card title */
+  font-size: 20px;
+  line-height: 1.33;
+  letter-spacing: 0;
+}
+
+h3 {
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  font-weight: 400; /* Subhead */
+  font-size: 16px;
+  line-height: 1.40;
+  letter-spacing: 0;
+}
+
+h4, h5, h6 {
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  font-weight: 600; /* Body emphasis */
+  font-size: 14px;
+  line-height: 1.29;
+  letter-spacing: 0.16px;
+}
+
+p {
+  color: var(--text-secondary);
+  line-height: 1.5;
+  letter-spacing: 0.16px;
+}
+
+/* Text Colors */
+.text-cyan,
+.text-sky { color: var(--accent-primary); }
 .text-emerald { color: var(--accent-emerald); }
-.text-amber { color: var(--accent-amber); }
+.text-amber,
+.text-gold { color: var(--accent-amber); }
 .text-crimson { color: var(--accent-crimson); }
-.text-purple { color: var(--accent-purple); }
+.text-muted { color: var(--text-secondary); }
 
-.bg-cyan-glow { background: var(--accent-cyan-glow); }
-.bg-emerald-glow { background: var(--accent-emerald-glow); }
-.bg-amber-glow { background: var(--accent-amber-glow); }
-.bg-crimson-glow { background: var(--accent-crimson-glow); }
-
-/* Glassmorphism Tactical Cards */
+/* ==========================================================================
+   Panels, Containers & Cards (Carbon Flat Geometry: 0px Radius, 1px Border)
+   ========================================================================== */
+.panel,
 .tactical-card {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--card-shadow);
-  backdrop-filter: blur(12px);
-  transition: var(--transition);
+  border-radius: 0px;
+  box-shadow: none;
+  transition: border-color 0.12s ease;
   position: relative;
-  overflow: hidden;
 }
 
+.panel:hover,
 .tactical-card:hover {
   border-color: var(--border-prominent);
-  transform: translateY(-1px);
 }
 
-.tactical-card-glass {
-  background: var(--bg-glass);
-  border: 1px solid var(--border-subtle);
-  backdrop-filter: blur(16px);
-  border-radius: var(--radius-lg);
+.panel-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
-/* Tactical Ribbon & Header */
+.panel-body {
+  padding: 20px;
+}
+
+/* Tactical Header Bar */
 .tactical-header {
   background: var(--bg-surface);
   border-bottom: 1px solid var(--border-subtle);
   position: sticky;
   top: 0;
   z-index: 50;
-  backdrop-filter: blur(16px);
 }
 
-/* Decision Flow Strip */
-.decision-strip {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: var(--bg-surface-elevated);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
+/* ==========================================================================
+   Data Tables (Information-Dense, 0px Radius, Clean Gray Header)
+   ========================================================================== */
+.enterprise-table-container {
+  width: 100%;
   overflow-x: auto;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.05em;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0px;
+  background: var(--bg-surface);
 }
 
-.step-node {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 8px;
-  border-radius: var(--radius-sm);
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
+.enterprise-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+
+.enterprise-table th {
+  background: var(--bg-surface-elevated);
   color: var(--text-secondary);
   font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.32px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-subtle);
   white-space: nowrap;
 }
 
-.step-node.active {
-  background: rgba(6, 182, 212, 0.15);
-  border-color: var(--accent-cyan);
-  color: var(--accent-cyan);
+.enterprise-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  vertical-align: middle;
+  letter-spacing: 0.16px;
 }
 
-.step-arrow {
-  color: var(--text-tertiary);
-  font-weight: bold;
+.enterprise-table tbody tr:hover {
+  background: var(--bg-surface-elevated);
 }
 
-/* Military Badges & Status Indicators */
-.tactical-badge {
+.enterprise-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ==========================================================================
+   Status Badges & Indicators (Carbon: Flat 0px, 1px Border, Clean Colors)
+   ========================================================================== */
+.tactical-badge,
+.badge-status {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 3px 8px;
-  border-radius: var(--radius-full);
-  font-size: 0.72rem;
-  font-weight: 600;
-  font-family: var(--font-mono);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  border-radius: 0px;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.16px;
   border: 1px solid transparent;
+  white-space: nowrap;
 }
 
 .badge-critical {
-  background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
-  border-color: rgba(239, 68, 68, 0.3);
+  background: var(--badge-critical-bg);
+  color: var(--badge-critical-text);
+  border-color: var(--badge-critical-border);
 }
 
 .badge-warning {
-  background: rgba(245, 158, 11, 0.15);
-  color: #f59e0b;
-  border-color: rgba(245, 158, 11, 0.3);
+  background: var(--badge-warning-bg);
+  color: var(--badge-warning-text);
+  border-color: var(--badge-warning-border);
 }
 
-.badge-normal {
-  background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
-  border-color: rgba(16, 185, 129, 0.3);
+.badge-normal,
+.badge-emerald {
+  background: var(--badge-normal-bg);
+  color: var(--badge-normal-text);
+  border-color: var(--badge-normal-border);
 }
 
-.badge-cyan {
-  background: rgba(6, 182, 212, 0.15);
-  color: #06b6d4;
-  border-color: rgba(6, 182, 212, 0.3);
+.badge-cyan,
+.badge-info,
+.badge-sky {
+  background: var(--badge-info-bg);
+  color: var(--badge-info-text);
+  border-color: var(--badge-info-border);
 }
 
-/* Radar Pulse Animation */
-@keyframes pulseGlow {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.4;
-    transform: scale(1.15);
-  }
+.badge-gold {
+  background: var(--badge-warning-bg);
+  color: var(--badge-warning-text);
+  border-color: var(--badge-warning-border);
 }
 
-.pulse-indicator {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+/* Carbon Square Status Indicators */
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 0px;
   display: inline-block;
-  animation: pulseGlow 2s infinite ease-in-out;
 }
 
-/* Buttons */
-.tactical-btn {
+.status-dot-normal { background: var(--accent-emerald); }
+.status-dot-warning { background: var(--accent-amber); }
+.status-dot-critical { background: var(--accent-crimson); }
+.status-dot-info { background: var(--accent-primary); }
+
+/* ==========================================================================
+   Buttons (Carbon: Square 0px, 12px 16px Padding, IBM Blue Primary)
+   ========================================================================== */
+.tactical-btn,
+.btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 8px 14px;
-  border-radius: var(--radius-md);
-  font-size: 0.85rem;
-  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: 0px;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.16px;
   font-family: var(--font-sans);
   cursor: pointer;
   border: 1px solid var(--border-subtle);
   background: var(--bg-surface-elevated);
   color: var(--text-primary);
   transition: var(--transition);
+  text-decoration: none;
+  box-shadow: none;
 }
 
-.tactical-btn:hover {
+.tactical-btn:hover,
+.btn:hover {
   background: var(--bg-surface-active);
   border-color: var(--border-prominent);
 }
 
-.tactical-btn-primary {
-  background: #0284c7;
-  border-color: #0369a1;
-  color: #ffffff;
+.tactical-btn:active,
+.btn:active {
+  background: var(--bg-surface-active);
 }
 
-.tactical-btn-primary:hover {
-  background: #0369a1;
+.tactical-btn:disabled,
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
-/* Grid Layouts */
+/* button-primary: IBM Blue #0f62fe */
+.tactical-btn-primary,
+.btn-primary {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: var(--text-inverse);
+  font-weight: 400;
+}
+
+.tactical-btn-primary:hover,
+.btn-primary:hover {
+  background: var(--accent-primary-hover);
+  border-color: var(--accent-primary-hover);
+}
+
+.tactical-btn-primary:active,
+.btn-primary:active {
+  background: var(--accent-primary-pressed);
+  border-color: var(--accent-primary-pressed);
+}
+
+/* button-secondary: Charcoal #161616 */
+.tactical-btn-secondary,
+.btn-secondary {
+  background: var(--text-primary);
+  border-color: var(--text-primary);
+  color: var(--text-inverse);
+  font-weight: 400;
+}
+
+.tactical-btn-secondary:hover,
+.btn-secondary:hover {
+  background: #262626;
+  border-color: #262626;
+}
+
+/* button-tertiary: Canvas with blue 1px border */
+.tactical-btn-tertiary,
+.btn-tertiary {
+  background: var(--bg-surface);
+  border: 1px solid var(--accent-primary);
+  color: var(--accent-primary);
+  font-weight: 400;
+}
+
+.tactical-btn-tertiary:hover,
+.btn-tertiary:hover {
+  background: var(--bg-surface-elevated);
+}
+
+/* button-danger: Carbon Red #da1e28 */
+.tactical-btn-danger,
+.btn-danger {
+  background: var(--accent-crimson);
+  border-color: var(--accent-crimson);
+  color: var(--text-inverse);
+  font-weight: 400;
+}
+
+.tactical-btn-danger:hover,
+.btn-danger:hover {
+  background: #ba1b23;
+  border-color: #ba1b23;
+}
+
+/* Compact Operational Button Variant */
+.tactical-btn-sm {
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+/* ==========================================================================
+   Form Controls (Carbon Input Chrome: Surface-1, 0px, 2px Blue Underline Focus)
+   ========================================================================== */
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 14px;
+  letter-spacing: 0.16px;
+  font-family: var(--font-sans);
+  background: var(--bg-surface-elevated);
+  color: var(--text-primary);
+  border: none;
+  border-bottom: 1px solid var(--border-prominent);
+  border-radius: 0px;
+  transition: var(--transition);
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  background: var(--bg-surface-elevated);
+  border-bottom: 2px solid var(--accent-primary);
+  box-shadow: none;
+}
+
+.form-input:disabled,
+.form-select:disabled,
+.form-textarea:disabled {
+  background: var(--bg-surface-active);
+  color: var(--text-tertiary);
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   Layout Grids (4px Scale Consistency)
+   ========================================================================== */
+.grid-kpi-4,
 .tactical-grid-4 {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 16px;
 }
 
+.grid-kpi-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.grid-split-2,
 .tactical-grid-2 {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 20px;
 }
 
-/* Elevation tag */
+/* Technical Metadata Pill */
 .elevation-tag {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--bg-surface-elevated);
   border: 1px solid var(--border-subtle);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.72rem;
+  padding: 3px 8px;
+  border-radius: 0px;
+  font-size: 12px;
   font-family: var(--font-mono);
   color: var(--text-secondary);
 }

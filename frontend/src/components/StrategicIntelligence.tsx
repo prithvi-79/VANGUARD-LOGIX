@@ -13,7 +13,6 @@ import {
   Navigation,
   Plane,
   Truck,
-  Filter,
 } from 'lucide-react';
 
 interface StrategicIntelligenceProps {
@@ -106,7 +105,6 @@ export const StrategicIntelligence: React.FC<StrategicIntelligenceProps> = ({
     loadTerrainPhysics();
   }, [weatherOverride]);
 
-  // Run Custom Terrain Simulation
   const runTerrainSimulation = async () => {
     try {
       const res = await api.simulateTerrainPhysics({
@@ -131,31 +129,23 @@ export const StrategicIntelligence: React.FC<StrategicIntelligenceProps> = ({
     switch (tier) {
       case 'OP_IMMEDIATE':
         return {
-          bg: 'rgba(239, 68, 68, 0.2)',
-          border: '#ef4444',
-          color: '#ef4444',
-          label: 'OP-IMMEDIATE',
+          badgeClass: 'badge-critical',
+          label: 'Immediate Dispatch',
         };
       case 'HIGH':
         return {
-          bg: 'rgba(245, 158, 11, 0.2)',
-          border: '#f59e0b',
-          color: '#f59e0b',
-          label: 'HIGH PRIORITY',
+          badgeClass: 'badge-warning',
+          label: 'High Priority',
         };
       case 'MEDIUM':
         return {
-          bg: 'rgba(59, 130, 246, 0.2)',
-          border: '#3b82f6',
-          color: '#3b82f6',
-          label: 'MEDIUM',
+          badgeClass: 'badge-info',
+          label: 'Medium Priority',
         };
       default:
         return {
-          bg: 'rgba(16, 185, 129, 0.2)',
-          border: '#10b981',
-          color: '#10b981',
-          label: 'ROUTINE',
+          badgeClass: 'badge-normal',
+          label: 'Routine Buffer',
         };
     }
   };
@@ -163,68 +153,67 @@ export const StrategicIntelligence: React.FC<StrategicIntelligenceProps> = ({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Sub-Navigation Header */}
-      <div
-        className="tactical-card"
-        style={{
-          padding: '16px 20px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '12px',
-          borderLeft: '4px solid var(--accent-cyan)',
-        }}
-      >
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span className="live-badge" style={{ background: 'var(--accent-cyan)' }} />
-            <h2 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, letterSpacing: '0.04em' }}>
-              TACTICAL DECISION INTELLIGENCE & RISK ENGINES
-            </h2>
+      <div className="panel">
+        <div
+          className="panel-header"
+          style={{
+            flexWrap: 'wrap',
+            gap: '12px',
+          }}
+        >
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <h2 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 600 }}>
+                Replenishment Priority & Route Dynamics
+              </h2>
+            </div>
+            <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+              Multi-attribute dispatch ranking, forward 14-day burn-down projections, and topographic slope resistance models.
+            </div>
           </div>
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-            Pure stateless mathematical engines for multi-attribute replenishment ranking, burn-down trajectories & topographic slope friction ($R_g$)
-          </div>
-        </div>
 
-        {/* Engine Switcher */}
-        <div style={{ display: 'flex', gap: '6px', background: 'var(--bg-card)', padding: '4px', borderRadius: '6px' }}>
-          <button
-            onClick={() => setActiveSubTab('priority')}
-            className="tactical-btn"
-            style={{
-              background: activeSubTab === 'priority' ? 'var(--accent-cyan)' : 'transparent',
-              color: activeSubTab === 'priority' ? '#000000' : 'var(--text-primary)',
-              fontWeight: 700,
-              fontSize: '0.75rem',
-            }}
-          >
-            <ShieldAlert size={14} /> Priority Scoring (0-100)
-          </button>
-          <button
-            onClick={() => setActiveSubTab('burndown')}
-            className="tactical-btn"
-            style={{
-              background: activeSubTab === 'burndown' ? 'var(--accent-cyan)' : 'transparent',
-              color: activeSubTab === 'burndown' ? '#000000' : 'var(--text-primary)',
-              fontWeight: 700,
-              fontSize: '0.75rem',
-            }}
-          >
-            <TrendingDown size={14} /> 14-Day Burn-Down
-          </button>
-          <button
-            onClick={() => setActiveSubTab('terrain')}
-            className="tactical-btn"
-            style={{
-              background: activeSubTab === 'terrain' ? 'var(--accent-cyan)' : 'transparent',
-              color: activeSubTab === 'terrain' ? '#000000' : 'var(--text-primary)',
-              fontWeight: 700,
-              fontSize: '0.75rem',
-            }}
-          >
-            <Navigation size={14} /> Topographic Slope ($R_g$)
-          </button>
+          {/* Engine Switcher */}
+          <div style={{ display: 'flex', gap: '4px' }}>
+            <button
+              onClick={() => setActiveSubTab('priority')}
+              className="tactical-btn"
+              style={{
+                fontSize: '0.75rem',
+                padding: '4px 10px',
+                background: activeSubTab === 'priority' ? 'var(--accent-primary)' : 'transparent',
+                color: activeSubTab === 'priority' ? 'var(--text-inverse)' : 'var(--text-secondary)',
+                borderColor: activeSubTab === 'priority' ? 'var(--accent-primary)' : 'var(--border-subtle)',
+              }}
+            >
+              <ShieldAlert size={13} /> Priority Queue (0–100)
+            </button>
+            <button
+              onClick={() => setActiveSubTab('burndown')}
+              className="tactical-btn"
+              style={{
+                fontSize: '0.75rem',
+                padding: '4px 10px',
+                background: activeSubTab === 'burndown' ? 'var(--accent-primary)' : 'transparent',
+                color: activeSubTab === 'burndown' ? 'var(--text-inverse)' : 'var(--text-secondary)',
+                borderColor: activeSubTab === 'burndown' ? 'var(--accent-primary)' : 'var(--border-subtle)',
+              }}
+            >
+              <TrendingDown size={13} /> 14-Day Burn-Down
+            </button>
+            <button
+              onClick={() => setActiveSubTab('terrain')}
+              className="tactical-btn"
+              style={{
+                fontSize: '0.75rem',
+                padding: '4px 10px',
+                background: activeSubTab === 'terrain' ? 'var(--accent-primary)' : 'transparent',
+                color: activeSubTab === 'terrain' ? 'var(--text-inverse)' : 'var(--text-secondary)',
+                borderColor: activeSubTab === 'terrain' ? 'var(--accent-primary)' : 'var(--border-subtle)',
+              }}
+            >
+              <Navigation size={13} /> Route Topography
+            </button>
+          </div>
         </div>
       </div>
 
@@ -234,225 +223,206 @@ export const StrategicIntelligence: React.FC<StrategicIntelligenceProps> = ({
       {activeSubTab === 'priority' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {/* Summary KPIs */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
-            <div className="tactical-card" style={{ padding: '16px', borderLeft: '4px solid #ef4444' }}>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>OP-IMMEDIATE REQUISITIONS</div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#ef4444', fontFamily: 'var(--font-mono)' }}>
+          <div className="grid-kpi-4">
+            <div className="panel" style={{ padding: '14px 16px', borderLeft: '4px solid var(--accent-crimson)' }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'uppercase' }}>
+                Immediate Requisitions
+              </div>
+              <div style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--accent-crimson)', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
                 {priorityQueue?.op_immediate_count ?? 0}
               </div>
-              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Score ≥ 80.0 • Immediate Dispatch</div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)' }}>Score ≥ 80.0 • Immediate dispatch</div>
             </div>
 
-            <div className="tactical-card" style={{ padding: '16px', borderLeft: '4px solid #f59e0b' }}>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>HIGH PRIORITY REQUISITIONS</div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#f59e0b', fontFamily: 'var(--font-mono)' }}>
+            <div className="panel" style={{ padding: '14px 16px', borderLeft: '4px solid var(--accent-amber)' }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'uppercase' }}>
+                High Priority
+              </div>
+              <div style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--accent-amber)', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
                 {priorityQueue?.high_count ?? 0}
               </div>
-              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Score 65–79 • Within 24 Hours</div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)' }}>Score 65–79 • Within 24 hours</div>
             </div>
 
-            <div className="tactical-card" style={{ padding: '16px', borderLeft: '4px solid #3b82f6' }}>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>MEDIUM PRIORITY</div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#3b82f6', fontFamily: 'var(--font-mono)' }}>
+            <div className="panel" style={{ padding: '14px 16px', borderLeft: '4px solid var(--accent-primary)' }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'uppercase' }}>
+                Medium Priority
+              </div>
+              <div style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--accent-primary)', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
                 {priorityQueue?.medium_count ?? 0}
               </div>
-              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Score 45–64 • Next Convoy Window</div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)' }}>Score 45–64 • Next convoy window</div>
             </div>
 
-            <div className="tactical-card" style={{ padding: '16px', borderLeft: '4px solid #10b981' }}>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>ROUTINE BUFFER ADEQUATE</div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#10b981', fontFamily: 'var(--font-mono)' }}>
+            <div className="panel" style={{ padding: '14px 16px', borderLeft: '4px solid var(--accent-emerald)' }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'uppercase' }}>
+                Routine Buffer
+              </div>
+              <div style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--accent-emerald)', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
                 {priorityQueue?.routine_count ?? 0}
               </div>
-              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Score &lt; 45 • Monitoring Only</div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)' }}>Score &lt; 45 • Monitoring only</div>
             </div>
           </div>
 
-          {/* Filters Bar */}
-          <div
-            className="tactical-card"
-            style={{
-              padding: '12px 16px',
-              display: 'flex',
-              gap: '16px',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              background: 'var(--bg-surface)',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-              <Filter size={14} /> Filter Tier:
-            </div>
-            <div style={{ display: 'flex', gap: '6px' }}>
-              {['ALL', 'OP_IMMEDIATE', 'HIGH', 'MEDIUM', 'ROUTINE'].map((t) => (
-                <button
-                  key={t}
-                  onClick={() => setTierFilter(t)}
-                  className="tactical-btn"
-                  style={{
-                    padding: '4px 10px',
-                    fontSize: '0.75rem',
-                    background: tierFilter === t ? 'var(--accent-cyan)' : 'var(--bg-card)',
-                    color: tierFilter === t ? '#000000' : 'var(--text-secondary)',
-                    fontWeight: tierFilter === t ? 700 : 500,
-                  }}
-                >
-                  {t}
-                </button>
-              ))}
+          {/* Filters Bar & Ranked Table */}
+          <div className="panel">
+            <div
+              className="panel-header"
+              style={{
+                flexWrap: 'wrap',
+                gap: '12px',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 500 }}>Priority Tier:</span>
+                <div style={{ display: 'flex', gap: '4px' }}>
+                  {['ALL', 'OP_IMMEDIATE', 'HIGH', 'MEDIUM', 'ROUTINE'].map((t) => (
+                    <button
+                      key={t}
+                      onClick={() => setTierFilter(t)}
+                      className="tactical-btn"
+                      style={{
+                        padding: '3px 8px',
+                        fontSize: '0.72rem',
+                        background: tierFilter === t ? 'var(--accent-primary)' : 'transparent',
+                        color: tierFilter === t ? 'var(--text-inverse)' : 'var(--text-secondary)',
+                        borderColor: tierFilter === t ? 'var(--accent-primary)' : 'var(--border-subtle)',
+                      }}
+                    >
+                      {t.replace(/_/g, ' ')}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 500 }}>Supply Class:</span>
+                <div style={{ display: 'flex', gap: '4px' }}>
+                  {['ALL', 'CLASS_I', 'CLASS_II', 'CLASS_III', 'CLASS_IV', 'CLASS_V'].map((c) => (
+                    <button
+                      key={c}
+                      onClick={() => setClassFilter(c)}
+                      className="tactical-btn"
+                      style={{
+                        padding: '3px 8px',
+                        fontSize: '0.72rem',
+                        background: classFilter === c ? 'var(--accent-primary)' : 'transparent',
+                        color: classFilter === c ? 'var(--text-inverse)' : 'var(--text-secondary)',
+                        borderColor: classFilter === c ? 'var(--accent-primary)' : 'var(--border-subtle)',
+                      }}
+                    >
+                      {c.replace('_', ' ')}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
 
-            <div style={{ width: '1px', height: '20px', background: 'var(--border-subtle)' }} />
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-              Class:
-            </div>
-            <div style={{ display: 'flex', gap: '6px' }}>
-              {['ALL', 'CLASS_I', 'CLASS_II', 'CLASS_III', 'CLASS_IV', 'CLASS_V'].map((c) => (
-                <button
-                  key={c}
-                  onClick={() => setClassFilter(c)}
-                  className="tactical-btn"
-                  style={{
-                    padding: '4px 10px',
-                    fontSize: '0.75rem',
-                    background: classFilter === c ? 'var(--accent-gold)' : 'var(--bg-card)',
-                    color: classFilter === c ? '#000000' : 'var(--text-secondary)',
-                    fontWeight: classFilter === c ? 700 : 500,
-                  }}
-                >
-                  {c}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Ranked Table */}
-          <div className="tactical-card" style={{ overflowX: 'auto', padding: '0' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.82rem' }}>
-              <thead>
-                <tr style={{ background: 'var(--bg-card)', borderBottom: '1px solid var(--border-subtle)', color: 'var(--text-muted)' }}>
-                  <th style={{ padding: '12px 16px' }}>RANK</th>
-                  <th style={{ padding: '12px 16px' }}>FORWARD POST</th>
-                  <th style={{ padding: '12px 16px' }}>SUPPLY ITEM</th>
-                  <th style={{ padding: '12px 16px' }}>CLASS</th>
-                  <th style={{ padding: '12px 16px' }}>COMPOSITE SCORE</th>
-                  <th style={{ padding: '12px 16px' }}>PRIORITY TIER</th>
-                  <th style={{ padding: '12px 16px' }}>7-FACTOR WEIGHT BREAKDOWN</th>
-                  <th style={{ padding: '12px 16px' }}>RECOMMENDED DISPATCH</th>
-                </tr>
-              </thead>
-              <tbody>
-                {isLoadingPriority ? (
+            {/* Ranked Table */}
+            <div className="enterprise-table-container" style={{ border: 'none', borderRadius: 0 }}>
+              <table className="enterprise-table">
+                <thead>
                   <tr>
-                    <td colSpan={8} style={{ padding: '36px', textAlign: 'center', color: 'var(--text-secondary)' }}>
-                      Evaluating dynamic multi-attribute priority scores across all forward ledgers...
-                    </td>
+                    <th>Rank</th>
+                    <th>Forward Outpost</th>
+                    <th>Supply Item</th>
+                    <th>Class</th>
+                    <th>Composite Score</th>
+                    <th>Priority Level</th>
+                    <th>Factor Weights</th>
+                    <th>Dispatch Action</th>
                   </tr>
-                ) : priorityQueue?.items.length === 0 ? (
-                  <tr>
-                    <td colSpan={8} style={{ padding: '36px', textAlign: 'center', color: 'var(--text-secondary)' }}>
-                      No forward stock items matching active tier/class filter criteria.
-                    </td>
-                  </tr>
-                ) : (
-                  priorityQueue?.items.map((item, idx) => {
-                    const badge = getTierBadge(item.priority_tier);
-                    return (
-                      <tr
-                        key={`${item.location_id}-${item.supply_id}`}
-                        style={{
-                          borderBottom: '1px solid var(--border-subtle)',
-                          transition: 'background 0.15s ease',
-                          background: item.priority_tier === 'OP_IMMEDIATE' ? 'rgba(239, 68, 68, 0.04)' : 'transparent',
-                        }}
-                      >
-                        <td style={{ padding: '12px 16px', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
-                          #{idx + 1}
-                        </td>
-                        <td style={{ padding: '12px 16px' }}>
-                          <div style={{ fontWeight: 700 }}>{item.location_name}</div>
-                          <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-                            {item.location_id}
-                          </div>
-                        </td>
-                        <td style={{ padding: '12px 16px', fontWeight: 600 }}>{item.supply_name}</td>
-                        <td style={{ padding: '12px 16px' }}>
-                          <span
-                            style={{
-                              padding: '2px 8px',
-                              borderRadius: '4px',
-                              fontSize: '0.7rem',
-                              fontFamily: 'var(--font-mono)',
-                              background: 'rgba(255, 255, 255, 0.05)',
-                              border: '1px solid var(--border-subtle)',
-                            }}
-                          >
-                            {item.supply_class}
-                          </span>
-                        </td>
-                        <td style={{ padding: '12px 16px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: '0.95rem', minWidth: '40px' }}>
-                              {item.composite_score}
+                </thead>
+                <tbody>
+                  {isLoadingPriority ? (
+                    <tr>
+                      <td colSpan={8} style={{ padding: '36px', textAlign: 'center', color: 'var(--text-secondary)' }}>
+                        Evaluating priority scores across forward ledgers...
+                      </td>
+                    </tr>
+                  ) : priorityQueue?.items.length === 0 ? (
+                    <tr>
+                      <td colSpan={8} style={{ padding: '36px', textAlign: 'center', color: 'var(--text-secondary)' }}>
+                        No items matching active filter criteria.
+                      </td>
+                    </tr>
+                  ) : (
+                    priorityQueue?.items.map((item, idx) => {
+                      const badge = getTierBadge(item.priority_tier);
+                      return (
+                        <tr key={`${item.location_id}-${item.supply_id}`}>
+                          <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
+                            #{idx + 1}
+                          </td>
+                          <td>
+                            <div style={{ fontWeight: 600 }}>{item.location_name}</div>
+                            <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>
+                              {item.location_id}
                             </div>
-                            <div style={{ flex: 1, height: '6px', background: 'var(--bg-card)', borderRadius: '3px', overflow: 'hidden', minWidth: '60px' }}>
-                              <div
-                                style={{
-                                  width: `${item.composite_score}%`,
-                                  height: '100%',
-                                  background: badge.border,
-                                }}
-                              />
+                          </td>
+                          <td style={{ fontWeight: 500 }}>{item.supply_name}</td>
+                          <td>
+                            <span className="elevation-tag">{item.supply_class.replace('_', ' ')}</span>
+                          </td>
+                          <td>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '0.9rem', width: '38px' }}>
+                                {item.composite_score}
+                              </span>
+                              <div style={{ flex: 1, height: '5px', background: 'var(--bg-surface-elevated)', borderRadius: 'var(--radius-full)', minWidth: '50px', overflow: 'hidden' }}>
+                                <div
+                                  style={{
+                                    width: `${item.composite_score}%`,
+                                    height: '100%',
+                                    background:
+                                      item.priority_tier === 'OP_IMMEDIATE'
+                                        ? 'var(--accent-crimson)'
+                                        : item.priority_tier === 'HIGH'
+                                        ? 'var(--accent-amber)'
+                                        : 'var(--accent-primary)',
+                                    borderRadius: 'var(--radius-full)',
+                                  }}
+                                />
+                              </div>
                             </div>
-                          </div>
-                        </td>
-                        <td style={{ padding: '12px 16px' }}>
-                          <span
-                            style={{
-                              padding: '3px 8px',
-                              borderRadius: '4px',
-                              fontSize: '0.7rem',
-                              fontWeight: 800,
-                              fontFamily: 'var(--font-mono)',
-                              background: badge.bg,
-                              border: `1px solid ${badge.border}`,
-                              color: badge.color,
-                            }}
-                          >
-                            {badge.label}
-                          </span>
-                        </td>
-                        <td style={{ padding: '12px 16px' }}>
-                          <div style={{ display: 'flex', gap: '4px', fontSize: '0.68rem', fontFamily: 'var(--font-mono)' }}>
-                            <span title="Urgency DoS (30pts max)" style={{ color: '#ef4444' }}>U:{item.factor_breakdown.urgency_dos}</span>
-                            <span style={{ color: 'var(--border-subtle)' }}>•</span>
-                            <span title="Deficit (15pts max)" style={{ color: '#f59e0b' }}>D:{item.factor_breakdown.safety_deficit}</span>
-                            <span style={{ color: 'var(--border-subtle)' }}>•</span>
-                            <span title="Class Criticality (15pts max)" style={{ color: 'var(--accent-cyan)' }}>C:{item.factor_breakdown.supply_criticality}</span>
-                            <span style={{ color: 'var(--border-subtle)' }}>•</span>
-                            <span title="Lead-Time (10pts max)" style={{ color: 'var(--text-secondary)' }}>L:{item.factor_breakdown.lead_time_pressure}</span>
-                          </div>
-                        </td>
-                        <td style={{ padding: '12px 16px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            {item.recommended_mode === 'AIR_BRIDGE' ? (
-                              <Plane size={14} className="text-crimson" />
-                            ) : (
-                              <Truck size={14} className="text-cyan" />
-                            )}
-                            <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>{item.recommended_mode}</span>
-                          </div>
-                          <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', marginTop: '2px', maxWidth: '240px' }}>
-                            {item.recommended_action}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
+                          </td>
+                          <td>
+                            <span className={`tactical-badge ${badge.badgeClass}`}>
+                              {badge.label}
+                            </span>
+                          </td>
+                          <td>
+                            <div style={{ display: 'flex', gap: '6px', fontSize: '0.7rem', fontFamily: 'var(--font-mono)' }}>
+                              <span title="Urgency (Days of Supply)">U:{item.factor_breakdown.urgency_dos}</span>
+                              <span style={{ color: 'var(--text-tertiary)' }}>•</span>
+                              <span title="Deficit Volume">D:{item.factor_breakdown.safety_deficit}</span>
+                              <span style={{ color: 'var(--text-tertiary)' }}>•</span>
+                              <span title="Class Criticality">C:{item.factor_breakdown.supply_criticality}</span>
+                              <span style={{ color: 'var(--text-tertiary)' }}>•</span>
+                              <span title="Lead Time">L:{item.factor_breakdown.lead_time_pressure}</span>
+                            </div>
+                          </td>
+                          <td>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              {item.recommended_mode === 'AIR_BRIDGE' ? (
+                                <Plane size={13} style={{ color: 'var(--accent-crimson)' }} />
+                              ) : (
+                                <Truck size={13} style={{ color: 'var(--accent-primary)' }} />
+                              )}
+                              <span style={{ fontSize: '0.74rem', fontWeight: 600 }}>{item.recommended_mode.replace('_', ' ')}</span>
+                            </div>
+                            <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', marginTop: '2px', maxWidth: '240px' }}>
+                              {item.recommended_action}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
@@ -463,205 +433,182 @@ export const StrategicIntelligence: React.FC<StrategicIntelligenceProps> = ({
       {activeSubTab === 'burndown' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {/* Post and Item Selectors */}
-          <div
-            className="tactical-card"
-            style={{
-              padding: '16px',
-              display: 'flex',
-              gap: '20px',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              background: 'var(--bg-surface)',
-            }}
-          >
-            <div>
-              <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>
-                SELECT FORWARD OUTPOST:
-              </label>
-              <select
-                value={selectedLocationId}
-                onChange={(e) => setSelectedLocationId(e.target.value)}
-                style={{
-                  background: 'var(--bg-card)',
-                  color: 'var(--text-primary)',
-                  border: '1px solid var(--border-subtle)',
-                  padding: '8px 12px',
-                  borderRadius: '6px',
-                  fontSize: '0.85rem',
-                }}
-              >
-                {locations.map((loc) => (
-                  <option key={loc.id} value={loc.id}>
-                    {loc.name} ({loc.elevation_m}m)
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>
-                SELECT STRATEGIC SUPPLY:
-              </label>
-              <select
-                value={selectedSupplyId}
-                onChange={(e) => setSelectedSupplyId(e.target.value)}
-                style={{
-                  background: 'var(--bg-card)',
-                  color: 'var(--text-primary)',
-                  border: '1px solid var(--border-subtle)',
-                  padding: '8px 12px',
-                  borderRadius: '6px',
-                  fontSize: '0.85rem',
-                }}
-              >
-                {supplies.map((sup) => (
-                  <option key={sup.id} value={sup.id}>
-                    {sup.name} [{sup.supply_class}]
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {burnDownData && (
-              <div style={{ marginLeft: 'auto', display: 'flex', gap: '16px', alignItems: 'center' }}>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>ELEVATION BURN MULTIPLIER</div>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '1.2rem', fontWeight: 800, color: 'var(--accent-gold)' }}>
-                    {burnDownData.elevation_m >= 4000 ? '1.65x' : burnDownData.elevation_m >= 3500 ? '1.18x' : '1.00x'}
-                  </div>
+          <div className="panel">
+            <div
+              className="panel-header"
+              style={{
+                flexWrap: 'wrap',
+                gap: '16px',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 500 }}>Outpost:</span>
+                  <select
+                    value={selectedLocationId}
+                    onChange={(e) => setSelectedLocationId(e.target.value)}
+                    className="form-select"
+                    style={{ width: 'auto', padding: '4px 8px', fontSize: '0.75rem' }}
+                  >
+                    {locations.map((loc) => (
+                      <option key={loc.id} value={loc.id}>
+                        {loc.name} ({loc.elevation_m}m)
+                      </option>
+                    ))}
+                  </select>
                 </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>INITIAL LEDGER BALANCE</div>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '1.2rem', fontWeight: 800, color: 'var(--accent-cyan)' }}>
-                    {burnDownData.initial_stock} {burnDownData.unit}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
 
-          {/* Visual Trajectory Chart */}
-          {isLoadingBurnDown ? (
-            <div className="tactical-card" style={{ padding: '36px', textAlign: 'center', color: 'var(--text-secondary)' }}>
-              Projecting 14-day high-altitude forward consumption curve...
-            </div>
-          ) : burnDownData && (
-            <div className="tactical-card" style={{ padding: '20px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700 }}>
-                  14-DAY FORWARD BURN-DOWN CURVE: {burnDownData.location_name} • {burnDownData.supply_name}
-                </h3>
-                <div style={{ display: 'flex', gap: '16px', fontSize: '0.75rem' }}>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <span style={{ width: '12px', height: '3px', background: 'var(--accent-cyan)' }} /> Projected Stock
-                  </span>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <span style={{ width: '12px', height: '2px', background: '#ef4444', borderBottom: '1px dashed #ef4444' }} /> Safety Threshold
-                  </span>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <span style={{ width: '12px', height: '2px', background: '#f59e0b', borderBottom: '1px dashed #f59e0b' }} /> Reorder Point
-                  </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 500 }}>Supply Item:</span>
+                  <select
+                    value={selectedSupplyId}
+                    onChange={(e) => setSelectedSupplyId(e.target.value)}
+                    className="form-select"
+                    style={{ width: 'auto', padding: '4px 8px', fontSize: '0.75rem' }}
+                  >
+                    {supplies.map((sup) => (
+                      <option key={sup.id} value={sup.id}>
+                        {sup.name} [{sup.supply_class.replace('_', ' ')}]
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
-              {/* Day-by-Day Cards Grid */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(90px, 1fr))', gap: '8px' }}>
-                {burnDownData.trajectory.map((pt) => {
-                  const isStockout = pt.status === 'STOCKOUT';
-                  const isCritical = pt.status === 'CRITICAL';
-                  const isWarning = pt.status === 'WARNING';
-
-                  const cardBorder = isStockout
-                    ? '#ef4444'
-                    : isCritical
-                    ? '#f97316'
-                    : isWarning
-                    ? '#f59e0b'
-                    : 'var(--border-subtle)';
-
-                  return (
-                    <div
-                      key={pt.day}
-                      style={{
-                        background: 'var(--bg-card)',
-                        border: `1px solid ${cardBorder}`,
-                        borderRadius: '6px',
-                        padding: '10px 8px',
-                        textAlign: 'center',
-                      }}
-                    >
-                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 600 }}>DAY +{pt.day}</div>
-                      <div
-                        style={{
-                          fontSize: '1rem',
-                          fontWeight: 800,
-                          fontFamily: 'var(--font-mono)',
-                          color: isStockout ? '#ef4444' : isCritical ? '#f97316' : 'var(--accent-cyan)',
-                          marginTop: '4px',
-                        }}
-                      >
-                        {pt.projected_stock}
-                      </div>
-                      <div style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
-                        {pt.days_of_supply} DoS
-                      </div>
-                      <div
-                        style={{
-                          marginTop: '6px',
-                          fontSize: '0.6rem',
-                          fontWeight: 800,
-                          padding: '2px 4px',
-                          borderRadius: '3px',
-                          background: isStockout ? 'rgba(239, 68, 68, 0.2)' : isCritical ? 'rgba(249, 115, 22, 0.2)' : 'rgba(16, 185, 129, 0.1)',
-                          color: isStockout ? '#ef4444' : isCritical ? '#f97316' : '#10b981',
-                        }}
-                      >
-                        {pt.status}
-                      </div>
+              {burnDownData && (
+                <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Elevation Factor</div>
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: '1.05rem', fontWeight: 700, color: 'var(--accent-amber)' }}>
+                      {burnDownData.elevation_m >= 4000 ? '1.65x' : burnDownData.elevation_m >= 3500 ? '1.18x' : '1.00x'}
                     </div>
-                  );
-                })}
-              </div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Initial Stock</div>
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: '1.05rem', fontWeight: 700, color: 'var(--accent-primary)' }}>
+                      {burnDownData.initial_stock.toLocaleString()} {burnDownData.unit}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
+
+            {/* Visual Trajectory Grid */}
+            <div className="panel-body">
+              {isLoadingBurnDown ? (
+                <div style={{ padding: '36px', textAlign: 'center', color: 'var(--text-secondary)' }}>
+                  Projecting 14-day forward consumption curve...
+                </div>
+              ) : burnDownData ? (
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
+                    <h3 style={{ margin: 0, fontSize: '0.9rem', fontWeight: 600 }}>
+                      14-Day Forward Consumption Projection: {burnDownData.location_name} • {burnDownData.supply_name}
+                    </h3>
+                    <div style={{ display: 'flex', gap: '12px', fontSize: '0.72rem', color: 'var(--text-secondary)' }}>
+                      <span>Initial Stock: {burnDownData.initial_stock.toLocaleString()} {burnDownData.unit}</span>
+                      {burnDownData.trajectory[0] && (
+                        <span>Safety Threshold: {burnDownData.trajectory[0].safety_threshold.toLocaleString()} {burnDownData.unit}</span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Day-by-Day Cards Grid */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(90px, 1fr))', gap: '8px' }}>
+                    {burnDownData.trajectory.map((pt) => {
+                      const isStockout = pt.status === 'STOCKOUT';
+                      const isCritical = pt.status === 'CRITICAL';
+                      const isWarning = pt.status === 'WARNING';
+
+                      const statusColor = isStockout
+                        ? 'var(--accent-crimson)'
+                        : isCritical
+                        ? 'var(--accent-amber)'
+                        : isWarning
+                        ? 'var(--accent-amber)'
+                        : 'var(--accent-emerald)';
+
+                      return (
+                        <div
+                          key={pt.day}
+                          style={{
+                            background: 'var(--bg-surface-elevated)',
+                            border: `1px solid ${isStockout || isCritical ? statusColor : 'var(--border-subtle)'}`,
+                            borderRadius: 'var(--radius-sm)',
+                            padding: '10px 8px',
+                            textAlign: 'center',
+                          }}
+                        >
+                          <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                            Day +{pt.day}
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '0.95rem',
+                              fontWeight: 700,
+                              fontFamily: 'var(--font-mono)',
+                              color: statusColor,
+                              marginTop: '3px',
+                            }}
+                          >
+                            {pt.projected_stock.toLocaleString()}
+                          </div>
+                          <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                            {pt.days_of_supply}d DoS
+                          </div>
+                          <div style={{ marginTop: '4px' }}>
+                            <span
+                              className={`tactical-badge ${
+                                isStockout || isCritical
+                                  ? 'badge-critical'
+                                  : isWarning
+                                  ? 'badge-warning'
+                                  : 'badge-normal'
+                              }`}
+                              style={{ fontSize: '0.62rem', padding: '1px 5px' }}
+                            >
+                              {pt.status}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          </div>
         </div>
       )}
 
       {/* ========================================================================= */}
-      {/* SUB-VIEW 3: TOPOGRAPHIC & ROUTE SLOPE PHYSICS ENGINE ($R_g$) */}
+      {/* SUB-VIEW 3: TOPOGRAPHIC & ROUTE SLOPE PHYSICS ENGINE */}
       {/* ========================================================================= */}
       {activeSubTab === 'terrain' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {/* Interactive Mountain Grade Simulator Card */}
-          <div
-            className="tactical-card"
-            style={{
-              padding: '20px',
-              background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(15, 23, 42, 0.9) 100%)',
-              border: '1px solid var(--accent-cyan)',
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
+          <div className="panel">
+            <div className="panel-header">
               <div>
-                <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 800, color: 'var(--accent-cyan)' }}>
-                  INTERACTIVE TOPOGRAPHIC PHYSICS SIMULATOR ($R_g = 1.0 + 0.035|\theta| + 0.002|\theta|^2$)
+                <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 600 }}>
+                  Topographic Route Grade & Friction Simulator
                 </h3>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
-                  Computes grade resistance factor, surface friction, environmental degradation and convoy transit delay
+                  Calculates grade resistance factors, road friction, surface conditions, and convoy travel time.
                 </div>
               </div>
 
               {simResult && (
                 <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
                   <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>GRADE RESISTANCE ($R_g$)</div>
-                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: '1.25rem', fontWeight: 800, color: 'var(--accent-gold)' }}>
+                    <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Grade Resistance Factor</div>
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: '1.15rem', fontWeight: 700, color: 'var(--accent-amber)' }}>
                       {simResult.grade_resistance_factor}x
                     </div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>EFFECTIVE TRANSIT TIME</div>
-                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: '1.25rem', fontWeight: 800, color: '#ef4444' }}>
+                    <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Effective Transit Time</div>
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: '1.15rem', fontWeight: 700, color: 'var(--accent-crimson)' }}>
                       {simResult.effective_transit_hours} hrs
                     </div>
                   </div>
@@ -670,218 +617,186 @@ export const StrategicIntelligence: React.FC<StrategicIntelligenceProps> = ({
             </div>
 
             {/* Interactive Controls */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
-              <div>
-                <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>
-                  MAXIMUM ROAD SLOPE: {simSlope}° ({simSlope > 10 ? 'High Alpine Steep Grade' : 'Moderate Grade'})
-                </label>
-                <input
-                  type="range"
-                  min="0"
-                  max="25"
-                  step="0.5"
-                  value={simSlope}
-                  onChange={(e) => setSimSlope(parseFloat(e.target.value))}
-                  style={{ width: '100%', accentColor: 'var(--accent-cyan)' }}
-                />
-              </div>
+            <div className="panel-body">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px' }}>
+                <div>
+                  <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px', fontWeight: 500 }}>
+                    Maximum Road Slope: {simSlope}° ({simSlope > 10 ? 'Steep Alpine Grade' : 'Moderate Grade'})
+                  </label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="25"
+                    step="0.5"
+                    value={simSlope}
+                    onChange={(e) => setSimSlope(parseFloat(e.target.value))}
+                    style={{ width: '100%', accentColor: 'var(--accent-primary)' }}
+                  />
+                </div>
 
-              <div>
-                <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>
-                  CORRIDOR DISTANCE: {simDistance} km
-                </label>
-                <input
-                  type="range"
-                  min="20"
-                  max="350"
-                  step="5"
-                  value={simDistance}
-                  onChange={(e) => setSimDistance(parseFloat(e.target.value))}
-                  style={{ width: '100%', accentColor: 'var(--accent-cyan)' }}
-                />
-              </div>
+                <div>
+                  <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px', fontWeight: 500 }}>
+                    Corridor Distance: {simDistance} km
+                  </label>
+                  <input
+                    type="range"
+                    min="20"
+                    max="350"
+                    step="5"
+                    value={simDistance}
+                    onChange={(e) => setSimDistance(parseFloat(e.target.value))}
+                    style={{ width: '100%', accentColor: 'var(--accent-primary)' }}
+                  />
+                </div>
 
-              <div>
-                <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>
-                  TERRAIN SURFACE CLASSIFICATION:
-                </label>
-                <select
-                  value={simSurface}
-                  onChange={(e) => setSimSurface(e.target.value)}
-                  style={{
-                    width: '100%',
-                    background: 'var(--bg-card)',
-                    color: 'var(--text-primary)',
-                    border: '1px solid var(--border-subtle)',
-                    padding: '6px 10px',
-                    borderRadius: '4px',
-                    fontSize: '0.8rem',
-                  }}
-                >
-                  <option value="HIGHWAY">HIGHWAY (Friction 1.00x)</option>
-                  <option value="MOUNTAIN_ROAD">MOUNTAIN ROAD (Friction 1.25x)</option>
-                  <option value="UNPAVED_TRACK">UNPAVED TRACK (Friction 1.55x)</option>
-                  <option value="GLACIAL_SNOWCAT_TRAIL">GLACIAL SNOWCAT (Friction 1.85x)</option>
-                </select>
-              </div>
+                <div>
+                  <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px', fontWeight: 500 }}>
+                    Terrain Surface:
+                  </label>
+                  <select
+                    value={simSurface}
+                    onChange={(e) => setSimSurface(e.target.value)}
+                    className="form-select"
+                    style={{ width: '100%', padding: '4px 8px', fontSize: '0.75rem' }}
+                  >
+                    <option value="HIGHWAY">Highway (Friction 1.00x)</option>
+                    <option value="MOUNTAIN_ROAD">Mountain Road (Friction 1.25x)</option>
+                    <option value="UNPAVED_TRACK">Unpaved Track (Friction 1.55x)</option>
+                    <option value="GLACIAL_SNOWCAT_TRAIL">Glacial Snowcat Trail (Friction 1.85x)</option>
+                  </select>
+                </div>
 
-              <div>
-                <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>
-                  WEATHER DEGRADATION:
-                </label>
-                <select
-                  value={simWeather}
-                  onChange={(e) => setSimWeather(e.target.value)}
-                  style={{
-                    width: '100%',
-                    background: 'var(--bg-card)',
-                    color: 'var(--text-primary)',
-                    border: '1px solid var(--border-subtle)',
-                    padding: '6px 10px',
-                    borderRadius: '4px',
-                    fontSize: '0.8rem',
-                  }}
-                >
-                  <option value="NORMAL">NORMAL (Multiplier 1.00x)</option>
-                  <option value="RAIN_SLUSH">RAIN / SLUSH (Multiplier 1.20x)</option>
-                  <option value="SNOW_ICE">SNOW & BLACK ICE (Multiplier 1.45x)</option>
-                  <option value="BLIZZARD">ACTIVE BLIZZARD (Severance 3.50x)</option>
-                </select>
+                <div>
+                  <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px', fontWeight: 500 }}>
+                    Weather Condition:
+                  </label>
+                  <select
+                    value={simWeather}
+                    onChange={(e) => setSimWeather(e.target.value)}
+                    className="form-select"
+                    style={{ width: '100%', padding: '4px 8px', fontSize: '0.75rem' }}
+                  >
+                    <option value="NORMAL">Normal Clear (Multiplier 1.00x)</option>
+                    <option value="RAIN_SLUSH">Rain / Slush (Multiplier 1.20x)</option>
+                    <option value="SNOW_ICE">Snow & Black Ice (Multiplier 1.45x)</option>
+                    <option value="BLIZZARD">Active Blizzard (Multiplier 3.50x)</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Active Supply Corridors Physics Table */}
-          <div
-            className="tactical-card"
-            style={{
-              padding: '12px 16px',
-              display: 'flex',
-              gap: '12px',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              background: 'var(--bg-surface)',
-            }}
-          >
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
-              Simulate Theater Weather Impact on All Corridors:
-            </span>
-            <div style={{ display: 'flex', gap: '6px' }}>
-              {['NORMAL', 'RAIN_SLUSH', 'SNOW_ICE', 'BLIZZARD'].map((w) => (
-                <button
-                  key={w}
-                  onClick={() => setWeatherOverride(w)}
-                  className="tactical-btn"
-                  style={{
-                    padding: '4px 10px',
-                    fontSize: '0.75rem',
-                    background: weatherOverride === w ? 'var(--accent-cyan)' : 'var(--bg-card)',
-                    color: weatherOverride === w ? '#000000' : 'var(--text-secondary)',
-                    fontWeight: weatherOverride === w ? 700 : 500,
-                  }}
-                >
-                  {w}
-                </button>
-              ))}
+          <div className="panel">
+            <div
+              className="panel-header"
+              style={{
+                flexWrap: 'wrap',
+                gap: '12px',
+              }}
+            >
+              <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
+                Simulate Weather Condition Across Corridors:
+              </span>
+              <div style={{ display: 'flex', gap: '4px' }}>
+                {['NORMAL', 'RAIN_SLUSH', 'SNOW_ICE', 'BLIZZARD'].map((w) => (
+                  <button
+                    key={w}
+                    onClick={() => setWeatherOverride(w)}
+                    className="tactical-btn"
+                    style={{
+                      padding: '3px 8px',
+                      fontSize: '0.72rem',
+                      background: weatherOverride === w ? 'var(--accent-primary)' : 'transparent',
+                      color: weatherOverride === w ? 'var(--text-inverse)' : 'var(--text-secondary)',
+                      borderColor: weatherOverride === w ? 'var(--accent-primary)' : 'var(--border-subtle)',
+                    }}
+                  >
+                    {w.replace(/_/g, ' ')}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
 
-          <div className="tactical-card" style={{ overflowX: 'auto', padding: '0' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.82rem' }}>
-              <thead>
-                <tr style={{ background: 'var(--bg-card)', borderBottom: '1px solid var(--border-subtle)', color: 'var(--text-muted)' }}>
-                  <th style={{ padding: '12px 16px' }}>CORRIDOR</th>
-                  <th style={{ padding: '12px 16px' }}>DISTANCE</th>
-                  <th style={{ padding: '12px 16px' }}>SLOPE (θ)</th>
-                  <th style={{ padding: '12px 16px' }}>GRADE FACTOR ($R_g$)</th>
-                  <th style={{ padding: '12px 16px' }}>TOTAL FRICTION</th>
-                  <th style={{ padding: '12px 16px' }}>BASE TRANSIT</th>
-                  <th style={{ padding: '12px 16px' }}>EFFECTIVE TRANSIT</th>
-                  <th style={{ padding: '12px 16px' }}>PASSABILITY STATUS</th>
-                  <th style={{ padding: '12px 16px' }}>CONTINGENCY FALLBACK</th>
-                </tr>
-              </thead>
-              <tbody>
-                {isLoadingRoutes ? (
+            <div className="enterprise-table-container" style={{ border: 'none', borderRadius: 0 }}>
+              <table className="enterprise-table">
+                <thead>
                   <tr>
-                    <td colSpan={9} style={{ padding: '36px', textAlign: 'center', color: 'var(--text-secondary)' }}>
-                      Evaluating corridor terrain physics...
-                    </td>
+                    <th>Corridor</th>
+                    <th>Distance</th>
+                    <th>Slope Angle</th>
+                    <th>Grade Factor</th>
+                    <th>Total Friction</th>
+                    <th>Base Transit</th>
+                    <th>Effective Transit</th>
+                    <th>Status</th>
+                    <th>Contingency Fallback</th>
                   </tr>
-                ) : (
-                  routeCorridors.map((c) => (
-                    <tr
-                      key={c.route_id}
-                      style={{
-                        borderBottom: '1px solid var(--border-subtle)',
-                        background: c.status === 'CLOSED' ? 'rgba(239, 68, 68, 0.05)' : 'transparent',
-                      }}
-                    >
-                      <td style={{ padding: '12px 16px' }}>
-                        <div style={{ fontWeight: 700 }}>{c.route_name}</div>
-                        <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-                          {c.route_id}
-                        </div>
-                      </td>
-                      <td style={{ padding: '12px 16px', fontFamily: 'var(--font-mono)' }}>{c.distance_km} km</td>
-                      <td style={{ padding: '12px 16px', fontFamily: 'var(--font-mono)' }}>{c.max_slope_deg}°</td>
-                      <td style={{ padding: '12px 16px', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent-gold)' }}>
-                        {c.grade_resistance_factor}x
-                      </td>
-                      <td style={{ padding: '12px 16px', fontFamily: 'var(--font-mono)' }}>
-                        {c.composite_terrain_friction}x
-                      </td>
-                      <td style={{ padding: '12px 16px', fontFamily: 'var(--font-mono)' }}>
-                        {c.base_transit_hours} hrs
-                      </td>
-                      <td
-                        style={{
-                          padding: '12px 16px',
-                          fontFamily: 'var(--font-mono)',
-                          fontWeight: 800,
-                          color: c.status === 'CLOSED' ? '#ef4444' : 'var(--text-primary)',
-                        }}
-                      >
-                        {c.status === 'CLOSED' ? 'IMPASSABLE' : `${c.effective_transit_hours} hrs`}
-                      </td>
-                      <td style={{ padding: '12px 16px' }}>
-                        <span
-                          style={{
-                            padding: '2px 8px',
-                            borderRadius: '4px',
-                            fontSize: '0.7rem',
-                            fontWeight: 800,
-                            fontFamily: 'var(--font-mono)',
-                            background:
-                              c.status === 'OPEN'
-                                ? 'rgba(16, 185, 129, 0.2)'
-                                : c.status === 'RESTRICTED'
-                                ? 'rgba(245, 158, 11, 0.2)'
-                                : 'rgba(239, 68, 68, 0.2)',
-                            color:
-                              c.status === 'OPEN' ? '#10b981' : c.status === 'RESTRICTED' ? '#f59e0b' : '#ef4444',
-                            border: `1px solid ${
-                              c.status === 'OPEN' ? '#10b981' : c.status === 'RESTRICTED' ? '#f59e0b' : '#ef4444'
-                            }`,
-                          }}
-                        >
-                          {c.status}
-                        </span>
-                      </td>
-                      <td style={{ padding: '12px 16px' }}>
-                        {c.contingency_fallback ? (
-                          <div style={{ fontSize: '0.75rem', color: '#ef4444', fontWeight: 600 }}>
-                            {c.contingency_fallback}
-                          </div>
-                        ) : (
-                          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Standard Convoy Ops</div>
-                        )}
+                </thead>
+                <tbody>
+                  {isLoadingRoutes ? (
+                    <tr>
+                      <td colSpan={9} style={{ padding: '36px', textAlign: 'center', color: 'var(--text-secondary)' }}>
+                        Evaluating corridor terrain physics...
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    routeCorridors.map((c) => (
+                      <tr key={c.route_id}>
+                        <td>
+                          <div style={{ fontWeight: 600 }}>{c.route_name}</div>
+                          <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>
+                            {c.route_id}
+                          </div>
+                        </td>
+                        <td style={{ fontFamily: 'var(--font-mono)' }}>{c.distance_km} km</td>
+                        <td style={{ fontFamily: 'var(--font-mono)' }}>{c.max_slope_deg}°</td>
+                        <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--accent-amber)' }}>
+                          {c.grade_resistance_factor}x
+                        </td>
+                        <td style={{ fontFamily: 'var(--font-mono)' }}>
+                          {c.composite_terrain_friction}x
+                        </td>
+                        <td style={{ fontFamily: 'var(--font-mono)' }}>
+                          {c.base_transit_hours} hrs
+                        </td>
+                        <td
+                          style={{
+                            fontFamily: 'var(--font-mono)',
+                            fontWeight: 700,
+                            color: c.status === 'CLOSED' ? 'var(--accent-crimson)' : 'inherit',
+                          }}
+                        >
+                          {c.status === 'CLOSED' ? 'Blocked' : `${c.effective_transit_hours} hrs`}
+                        </td>
+                        <td>
+                          <span
+                            className={`tactical-badge ${
+                              c.status === 'OPEN'
+                                ? 'badge-normal'
+                                : c.status === 'RESTRICTED'
+                                ? 'badge-warning'
+                                : 'badge-critical'
+                            }`}
+                          >
+                            {c.status}
+                          </span>
+                        </td>
+                        <td>
+                          {c.contingency_fallback ? (
+                            <div style={{ fontSize: '0.74rem', color: 'var(--accent-crimson)', fontWeight: 500 }}>
+                              {c.contingency_fallback}
+                            </div>
+                          ) : (
+                            <div style={{ fontSize: '0.74rem', color: 'var(--text-secondary)' }}>Standard Road Convoy</div>
+                          )}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}

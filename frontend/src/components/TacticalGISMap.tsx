@@ -121,102 +121,112 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* GIS Sector Control Banner */}
-      <div
-        className="tactical-card"
-        style={{
-          padding: '14px 20px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '12px',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div
-            style={{
-              padding: '8px',
-              borderRadius: '6px',
-              background: 'rgba(6, 182, 212, 0.15)',
-              color: 'var(--accent-cyan)',
-            }}
-          >
-            <Compass size={20} />
-          </div>
-          <div>
-            <div style={{ fontWeight: 700, fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              Tactical GIS Sector Map — Northern Command XIV Corps
-              <span className="tactical-badge badge-cyan" style={{ fontSize: '0.65rem' }}>
-                WGS-84 / MGRS ZONE 43S & 44R
-              </span>
-            </div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-              Topographic operational picture with real-time BRO pass status & corridor friction.
-            </div>
-          </div>
-        </div>
-
-        {/* Sector Filter & Layer Toggles */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem' }}>
-            <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>Sector:</span>
-            <select
-              value={filterSector}
-              onChange={(e) => setFilterSector(e.target.value)}
+      <div className="panel">
+        <div
+          className="panel-header"
+          style={{
+            flexWrap: 'wrap',
+            gap: '12px',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div
               style={{
+                padding: '8px',
+                borderRadius: 'var(--radius-md)',
                 background: 'var(--bg-surface-elevated)',
-                color: 'var(--text-primary)',
-                border: '1px solid var(--border-subtle)',
-                padding: '4px 8px',
-                borderRadius: '6px',
-                fontSize: '0.75rem',
-                fontFamily: 'var(--font-mono)',
+                color: 'var(--accent-primary)',
               }}
             >
-              {sectors.map((s) => (
-                <option key={s} value={s}>
-                  {s.replace(/_/g, ' ')}
-                </option>
-              ))}
-            </select>
+              <Compass size={20} />
+            </div>
+            <div>
+              <div style={{ fontWeight: 600, fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                Theater Cartographic GIS & Topography
+                <span className="tactical-badge badge-info" style={{ fontSize: '0.65rem' }}>
+                  WGS-84 / MGRS Zone 43S & 44R
+                </span>
+              </div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                Operational picture with real-time BRO pass status, elevation contours, and corridor transit dynamics.
+              </div>
+            </div>
           </div>
 
-          <button
-            onClick={() => setShowContours(!showContours)}
-            className={`tactical-btn ${showContours ? 'tactical-btn-primary' : ''}`}
-            style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-          >
-            <Layers size={13} /> Contours
-          </button>
+          {/* Sector Filter & Layer Toggles */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem' }}>
+              <span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>Sector:</span>
+              <select
+                value={filterSector}
+                onChange={(e) => setFilterSector(e.target.value)}
+                className="form-select"
+                style={{ width: 'auto', padding: '3px 8px', fontSize: '0.75rem' }}
+              >
+                {sectors.map((s) => (
+                  <option key={s} value={s}>
+                    {s.replace(/_/g, ' ')}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          <button
-            onClick={() => setShowRoutesLayer(!showRoutesLayer)}
-            className={`tactical-btn ${showRoutesLayer ? 'tactical-btn-primary' : ''}`}
-            style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-          >
-            <ArrowRight size={13} /> Corridors
-          </button>
+            <button
+              onClick={() => setShowContours(!showContours)}
+              className="tactical-btn"
+              style={{
+                padding: '4px 9px',
+                fontSize: '0.75rem',
+                background: showContours ? 'var(--accent-primary)' : 'transparent',
+                color: showContours ? 'var(--text-inverse)' : 'var(--text-secondary)',
+                borderColor: showContours ? 'var(--accent-primary)' : 'var(--border-subtle)',
+              }}
+            >
+              <Layers size={13} /> Contours
+            </button>
 
-          <button
-            onClick={() => setShowConvoyPulse(!showConvoyPulse)}
-            className={`tactical-btn ${showConvoyPulse ? 'tactical-btn-primary' : ''}`}
-            style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-          >
-            <Radio size={13} /> Convoy Radar
-          </button>
+            <button
+              onClick={() => setShowRoutesLayer(!showRoutesLayer)}
+              className="tactical-btn"
+              style={{
+                padding: '4px 9px',
+                fontSize: '0.75rem',
+                background: showRoutesLayer ? 'var(--accent-primary)' : 'transparent',
+                color: showRoutesLayer ? 'var(--text-inverse)' : 'var(--text-secondary)',
+                borderColor: showRoutesLayer ? 'var(--accent-primary)' : 'var(--border-subtle)',
+              }}
+            >
+              <ArrowRight size={13} /> Corridors
+            </button>
+
+            <button
+              onClick={() => setShowConvoyPulse(!showConvoyPulse)}
+              className="tactical-btn"
+              style={{
+                padding: '4px 9px',
+                fontSize: '0.75rem',
+                background: showConvoyPulse ? 'var(--accent-primary)' : 'transparent',
+                color: showConvoyPulse ? 'var(--text-inverse)' : 'var(--text-secondary)',
+                borderColor: showConvoyPulse ? 'var(--accent-primary)' : 'var(--border-subtle)',
+              }}
+            >
+              <Radio size={13} /> Convoy Radar
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Main Map Canvas + Right Inspector Drawer */}
+      {/* Main Map Canvas + Right Inspector Drawer */}
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 380px', gap: '20px' }}>
         {/* SVG Tactical Map Canvas */}
         <div
-          className="tactical-card"
+          className="panel"
           style={{
             position: 'relative',
-            background: 'radial-gradient(ellipse at 60% 40%, rgba(15, 23, 42, 0.95), #070b14)',
-            border: '1px solid var(--border-prominent)',
-            borderRadius: '12px',
+            background: 'var(--bg-map-canvas)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: '0px',
             overflow: 'hidden',
             minHeight: '620px',
             display: 'flex',
@@ -232,7 +242,7 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
               left: 14,
               fontSize: '0.7rem',
               fontFamily: 'var(--font-mono)',
-              color: 'var(--text-tertiary)',
+              color: 'var(--text-secondary)',
               pointerEvents: 'none',
               zIndex: 10,
               display: 'flex',
@@ -242,7 +252,7 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
           >
             <span>NORTHERN COMMAND LADAKH SECTOR • XIV CORPS</span>
             <span>LAT: 32°12'N - 35°48'N • LON: 74°24'E - 79°48'E</span>
-            <span style={{ color: 'var(--accent-cyan)' }}>ELEVATION: 1,585m - 5,582m MSL</span>
+            <span style={{ color: 'var(--accent-primary)' }}>ELEVATION: 1,585m - 5,582m MSL</span>
           </div>
 
           <div
@@ -254,31 +264,32 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
               gap: '12px',
               fontSize: '0.7rem',
               fontFamily: 'var(--font-mono)',
-              background: 'rgba(15, 23, 42, 0.8)',
+              background: 'var(--bg-map-legend)',
+              color: 'var(--text-primary)',
               padding: '6px 12px',
-              borderRadius: '6px',
+              borderRadius: '0px',
               border: '1px solid var(--border-subtle)',
               zIndex: 10,
             }}
           >
             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }}></span>
+              <span style={{ width: '8px', height: '8px', borderRadius: '0px', background: '#24a148' }}></span>
               Normal DoS (&gt;12d)
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f59e0b' }}></span>
+              <span style={{ width: '8px', height: '8px', borderRadius: '0px', background: '#b28600' }}></span>
               Warning (&lt;12d)
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ef4444' }}></span>
+              <span style={{ width: '8px', height: '8px', borderRadius: '0px', background: '#da1e28' }}></span>
               Critical (&lt;5d)
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <span style={{ width: '12px', height: '2px', background: '#06b6d4' }}></span>
+              <span style={{ width: '12px', height: '2px', background: '#0f62fe' }}></span>
               Corridor Open
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <span style={{ width: '12px', height: '2px', borderTop: '2px dashed #ef4444' }}></span>
+              <span style={{ width: '12px', height: '2px', borderTop: '2px dashed #da1e28' }}></span>
               Pass Blocked
             </span>
           </div>
@@ -290,21 +301,21 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
             <defs>
               {/* Radar pulse animation for active convoys */}
               <filter id="glow-cyan" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feGaussianBlur stdDeviation="2" result="blur" />
                 <feComposite in="SourceGraphic" in2="blur" operator="over" />
               </filter>
               <filter id="glow-crimson" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur stdDeviation="4" result="blur" />
+                <feGaussianBlur stdDeviation="3" result="blur" />
                 <feComposite in="SourceGraphic" in2="blur" operator="over" />
               </filter>
               <linearGradient id="corridor-gradient-open" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#0284c7" stopOpacity="0.8" />
-                <stop offset="100%" stopColor="#10b981" stopOpacity="0.9" />
+                <stop offset="0%" stopColor="#0f62fe" stopOpacity="0.85" />
+                <stop offset="100%" stopColor="#24a148" stopOpacity="0.95" />
               </linearGradient>
             </defs>
 
             {/* MGRS Grid lines */}
-            <g stroke="rgba(255, 255, 255, 0.05)" strokeWidth="1" strokeDasharray="3,6">
+            <g stroke="var(--map-grid-stroke)" strokeWidth="1" strokeDasharray="3,6">
               {[120, 240, 360, 480, 600, 720, 840].map((x) => (
                 <line key={`grid-x-${x}`} x1={x} y1="20" x2={x} y2="600" />
               ))}
@@ -315,7 +326,7 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
 
             {/* Topographic Elevation Contours (Himalayan / Karakoram Range Lines) */}
             {showContours && (
-              <g stroke="rgba(6, 182, 212, 0.08)" fill="none" strokeWidth="1.5">
+              <g stroke="var(--map-contour-stroke)" fill="none" strokeWidth="1.5">
                 {/* Karakoram Ridge (North) */}
                 <path d="M 420 80 Q 480 90, 540 100 T 660 120 T 780 180" />
                 <path d="M 400 110 Q 470 125, 530 140 T 640 160 T 750 220" />
@@ -340,9 +351,9 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
                   const isRestricted = route.status === 'RESTRICTED';
 
                   const strokeColor = isClosed
-                    ? '#ef4444'
+                    ? '#da1e28'
                     : isRestricted
-                    ? '#f59e0b'
+                    ? '#b28600'
                     : 'url(#corridor-gradient-open)';
 
                   const strokeDash = isClosed ? '4,4' : isRestricted ? '6,3' : 'none';
@@ -366,7 +377,7 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
 
                       {/* Moving convoy pulse animation on open corridors */}
                       {showConvoyPulse && !isClosed && (
-                        <circle r="3.5" fill="#06b6d4" opacity="0.9">
+                        <circle r="3.5" fill="#0f62fe" opacity="0.9">
                           <animateMotion
                             path={pathD}
                             dur={isRestricted ? '8s' : '5s'}
@@ -385,6 +396,7 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
               {projectedPasses.map((pass) => {
                 const isSelected = selectedPassId === pass.id;
                 const isBlocked = !pass.is_passable;
+                const isRestricted = pass.status === 'RESTRICTED_CONVOY';
 
                 return (
                   <g
@@ -399,8 +411,8 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
                     {/* Pass Diamond Icon */}
                     <polygon
                       points="0,-11 11,0 0,11 -11,0"
-                      fill={isBlocked ? '#ef4444' : '#f59e0b'}
-                      stroke={isSelected ? '#ffffff' : '#080d1a'}
+                      fill={isBlocked ? '#da1e28' : isRestricted ? '#b28600' : '#24a148'}
+                      stroke={isSelected ? 'var(--accent-primary)' : 'var(--border-prominent)'}
                       strokeWidth={isSelected ? '2.5' : '1.5'}
                       filter={isBlocked ? 'url(#glow-crimson)' : 'none'}
                     />
@@ -408,7 +420,7 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
                       x="0"
                       y="3.5"
                       textAnchor="middle"
-                      fill="#080d1a"
+                      fill="#ffffff"
                       fontSize="9"
                       fontWeight="bold"
                       fontFamily="var(--font-mono)"
@@ -418,7 +430,7 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
                     <text
                       x="14"
                       y="3"
-                      fill={isBlocked ? '#ef4444' : '#f8fafc'}
+                      fill={isBlocked ? '#da1e28' : 'var(--map-node-label)'}
                       fontSize="10"
                       fontWeight="700"
                       fontFamily="var(--font-mono)"
@@ -439,12 +451,12 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
                 const isWarning = !isCritical && node.minDoS <= 12;
 
                 const nodeColor = isCritical
-                  ? '#ef4444'
+                  ? '#da1e28'
                   : isWarning
-                  ? '#f59e0b'
+                  ? '#b28600'
                   : isBase
-                  ? '#0284c7'
-                  : '#10b981';
+                  ? '#0f62fe'
+                  : '#24a148';
 
                 const matchesFilter =
                   filterSector === 'ALL' || node.sector === filterSector;
@@ -466,7 +478,7 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
                       <circle
                         r="18"
                         fill="none"
-                        stroke="#ef4444"
+                        stroke="#da1e28"
                         strokeWidth="1.5"
                         opacity="0.6"
                       >
@@ -485,23 +497,23 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
                       </circle>
                     )}
 
-                    {/* Node Shape: Square for Base Depot, Circle for Forward Outpost */}
+                    {/* Node Shape: Square for Base Depot (rx=0), Circle for Forward Outpost */}
                     {isBase ? (
                       <rect
                         x="-10"
                         y="-10"
                         width="20"
                         height="20"
-                        rx="4"
+                        rx="0"
                         fill={nodeColor}
-                        stroke={isSelected ? '#ffffff' : '#080d1a'}
+                        stroke={isSelected ? 'var(--accent-primary)' : 'var(--border-prominent)'}
                         strokeWidth={isSelected ? '3' : '1.5'}
                       />
                     ) : (
                       <circle
                         r={isSelected ? '10' : '8'}
                         fill={nodeColor}
-                        stroke={isSelected ? '#ffffff' : '#080d1a'}
+                        stroke={isSelected ? 'var(--accent-primary)' : 'var(--border-prominent)'}
                         strokeWidth={isSelected ? '3' : '1.5'}
                       />
                     )}
@@ -510,18 +522,17 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
                     <text
                       x="14"
                       y="-4"
-                      fill="#ffffff"
+                      fill="var(--map-node-label)"
                       fontSize="11"
                       fontWeight={isSelected ? '800' : '600'}
                       fontFamily="var(--font-sans)"
-                      filter="drop-shadow(0px 1px 2px rgba(0,0,0,0.8))"
                     >
                       {node.name.split('(')[0].replace('Outpost', '').replace('Node', '').trim()}
                     </text>
                     <text
                       x="14"
                       y="9"
-                      fill="var(--accent-cyan)"
+                      fill="var(--text-secondary)"
                       fontSize="9"
                       fontFamily="var(--font-mono)"
                       fontWeight="600"
@@ -539,16 +550,16 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {selectedPass ? (
             /* Mountain Pass Inspector */
-            <div className="tactical-card" style={{ padding: '20px' }}>
+            <div className="panel" style={{ padding: '16px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
-                  <span className="tactical-badge badge-cyan" style={{ marginBottom: '6px' }}>
-                    BRO PASS CHOKE POINT
+                  <span className="tactical-badge badge-info" style={{ marginBottom: '6px' }}>
+                    BRO Pass Choke Point
                   </span>
-                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0 }}>
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 600, margin: 0 }}>
                     {selectedPass.name}
                   </h3>
-                  <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
                     {selectedPass.highway}
                   </div>
                 </div>
@@ -569,30 +580,30 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
                 style={{
                   display: 'grid',
                   gridTemplateColumns: '1fr 1fr',
-                  gap: '10px',
-                  marginTop: '16px',
+                  gap: '8px',
+                  marginTop: '14px',
                   fontSize: '0.8rem',
                   fontFamily: 'var(--font-mono)',
                 }}
               >
-                <div style={{ padding: '8px', background: 'var(--bg-surface-elevated)', borderRadius: '6px' }}>
-                  <div style={{ color: 'var(--text-tertiary)', fontSize: '0.7rem' }}>ALTITUDE</div>
-                  <div style={{ fontWeight: 700, marginTop: '2px' }}>{selectedPass.elevation_m}m MSL</div>
+                <div style={{ padding: '8px', background: 'var(--bg-surface-elevated)', borderRadius: 'var(--radius-sm)' }}>
+                  <div style={{ color: 'var(--text-tertiary)', fontSize: '0.68rem' }}>ALTITUDE</div>
+                  <div style={{ fontWeight: 600, marginTop: '2px' }}>{selectedPass.elevation_m}m MSL</div>
                 </div>
-                <div style={{ padding: '8px', background: 'var(--bg-surface-elevated)', borderRadius: '6px' }}>
-                  <div style={{ color: 'var(--text-tertiary)', fontSize: '0.7rem' }}>AMBIENT TEMP</div>
-                  <div style={{ fontWeight: 700, marginTop: '2px', color: 'var(--accent-cyan)' }}>
+                <div style={{ padding: '8px', background: 'var(--bg-surface-elevated)', borderRadius: 'var(--radius-sm)' }}>
+                  <div style={{ color: 'var(--text-tertiary)', fontSize: '0.68rem' }}>AMBIENT TEMP</div>
+                  <div style={{ fontWeight: 600, marginTop: '2px', color: 'var(--accent-primary)' }}>
                     {selectedPass.temperature_c}°C
                   </div>
                 </div>
-                <div style={{ padding: '8px', background: 'var(--bg-surface-elevated)', borderRadius: '6px' }}>
-                  <div style={{ color: 'var(--text-tertiary)', fontSize: '0.7rem' }}>SNOW DEPTH</div>
-                  <div style={{ fontWeight: 700, marginTop: '2px' }}>
+                <div style={{ padding: '8px', background: 'var(--bg-surface-elevated)', borderRadius: 'var(--radius-sm)' }}>
+                  <div style={{ color: 'var(--text-tertiary)', fontSize: '0.68rem' }}>SNOW DEPTH</div>
+                  <div style={{ fontWeight: 600, marginTop: '2px' }}>
                     {selectedPass.snow_accumulation_cm} cm
                   </div>
                 </div>
-                <div style={{ padding: '8px', background: 'var(--bg-surface-elevated)', borderRadius: '6px' }}>
-                  <div style={{ color: 'var(--text-tertiary)', fontSize: '0.7rem' }}>DETACHMENT</div>
+                <div style={{ padding: '8px', background: 'var(--bg-surface-elevated)', borderRadius: 'var(--radius-sm)' }}>
+                  <div style={{ color: 'var(--text-tertiary)', fontSize: '0.68rem' }}>DETACHMENT</div>
                   <div style={{ fontWeight: 600, marginTop: '2px', fontSize: '0.72rem' }}>
                     {selectedPass.bro_detachment.split('/')[0]}
                   </div>
@@ -602,49 +613,46 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
               {selectedPass.closure_reason && (
                 <div
                   style={{
-                    marginTop: '14px',
-                    padding: '10px',
-                    borderRadius: '6px',
-                    background: 'rgba(239, 68, 68, 0.1)',
-                    border: '1px solid rgba(239, 68, 68, 0.3)',
-                    fontSize: '0.78rem',
+                    marginTop: '12px',
+                    padding: '8px 10px',
+                    borderRadius: 'var(--radius-sm)',
+                    background: 'var(--badge-critical-bg)',
+                    border: '1px solid var(--badge-critical-border)',
+                    fontSize: '0.75rem',
                     color: 'var(--accent-crimson)',
                   }}
                 >
-                  <AlertTriangle size={14} style={{ display: 'inline', marginRight: '4px' }} />
+                  <AlertTriangle size={13} style={{ display: 'inline', marginRight: '4px' }} />
                   {selectedPass.closure_reason}
                 </div>
               )}
 
-              <div style={{ marginTop: '16px' }}>
+              <div style={{ marginTop: '14px' }}>
                 <button
                   onClick={() => onTogglePass(selectedPass.id, selectedPass.status)}
                   className="tactical-btn"
                   style={{
                     width: '100%',
                     justifyContent: 'center',
-                    background: selectedPass.is_passable
-                      ? 'rgba(239, 68, 68, 0.15)'
-                      : 'rgba(16, 185, 129, 0.15)',
-                    borderColor: selectedPass.is_passable
-                      ? 'rgba(239, 68, 68, 0.4)'
-                      : 'rgba(16, 185, 129, 0.4)',
+                    padding: '6px 12px',
+                    fontSize: '0.78rem',
                     color: selectedPass.is_passable ? 'var(--accent-crimson)' : 'var(--accent-emerald)',
+                    borderColor: selectedPass.is_passable ? 'var(--badge-critical-border)' : 'var(--badge-normal-border)',
                   }}
                 >
-                  {selectedPass.is_passable ? 'Simulate BLIZZARD (Sever Pass)' : 'Mark CLEARED by BRO (Open)'}
+                  {selectedPass.is_passable ? 'Simulate Blizzard (Close)' : 'Mark Cleared (Open)'}
                 </button>
               </div>
             </div>
           ) : selectedNode ? (
             /* Tactical Node Inspector */
-            <div className="tactical-card" style={{ padding: '20px' }}>
+            <div className="panel" style={{ padding: '16px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
-                  <span className="tactical-badge badge-cyan" style={{ marginBottom: '6px' }}>
+                  <span className="tactical-badge badge-info" style={{ marginBottom: '6px' }}>
                     {selectedNode.node_type.replace('_', ' ')}
                   </span>
-                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0 }}>
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 600, margin: 0 }}>
                     {selectedNode.name}
                   </h3>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
@@ -669,40 +677,40 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
                 style={{
                   display: 'grid',
                   gridTemplateColumns: '1fr 1fr',
-                  gap: '10px',
-                  marginTop: '16px',
+                  gap: '8px',
+                  marginTop: '14px',
                   fontSize: '0.78rem',
                   fontFamily: 'var(--font-mono)',
                 }}
               >
-                <div style={{ padding: '8px', background: 'var(--bg-surface-elevated)', borderRadius: '6px' }}>
+                <div style={{ padding: '8px', background: 'var(--bg-surface-elevated)', borderRadius: 'var(--radius-sm)' }}>
                   <div style={{ color: 'var(--text-tertiary)', fontSize: '0.68rem' }}>ELEVATION</div>
-                  <div style={{ fontWeight: 700, color: 'var(--accent-cyan)' }}>
+                  <div style={{ fontWeight: 600, color: 'var(--accent-primary)' }}>
                     {selectedNode.elevation_m}m MSL
                   </div>
                 </div>
-                <div style={{ padding: '8px', background: 'var(--bg-surface-elevated)', borderRadius: '6px' }}>
+                <div style={{ padding: '8px', background: 'var(--bg-surface-elevated)', borderRadius: 'var(--radius-sm)' }}>
                   <div style={{ color: 'var(--text-tertiary)', fontSize: '0.68rem' }}>TROOPS (PAX)</div>
-                  <div style={{ fontWeight: 700 }}>{selectedNode.current_headcount} Soldiers</div>
+                  <div style={{ fontWeight: 600 }}>{selectedNode.current_headcount} PAX</div>
                 </div>
-                <div style={{ padding: '8px', background: 'var(--bg-surface-elevated)', borderRadius: '6px' }}>
+                <div style={{ padding: '8px', background: 'var(--bg-surface-elevated)', borderRadius: 'var(--radius-sm)' }}>
                   <div style={{ color: 'var(--text-tertiary)', fontSize: '0.68rem' }}>MGRS GRID</div>
                   <div style={{ fontWeight: 600, fontSize: '0.72rem' }}>{selectedNode.mgrs_grid || '—'}</div>
                 </div>
-                <div style={{ padding: '8px', background: 'var(--bg-surface-elevated)', borderRadius: '6px' }}>
+                <div style={{ padding: '8px', background: 'var(--bg-surface-elevated)', borderRadius: 'var(--radius-sm)' }}>
                   <div style={{ color: 'var(--text-tertiary)', fontSize: '0.68rem' }}>AIR ACCESSIBLE</div>
-                  <div style={{ fontWeight: 700 }}>
-                    {selectedNode.is_air_accessible ? '✅ Helipad / ALG' : '❌ Road Only'}
+                  <div style={{ fontWeight: 600 }}>
+                    {selectedNode.is_air_accessible ? 'Helipad / ALG' : 'Surface Only'}
                   </div>
                 </div>
               </div>
 
               {/* Inventory Shortages Summary */}
-              <div style={{ marginTop: '18px' }}>
+              <div style={{ marginTop: '14px' }}>
                 <div
                   style={{
-                    fontSize: '0.78rem',
-                    fontWeight: 700,
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
                     color: 'var(--text-secondary)',
                     marginBottom: '8px',
                     display: 'flex',
@@ -710,7 +718,7 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
                   }}
                 >
                   <span>CRITICAL STOCK LEDGERS</span>
-                  <span className="text-crimson font-mono">
+                  <span style={{ color: 'var(--accent-crimson)', fontFamily: 'var(--font-mono)' }}>
                     {selectedNode.criticalCount} Critical
                   </span>
                 </div>
@@ -719,7 +727,7 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '8px',
+                    gap: '6px',
                     maxHeight: '220px',
                     overflowY: 'auto',
                   }}
@@ -729,7 +737,7 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
                       key={inv.id}
                       style={{
                         padding: '8px 10px',
-                        borderRadius: '6px',
+                        borderRadius: 'var(--radius-sm)',
                         background: 'var(--bg-surface-elevated)',
                         border: '1px solid var(--border-subtle)',
                         display: 'flex',
@@ -742,7 +750,7 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
                         <div style={{ fontWeight: 600 }}>
                           {inv.supply?.name.split('(')[0] || inv.supply_id}
                         </div>
-                        <div style={{ color: 'var(--text-tertiary)', fontSize: '0.68rem' }}>
+                        <div style={{ color: 'var(--text-secondary)', fontSize: '0.68rem' }}>
                           Stock: {inv.current_stock.toLocaleString()} • Burn: {inv.daily_consumption_rate}/day
                         </div>
                       </div>
@@ -766,56 +774,55 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
               </div>
             </div>
           ) : (
-            <div className="tactical-card" style={{ padding: '24px', textAlign: 'center', color: 'var(--text-tertiary)' }}>
-              Click on any tactical node or pass on the map to inspect operational telemetry.
+            <div className="panel" style={{ padding: '24px', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.82rem' }}>
+              Select a node or pass on the map to inspect operational metrics.
             </div>
           )}
 
           {/* Air Corridor Advisory Card */}
           <div
-            className="tactical-card"
+            className="panel"
             style={{
-              padding: '16px',
-              borderLeft: '4px solid var(--accent-cyan)',
-              background: 'var(--bg-surface)',
+              padding: '14px',
+              borderLeft: '4px solid var(--accent-primary)',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, fontSize: '0.85rem' }}>
-              <Plane size={16} className="text-cyan" />
-              <span>Contingency Air-Bridge Envelope</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, fontSize: '0.82rem' }}>
+              <Plane size={15} style={{ color: 'var(--accent-primary)' }} />
+              <span>Contingency Air-Bridge Corridor</span>
             </div>
             <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-              When road passes (Zoji La / Khardung La) close due to blizzards, tactical air-drops & Mi-17 V5 sorties deploy automatically from Leh / Thoise air logistics hubs.
+              When road axes are severed by blizzards or avalanches, IAF Mi-17 V5 sorties coordinate from Leh and Thoise base air logistics hubs.
             </p>
           </div>
         </div>
       </div>
 
       {/* High-Altitude Elevation Profile Cross-Section */}
-      <div className="tactical-card" style={{ padding: '20px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+      <div className="panel">
+        <div className="panel-header">
           <div>
-            <h3 style={{ fontSize: '1rem', fontWeight: 700, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <TrendingUp size={16} className="text-cyan" />
-              Strategic Supply Axis — High-Altitude Elevation Profile (Srinagar → Leh → Khardung La → DBO)
+            <h3 style={{ fontSize: '0.95rem', fontWeight: 600, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <TrendingUp size={16} style={{ color: 'var(--accent-primary)' }} />
+              Main Supply Axis — High-Altitude Elevation Profile (Srinagar → Leh → Khardung La → DBO)
             </h3>
             <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
-              Vehicle payload envelopes de-rate significantly above 3,500m MSL; passes exceed 5,300m MSL with severe engine power degradation.
+              High-altitude passes (&gt;5,300m MSL) severely de-rate internal combustion engine torque and rotor thrust envelope.
             </p>
           </div>
-          <span className="elevation-tag">MAX PASS: 5,359m (Khardung La)</span>
+          <span className="elevation-tag">Peak Pass: 5,359m (Khardung La)</span>
         </div>
 
-        <div style={{ width: '100%', height: '180px' }}>
+        <div className="panel-body" style={{ width: '100%', height: '180px' }}>
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={elevationProfileData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="elevationGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.5} />
-                  <stop offset="95%" stopColor="#06b6d4" stopOpacity={0.0} />
+                  <stop offset="5%" stopColor="var(--accent-primary)" stopOpacity={0.4} />
+                  <stop offset="95%" stopColor="var(--accent-primary)" stopOpacity={0.0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" />
               <XAxis
                 dataKey="name"
                 tick={{ fill: 'var(--text-tertiary)', fontSize: 10 }}
@@ -830,15 +837,16 @@ export const TacticalGISMap: React.FC<TacticalGISMapProps> = ({
               <Tooltip
                 contentStyle={{
                   background: 'var(--bg-surface)',
-                  border: '1px solid var(--border-prominent)',
-                  borderRadius: '6px',
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: 'var(--radius-sm)',
                   fontSize: '0.75rem',
+                  color: 'var(--text-primary)',
                 }}
               />
               <Area
                 type="monotone"
                 dataKey="elevation"
-                stroke="#06b6d4"
+                stroke="var(--accent-primary)"
                 strokeWidth={2}
                 fillOpacity={1}
                 fill="url(#elevationGrad)"

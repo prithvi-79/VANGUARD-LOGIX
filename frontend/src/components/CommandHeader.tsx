@@ -1,4 +1,5 @@
-import { Shield, Sun, Moon, RefreshCw, Radio, MapPin, Database } from 'lucide-react';
+import React from 'react';
+import { Shield, Sun, Moon, RefreshCw, Database, MapPin, BookOpen } from 'lucide-react';
 import { useTheme } from '../theme/ThemeContext';
 import type { DBStatusResponse } from '../types';
 
@@ -19,41 +20,46 @@ export const CommandHeader: React.FC<CommandHeaderProps> = ({
 
   return (
     <header className="tactical-header">
-      {/* Top Banner Ribbon */}
+      {/* Primary Administrative Header Ribbon */}
       <div
         style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          padding: '10px 24px',
+          padding: '12px 24px',
           borderBottom: '1px solid var(--border-subtle)',
+          flexWrap: 'wrap',
+          gap: '12px',
         }}
       >
+        {/* Left: Organization Identity & Theater */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: '40px',
-              height: '40px',
-              borderRadius: '8px',
-              background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
-              color: '#ffffff',
-              boxShadow: '0 0 15px rgba(2, 132, 199, 0.4)',
+              width: '36px',
+              height: '36px',
+              borderRadius: '0px',
+              background: 'var(--bg-surface-elevated)',
+              border: '1px solid var(--border-prominent)',
+              color: 'var(--accent-primary)',
             }}
           >
-            <Shield size={24} />
+            <Shield size={20} />
           </div>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <h1 style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '0.04em', margin: 0 }}>
-                VANGUARD-LOGIX
-              </h1>
-              <span className="tactical-badge badge-cyan">SIH PS 26251</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '1.15rem', fontWeight: 600, letterSpacing: '0', margin: 0, color: 'var(--text-primary)' }}>
+                Vanguard Logistics Operations Portal
+              </span>
+              <span className="tactical-badge badge-info">
+                HQ XIV Corps • Northern Command
+              </span>
               <span className="tactical-badge badge-normal">
-                <span className="pulse-indicator" style={{ background: 'var(--accent-emerald)' }}></span>
-                ONLINE
+                <span className="status-dot status-dot-normal"></span>
+                Operational
               </span>
             </div>
             <div
@@ -61,21 +67,23 @@ export const CommandHeader: React.FC<CommandHeaderProps> = ({
                 fontSize: '0.75rem',
                 color: 'var(--text-secondary)',
                 display: 'flex',
-                gap: '12px',
+                alignItems: 'center',
+                gap: '8px',
                 marginTop: '2px',
+                letterSpacing: '0.16px',
               }}
             >
               <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <MapPin size={12} /> HQ 14 Corps, Northern Command (Leh)
+                <MapPin size={12} /> Staging Depot: Leh Transshipment Base
               </span>
               <span>•</span>
-              <span>High Altitude Forward Supply Chain & Predictive Logistics</span>
+              <span>High-Altitude Forward Replenishment & Decision Support</span>
             </div>
           </div>
         </div>
 
-        {/* Action Controls & Theme Toggle */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        {/* Right: Operational Status, Sync & View Modes */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           {dbStatus && (
             <div
               style={{
@@ -83,17 +91,19 @@ export const CommandHeader: React.FC<CommandHeaderProps> = ({
                 alignItems: 'center',
                 gap: '8px',
                 padding: '6px 12px',
-                borderRadius: '6px',
+                borderRadius: '0px',
                 background: 'var(--bg-surface-elevated)',
                 border: '1px solid var(--border-subtle)',
                 fontSize: '0.75rem',
-                fontFamily: 'var(--font-mono)',
               }}
             >
-              <Database size={13} className="text-cyan" />
-              <span>{dbStatus.database_type}</span>
-              <span style={{ color: 'var(--text-tertiary)' }}>|</span>
-              <span style={{ color: 'var(--accent-emerald)' }}>{dbStatus.inventory_records_count} Stock Ledgers</span>
+              <Database size={13} style={{ color: 'var(--text-secondary)' }} />
+              <span style={{ color: 'var(--text-secondary)' }}>Ledger:</span>
+              <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
+                {dbStatus.inventory_records_count} Records
+              </span>
+              <span style={{ color: 'var(--text-tertiary)' }}>•</span>
+              <span style={{ color: 'var(--text-secondary)' }}>{dbStatus.database_type}</span>
             </div>
           )}
 
@@ -101,76 +111,74 @@ export const CommandHeader: React.FC<CommandHeaderProps> = ({
             onClick={onRefresh}
             disabled={isLoading}
             className="tactical-btn"
-            title="Refresh Theater State"
+            title="Refresh Theater Stock & Pass Status"
+            style={{ fontSize: '0.78rem' }}
           >
-            <RefreshCw size={14} className={isLoading ? 'animate-spin' : ''} />
-            <span style={{ fontSize: '0.8rem' }}>Sync</span>
+            <RefreshCw size={13} className={isLoading ? 'animate-spin' : ''} />
+            <span>Sync State</span>
           </button>
 
           <button
             onClick={toggleTheme}
             className="tactical-btn"
-            title={theme === 'dark' ? 'Switch to High-Contrast Light Mode' : 'Switch to Dark Command Center'}
-            aria-label="Toggle Theme"
+            title={theme === 'dark' ? 'Switch to Daylight Ops Mode (Light)' : 'Switch to Command Center Mode (Dark)'}
+            aria-label="Toggle Interface Theme"
+            style={{ fontSize: '0.78rem' }}
           >
             {theme === 'dark' ? (
               <>
-                <Sun size={15} style={{ color: '#f59e0b' }} />
-                <span style={{ fontSize: '0.8rem' }}>Daylight</span>
+                <Sun size={14} style={{ color: 'var(--accent-amber)' }} />
+                <span>Daylight</span>
               </>
             ) : (
               <>
-                <Moon size={15} style={{ color: '#06b6d4' }} />
-                <span style={{ fontSize: '0.8rem' }}>Night Ops</span>
+                <Moon size={14} style={{ color: 'var(--accent-primary)' }} />
+                <span>Dark</span>
               </>
             )}
           </button>
         </div>
       </div>
 
-      {/* Decision Flow Strip */}
+      {/* Secondary Decision Flow Reference Strip */}
       <div
         style={{
-          padding: '8px 24px',
+          padding: '6px 24px',
           background: 'var(--bg-surface-elevated)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          cursor: 'pointer',
+          borderBottom: '1px solid var(--border-subtle)',
+          fontSize: '0.75rem',
         }}
-        onClick={onOpenDecisionFlow}
-        title="Click to view Decision Pipeline Architecture"
       >
-        <div className="decision-strip" style={{ border: 'none', background: 'transparent', padding: 0 }}>
-          <span style={{ color: 'var(--text-secondary)', fontWeight: 700, marginRight: '4px' }}>
-            OPERATIONAL PIPELINE:
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)', overflowX: 'auto', whiteSpace: 'nowrap' }}>
+          <span style={{ fontWeight: 600, color: 'var(--text-primary)', marginRight: '4px' }}>
+            Decision Pipeline:
           </span>
-          <span className="step-node active">
-            <Radio size={12} /> 1. DATA (SEED 26251)
-          </span>
-          <span className="step-arrow">→</span>
-          <span className="step-node">2. FORECAST (P10/P50/P90)</span>
-          <span className="step-arrow">→</span>
-          <span className="step-node">3. RISK & DOS COUNTDOWN</span>
-          <span className="step-arrow">→</span>
-          <span className="step-node">4. PRIORITY SCORING</span>
-          <span className="step-arrow">→</span>
-          <span className="step-node">5. ALLOCATION</span>
-          <span className="step-arrow">→</span>
-          <span className="step-node">6. ROUTE & PASS FEASIBILITY</span>
-          <span className="step-arrow">→</span>
-          <span className="step-node">7. TACTICAL DISPATCH</span>
+          <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>1. Sensor & Stock Ingestion</span>
+          <span style={{ color: 'var(--text-tertiary)' }}>→</span>
+          <span>2. Quantile Forecast (P10 / P50 / P90)</span>
+          <span style={{ color: 'var(--text-tertiary)' }}>→</span>
+          <span>3. Days-of-Supply Burn-Down</span>
+          <span style={{ color: 'var(--text-tertiary)' }}>→</span>
+          <span>4. Priority Ranking</span>
+          <span style={{ color: 'var(--text-tertiary)' }}>→</span>
+          <span>5. Fleet Dispatch (CVRPTW)</span>
+          <span style={{ color: 'var(--text-tertiary)' }}>→</span>
+          <span>6. Pass & Terrain Feasibility</span>
+          <span style={{ color: 'var(--text-tertiary)' }}>→</span>
+          <span>7. IAF-Z-2096 Movement Order</span>
         </div>
 
         <button
           className="tactical-btn"
-          style={{ padding: '3px 10px', fontSize: '0.72rem', background: 'rgba(6, 182, 212, 0.15)', borderColor: 'var(--accent-cyan)', color: 'var(--accent-cyan)' }}
-          onClick={(e) => {
-            e.stopPropagation();
-            onOpenDecisionFlow();
-          }}
+          style={{ padding: '2px 8px', fontSize: '0.72rem', background: 'transparent' }}
+          onClick={onOpenDecisionFlow}
+          title="Inspect the 7-stage military logistics decision architecture"
         >
-          Pipeline Guide ℹ️
+          <BookOpen size={12} />
+          <span>Architecture Guide</span>
         </button>
       </div>
     </header>

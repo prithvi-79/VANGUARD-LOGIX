@@ -34,7 +34,7 @@ export const OperationalAlerts: React.FC<OperationalAlertsProps> = ({
     alerts.push({
       id: `alert-inv-${item.id}`,
       severity: 'CRITICAL',
-      category: 'INVENTORY_STOCKOUT',
+      category: 'INVENTORY_SHORTAGE',
       title: `Critical Supply Shortage: ${item.supply?.name.split('(')[0] || item.supply_id}`,
       locationName: loc?.name || item.location_id,
       elevation: loc?.elevation_m,
@@ -99,39 +99,54 @@ export const OperationalAlerts: React.FC<OperationalAlertsProps> = ({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Alert Stats Ribbon */}
-      <div className="tactical-card" style={{ padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span className="tactical-badge badge-critical">LIVE MILITARY SITUATION FEED</span>
-            <span className="tactical-badge badge-cyan">{alerts.length} ACTIVE DIRECTIVES</span>
+      <div className="panel">
+        <div
+          className="panel-header"
+          style={{
+            flexWrap: 'wrap',
+            gap: '12px',
+          }}
+        >
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <h2 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 600 }}>
+                Operational Alerts & Field Directives
+              </h2>
+              <span className="tactical-badge badge-info">
+                {alerts.length} Active Directives
+              </span>
+            </div>
+            <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+              Automated alerts triggered by burn-rate threshold violations, mountain pass status changes, and pending IAF-Z-2096 vouchers.
+            </div>
           </div>
-          <h2 style={{ fontSize: '1.2rem', fontWeight: 800, marginTop: '4px', margin: 0 }}>
-            Northern Command XIV Corps — Tactical Operational Alerts
-          </h2>
-          <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
-            Automated alerts triggered by burn-rate threshold violations, BRO pass condition changes, and pending IAF-Z-2096 vouchers.
-          </div>
-        </div>
 
-        {/* Severity Filter */}
-        <div style={{ display: 'flex', gap: '8px' }}>
-          {['ALL', 'CRITICAL', 'WARNING'].map((sev) => (
-            <button
-              key={sev}
-              onClick={() => setFilterSeverity(sev)}
-              className={`tactical-btn ${filterSeverity === sev ? 'tactical-btn-primary' : ''}`}
-              style={{ padding: '6px 14px', fontSize: '0.75rem' }}
-            >
-              {sev}
-            </button>
-          ))}
+          {/* Severity Filter */}
+          <div style={{ display: 'flex', gap: '4px' }}>
+            {['ALL', 'CRITICAL', 'WARNING'].map((sev) => (
+              <button
+                key={sev}
+                onClick={() => setFilterSeverity(sev)}
+                className="tactical-btn"
+                style={{
+                  padding: '4px 10px',
+                  fontSize: '0.75rem',
+                  background: filterSeverity === sev ? 'var(--accent-primary)' : 'transparent',
+                  color: filterSeverity === sev ? 'var(--text-inverse)' : 'var(--text-secondary)',
+                  borderColor: filterSeverity === sev ? 'var(--accent-primary)' : 'var(--border-subtle)',
+                }}
+              >
+                {sev === 'ALL' ? 'All Alerts' : sev}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Alerts Feed List */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {filteredAlerts.length === 0 ? (
-          <div className="tactical-card" style={{ padding: '32px', textAlign: 'center', color: 'var(--text-tertiary)' }}>
+          <div className="panel" style={{ padding: '32px', textAlign: 'center', color: 'var(--text-secondary)' }}>
             No operational alerts matching active filter criteria. All theater nodes reporting within normal parameters.
           </div>
         ) : (
@@ -141,79 +156,76 @@ export const OperationalAlerts: React.FC<OperationalAlertsProps> = ({
             return (
               <div
                 key={alert.id}
-                className="tactical-card"
+                className="panel"
                 style={{
-                  padding: '18px 20px',
-                  borderLeft: `4px solid ${isCrit ? '#ef4444' : '#f59e0b'}`,
+                  padding: '16px 18px',
+                  borderLeft: `4px solid ${isCrit ? 'var(--accent-crimson)' : 'var(--accent-amber)'}`,
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'flex-start',
-                  gap: '16px',
+                  gap: '14px',
                 }}
               >
-                <div style={{ display: 'flex', gap: '14px', flex: 1 }}>
+                <div style={{ display: 'flex', gap: '12px', flex: 1 }}>
                   <div
                     style={{
-                      padding: '10px',
-                      borderRadius: '8px',
-                      background: isCrit ? 'rgba(239, 68, 68, 0.15)' : 'rgba(245, 158, 11, 0.15)',
+                      padding: '8px',
+                      borderRadius: 'var(--radius-sm)',
+                      background: isCrit ? 'var(--badge-critical-bg)' : 'var(--badge-warning-bg)',
                       color: isCrit ? 'var(--accent-crimson)' : 'var(--accent-amber)',
                       flexShrink: 0,
                     }}
                   >
                     {alert.category.includes('PASS') ? (
-                      <Mountain size={20} />
+                      <Mountain size={18} />
                     ) : alert.category.includes('INDENT') ? (
-                      <FileCheck2 size={20} />
+                      <FileCheck2 size={18} />
                     ) : (
-                      <AlertTriangle size={20} />
+                      <AlertTriangle size={18} />
                     )}
                   </div>
 
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                      <span
-                        className={`tactical-badge ${isCrit ? 'badge-critical' : 'badge-warning'}`}
-                        style={{ fontSize: '0.65rem' }}
-                      >
+                      <span className={`tactical-badge ${isCrit ? 'badge-critical' : 'badge-warning'}`} style={{ fontSize: '0.65rem' }}>
                         {alert.severity}
                       </span>
-                      <span style={{ fontSize: '0.72rem', color: 'var(--text-tertiary)', fontFamily: 'var(--font-mono)' }}>
-                        {alert.category}
+                      <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>
+                        {alert.category.replace(/_/g, ' ')}
                       </span>
                       {alert.elevation && (
                         <span className="elevation-tag">{alert.elevation}m MSL</span>
                       )}
                     </div>
 
-                    <h4 style={{ fontSize: '0.95rem', fontWeight: 700, marginTop: '4px', margin: 0 }}>
+                    <h4 style={{ fontSize: '0.9rem', fontWeight: 600, margin: '4px 0 0 0' }}>
                       {alert.title}
                     </h4>
 
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                    <div style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
                       Sector / Post: <strong style={{ color: 'var(--text-primary)' }}>{alert.locationName}</strong>
                     </div>
 
-                    <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '6px', lineHeight: 1.5 }}>
+                    <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '6px', lineHeight: 1.5, margin: '6px 0 0 0' }}>
                       {alert.message}
                     </p>
 
                     <div
                       style={{
-                        marginTop: '10px',
+                        marginTop: '8px',
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: '6px',
-                        padding: '4px 8px',
-                        borderRadius: '4px',
+                        padding: '3px 8px',
+                        borderRadius: 'var(--radius-sm)',
                         background: 'var(--bg-surface-elevated)',
                         border: '1px solid var(--border-subtle)',
                         fontSize: '0.72rem',
-                        color: 'var(--accent-cyan)',
+                        color: 'var(--accent-primary)',
                         fontFamily: 'var(--font-mono)',
                       }}
                     >
-                      <ArrowRight size={12} />
+                      <ArrowRight size={11} />
                       {alert.action}
                     </div>
                   </div>
@@ -229,66 +241,54 @@ export const OperationalAlerts: React.FC<OperationalAlertsProps> = ({
       </div>
 
       {/* IAF-Z-2096 Indent Vouchers Cryptographic Verification Register */}
-      <div className="tactical-card" style={{ padding: '24px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+      <div className="panel">
+        <div
+          className="panel-header"
+          style={{
+            flexWrap: 'wrap',
+            gap: '12px',
+          }}
+        >
           <div>
-            <h3 style={{ fontSize: '1.05rem', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <ShieldCheck size={18} className="text-emerald" />
-              IAF-Z-2096 Military Requisition Vouchers & Cryptographic Ledger
-            </h3>
-            <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
-              Every requisition indent is signed with SHA-256 integrity verification preventing field voucher tampering.
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <ShieldCheck size={16} style={{ color: 'var(--accent-emerald)' }} />
+              <h3 style={{ fontSize: '0.92rem', fontWeight: 600, margin: 0 }}>
+                IAF-Z-2096 Requisition Vouchers & Cryptographic Ledger
+              </h3>
+            </div>
+            <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', margin: '2px 0 0 0' }}>
+              Every field indent is authenticated with SHA-256 integrity verification.
             </p>
           </div>
           <span className="tactical-badge badge-normal">
-            <CheckCircle2 size={12} /> SHA-256 HASH VERIFIED
+            <CheckCircle2 size={11} style={{ marginRight: '4px' }} /> SHA-256 Verified
           </span>
         </div>
 
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem' }}>
+        <div className="enterprise-table-container" style={{ border: 'none', borderRadius: 0 }}>
+          <table className="enterprise-table">
             <thead>
-              <tr
-                style={{
-                  borderBottom: '1px solid var(--border-prominent)',
-                  textAlign: 'left',
-                  color: 'var(--text-secondary)',
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.72rem',
-                }}
-              >
-                <th style={{ padding: '10px 12px' }}>VOUCHER NO</th>
-                <th style={{ padding: '10px 12px' }}>ORIGINATING UNIT</th>
-                <th style={{ padding: '10px 12px' }}>POST</th>
-                <th style={{ padding: '10px 12px' }}>PRIORITY</th>
-                <th style={{ padding: '10px 12px' }}>OFFICER CREDENTIALS</th>
-                <th style={{ padding: '10px 12px' }}>SHA-256 SIGNATURE</th>
-                <th style={{ padding: '10px 12px' }}>STATUS</th>
+              <tr>
+                <th>Voucher No</th>
+                <th>Originating Unit</th>
+                <th>Post</th>
+                <th>Priority</th>
+                <th>Officer Credentials</th>
+                <th>SHA-256 Signature</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody>
               {indents.map((voucher) => (
-                <tr
-                  key={voucher.id}
-                  style={{
-                    borderBottom: '1px solid var(--border-subtle)',
-                    transition: 'background-color 0.15s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'var(--bg-surface-elevated)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                  }}
-                >
-                  <td style={{ padding: '10px 12px', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>
+                <tr key={voucher.id}>
+                  <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
                     {voucher.id}
                   </td>
-                  <td style={{ padding: '10px 12px', fontWeight: 600 }}>{voucher.originating_unit}</td>
-                  <td style={{ padding: '10px 12px' }}>
+                  <td style={{ fontWeight: 500 }}>{voucher.originating_unit}</td>
+                  <td>
                     <span className="elevation-tag">{voucher.forward_post_id}</span>
                   </td>
-                  <td style={{ padding: '10px 12px' }}>
+                  <td>
                     <span
                       className={`tactical-badge ${
                         voucher.priority === 'OP_IMMEDIATE'
@@ -299,16 +299,16 @@ export const OperationalAlerts: React.FC<OperationalAlertsProps> = ({
                       }`}
                       style={{ fontSize: '0.68rem' }}
                     >
-                      {voucher.priority}
+                      {voucher.priority.replace(/_/g, ' ')}
                     </span>
                   </td>
-                  <td style={{ padding: '10px 12px', fontSize: '0.75rem' }}>
+                  <td style={{ fontSize: '0.75rem' }}>
                     {voucher.officer_service_number}
                   </td>
-                  <td style={{ padding: '10px 12px', fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--accent-cyan)' }}>
+                  <td style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--accent-primary)' }}>
                     {voucher.verification_hash ? `${voucher.verification_hash.slice(0, 16)}...` : '—'}
                   </td>
-                  <td style={{ padding: '10px 12px' }}>
+                  <td>
                     <span className="tactical-badge badge-warning" style={{ fontSize: '0.68rem' }}>
                       {voucher.status}
                     </span>

@@ -34,19 +34,19 @@ export const CommandBriefing: React.FC<CommandBriefingProps> = ({
   const availableVehicles = vehicles.filter((v) => v.operational_status === 'AVAILABLE');
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      {/* 4 Stat Metric Cards */}
-      <div className="tactical-grid-4">
-        {/* Card 1: Inventory Health & Critical Stockouts */}
-        <div className="tactical-card" style={{ padding: '20px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      {/* 4 Primary Operational Metric Cards */}
+      <div className="grid-kpi-4">
+        {/* Card 1: Inventory Health */}
+        <div className="panel" style={{ padding: '16px 18px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
-              <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
-                THEATER INVENTORY STATUS
+              <div style={{ fontSize: '0.74rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                Theater Stock Health
               </div>
-              <div style={{ fontSize: '2rem', fontWeight: 800, marginTop: '4px' }}>
-                <span className="text-crimson">{criticalItems.length}</span>
-                <span style={{ fontSize: '1rem', color: 'var(--text-tertiary)', fontWeight: 500 }}>
+              <div style={{ fontSize: '1.75rem', fontWeight: 700, marginTop: '4px', letterSpacing: '-0.02em' }}>
+                <span style={{ color: 'var(--accent-crimson)' }}>{criticalItems.length}</span>
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-tertiary)', fontWeight: 500 }}>
                   {' '}
                   Critical / {inventory.length} Ledgers
                 </span>
@@ -54,39 +54,31 @@ export const CommandBriefing: React.FC<CommandBriefingProps> = ({
             </div>
             <div
               style={{
-                padding: '10px',
-                borderRadius: '8px',
-                background: 'rgba(239, 68, 68, 0.15)',
+                padding: '8px',
+                borderRadius: 'var(--radius-md)',
+                background: 'var(--badge-critical-bg)',
                 color: 'var(--accent-crimson)',
               }}
             >
-              <AlertTriangle size={22} />
+              <AlertTriangle size={18} />
             </div>
           </div>
-          <div
-            style={{
-              display: 'flex',
-              gap: '12px',
-              marginTop: '16px',
-              fontSize: '0.75rem',
-              fontFamily: 'var(--font-mono)',
-            }}
-          >
-            <span className="tactical-badge badge-critical">{criticalItems.length} &lt; 5d DoS</span>
-            <span className="tactical-badge badge-warning">{warningItems.length} &lt; 12d DoS</span>
+          <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+            <span className="tactical-badge badge-critical">{criticalItems.length} &lt; 5d Burn Buffer</span>
+            <span className="tactical-badge badge-warning">{warningItems.length} &lt; 12d Warning</span>
           </div>
         </div>
 
         {/* Card 2: Strategic Passes */}
-        <div className="tactical-card" style={{ padding: '20px' }}>
+        <div className="panel" style={{ padding: '16px 18px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
-              <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
-                BRO STRATEGIC PASSES
+              <div style={{ fontSize: '0.74rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                Strategic Pass Clearances
               </div>
-              <div style={{ fontSize: '2rem', fontWeight: 800, marginTop: '4px' }}>
-                <span className="text-emerald">{openPasses.length}</span>
-                <span style={{ fontSize: '1rem', color: 'var(--text-tertiary)', fontWeight: 500 }}>
+              <div style={{ fontSize: '1.75rem', fontWeight: 700, marginTop: '4px', letterSpacing: '-0.02em' }}>
+                <span style={{ color: 'var(--accent-emerald)' }}>{openPasses.length}</span>
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-tertiary)', fontWeight: 500 }}>
                   {' '}
                   Open / {passes.length} Monitored
                 </span>
@@ -94,92 +86,76 @@ export const CommandBriefing: React.FC<CommandBriefingProps> = ({
             </div>
             <div
               style={{
-                padding: '10px',
-                borderRadius: '8px',
-                background: 'rgba(16, 185, 129, 0.15)',
+                padding: '8px',
+                borderRadius: 'var(--radius-md)',
+                background: 'var(--badge-normal-bg)',
                 color: 'var(--accent-emerald)',
               }}
             >
-              <Mountain size={22} />
+              <Mountain size={18} />
             </div>
           </div>
-          <div
-            style={{
-              display: 'flex',
-              gap: '12px',
-              marginTop: '16px',
-              fontSize: '0.75rem',
-              fontFamily: 'var(--font-mono)',
-            }}
-          >
+          <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
             <span className="tactical-badge badge-normal">{openPasses.length} Passable</span>
-            <span className="tactical-badge badge-critical">{blockedPasses.length} Severed</span>
+            <span className="tactical-badge badge-critical">{blockedPasses.length} Blocked</span>
           </div>
         </div>
 
         {/* Card 3: Multimodal Fleet Readiness */}
-        <div className="tactical-card" style={{ padding: '20px' }}>
+        <div className="panel" style={{ padding: '16px 18px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
-              <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
-                MULTIMODAL FLEET
+              <div style={{ fontSize: '0.74rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                Transport Fleet Readiness
               </div>
-              <div style={{ fontSize: '2rem', fontWeight: 800, marginTop: '4px' }}>
-                <span className="text-cyan">{availableVehicles.length}</span>
-                <span style={{ fontSize: '1rem', color: 'var(--text-tertiary)', fontWeight: 500 }}>
+              <div style={{ fontSize: '1.75rem', fontWeight: 700, marginTop: '4px', letterSpacing: '-0.02em' }}>
+                <span style={{ color: 'var(--accent-primary)' }}>{availableVehicles.length}</span>
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-tertiary)', fontWeight: 500 }}>
                   {' '}
-                  Ready / {vehicles.length} Units
+                  Available / {vehicles.length} Units
                 </span>
               </div>
             </div>
             <div
               style={{
-                padding: '10px',
-                borderRadius: '8px',
-                background: 'rgba(6, 182, 212, 0.15)',
-                color: 'var(--accent-cyan)',
+                padding: '8px',
+                borderRadius: 'var(--radius-md)',
+                background: 'var(--badge-info-bg)',
+                color: 'var(--accent-primary)',
               }}
             >
-              <Truck size={22} />
+              <Truck size={18} />
             </div>
           </div>
-          <div
-            style={{
-              display: 'flex',
-              gap: '8px',
-              marginTop: '16px',
-              fontSize: '0.72rem',
-              color: 'var(--text-secondary)',
-            }}
-          >
-            <span>Trucks 4x4/6x6</span> • <span>Bv-206 Snowcats</span> • <span>Mi-17 Air Lift</span>
+          <div style={{ display: 'flex', gap: '6px', marginTop: '12px', fontSize: '0.72rem', color: 'var(--text-secondary)' }}>
+            <span>Trucks 4x4/6x6</span> • <span>Bv-206 Tracked</span> • <span>Mi-17 Sorties</span>
           </div>
         </div>
 
         {/* Card 4: IAF-Z-2096 Indent Vouchers */}
-        <div className="tactical-card" style={{ padding: '20px' }}>
+        <div className="panel" style={{ padding: '16px 18px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
-              <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
-                IAF-Z-2096 INDENTS
+              <div style={{ fontSize: '0.74rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                Signed Requisitions (IAF-Z-2096)
               </div>
-              <div style={{ fontSize: '2rem', fontWeight: 800, marginTop: '4px' }}>
-                <span className="text-amber">{indents.length}</span>
-                <span style={{ fontSize: '1rem', color: 'var(--text-tertiary)', fontWeight: 500 }}>
+              <div style={{ fontSize: '1.75rem', fontWeight: 700, marginTop: '4px', letterSpacing: '-0.02em' }}>
+                <span style={{ color: 'var(--accent-amber)' }}>{indents.length}</span>
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-tertiary)', fontWeight: 500 }}>
                   {' '}
-                  Vouchers Signed
+                  Active Vouchers
                 </span>
               </div>
             </div>
             <div
               style={{
-                padding: '10px',
-                borderRadius: '8px',
-                background: 'rgba(245, 158, 11, 0.15)',
+                padding: '8px',
+                borderRadius: 'var(--radius-md)',
+                background: 'var(--badge-warning-bg)',
                 color: 'var(--accent-amber)',
               }}
             >
-              <FileCheck2 size={22} />
+              <FileCheck2 size={18} />
             </div>
           </div>
           <div
@@ -187,205 +163,181 @@ export const CommandBriefing: React.FC<CommandBriefingProps> = ({
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              marginTop: '16px',
+              marginTop: '12px',
               fontSize: '0.72rem',
               color: 'var(--accent-emerald)',
-              fontFamily: 'var(--font-mono)',
             }}
           >
             <CheckCircle2 size={13} />
-            <span>SHA-256 Verified Signatures</span>
+            <span>SHA-256 Tamper-Evident Signatures</span>
           </div>
         </div>
       </div>
 
-      {/* Strategic Passes Passability Live Panel */}
-      <div className="tactical-card" style={{ padding: '24px' }}>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '18px',
-          }}
-        >
+      {/* Strategic Passes Live Status Panel */}
+      <div className="panel">
+        <div className="panel-header">
           <div>
-            <h2 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Mountain className="text-cyan" size={18} />
-              Border Roads Organisation (BRO) — Strategic Mountain Pass Monitor
-            </h2>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
-              Real-time passability conditions for choke points across Northern Command supply axes. Toggle status to simulate weather disruption or clearance.
-            </p>
+            <div style={{ fontSize: '0.92rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Mountain size={16} style={{ color: 'var(--accent-primary)' }} />
+              Border Roads Organisation (BRO) — Mountain Pass Monitoring
+            </div>
+            <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+              Real-time transit conditions along Northern Command supply axes (NH-1D, Manali-Leh, Nubra, DBO). Toggle status to simulate weather disruption or road clearance.
+            </div>
           </div>
-          <span className="tactical-badge badge-cyan">BRO Project Himank / Beacon</span>
+          <span className="tactical-badge badge-info">BRO Projects Himank / Beacon</span>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))', gap: '14px' }}>
-          {passes.map((pass) => {
-            const isBlocked = !pass.is_passable;
-            return (
-              <div
-                key={pass.id}
-                style={{
-                  padding: '16px',
-                  borderRadius: '8px',
-                  background: 'var(--bg-surface-elevated)',
-                  border: `1px solid ${isBlocked ? 'rgba(239, 68, 68, 0.4)' : 'var(--border-subtle)'}`,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '12px',
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <div>
-                    <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{pass.name}</div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>{pass.highway}</div>
-                  </div>
-                  <span
-                    className={`tactical-badge ${
-                      pass.status === 'OPEN'
-                        ? 'badge-normal'
-                        : pass.status === 'RESTRICTED_CONVOY'
-                        ? 'badge-warning'
-                        : 'badge-critical'
-                    }`}
-                  >
-                    {pass.status.replace('_', ' ')}
-                  </span>
-                </div>
-
+        <div className="panel-body">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '12px' }}>
+            {passes.map((pass) => {
+              const isBlocked = !pass.is_passable;
+              return (
                 <div
+                  key={pass.id}
                   style={{
+                    padding: '14px',
+                    borderRadius: 'var(--radius-md)',
+                    background: 'var(--bg-surface-elevated)',
+                    border: `1px solid ${isBlocked ? 'var(--badge-critical-border)' : 'var(--border-subtle)'}`,
                     display: 'flex',
-                    alignItems: 'center',
-                    gap: '16px',
-                    fontSize: '0.78rem',
-                    color: 'var(--text-secondary)',
-                    fontFamily: 'var(--font-mono)',
+                    flexDirection: 'column',
+                    gap: '10px',
                   }}
                 >
-                  <span className="elevation-tag">{pass.elevation_m}m MSL</span>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Thermometer size={13} /> {pass.temperature_c}°C
-                  </span>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Snowflake size={13} /> {pass.snow_accumulation_cm}cm Snow
-                  </span>
-                </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{pass.name}</div>
+                      <div style={{ fontSize: '0.74rem', color: 'var(--text-secondary)' }}>{pass.highway}</div>
+                    </div>
+                    <span
+                      className={`tactical-badge ${
+                        pass.status === 'OPEN'
+                          ? 'badge-normal'
+                          : pass.status === 'RESTRICTED_CONVOY'
+                          ? 'badge-warning'
+                          : 'badge-critical'
+                      }`}
+                    >
+                      {pass.status.replace(/_/g, ' ')}
+                    </span>
+                  </div>
 
-                {pass.closure_reason && (
                   <div
                     style={{
-                      fontSize: '0.74rem',
-                      color: 'var(--accent-crimson)',
-                      background: 'rgba(239, 68, 68, 0.08)',
-                      padding: '6px 8px',
-                      borderRadius: '4px',
-                    }}
-                  >
-                    ⚠️ {pass.closure_reason}
-                  </div>
-                )}
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
-                  <span style={{ fontSize: '0.72rem', color: 'var(--text-tertiary)' }}>
-                    Detachment: {pass.bro_detachment}
-                  </span>
-                  <button
-                    onClick={() => onTogglePass(pass.id, pass.status)}
-                    className="tactical-btn"
-                    style={{
-                      padding: '4px 10px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
                       fontSize: '0.75rem',
-                      background: isBlocked ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-                      borderColor: isBlocked ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)',
-                      color: isBlocked ? 'var(--accent-emerald)' : 'var(--accent-crimson)',
+                      color: 'var(--text-secondary)',
                     }}
                   >
-                    {isBlocked ? 'Mark CLEARED (Open)' : 'Simulate BLIZZARD (Close)'}
-                  </button>
+                    <span className="elevation-tag">{pass.elevation_m}m MSL</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <Thermometer size={12} /> {pass.temperature_c}°C
+                    </span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <Snowflake size={12} /> {pass.snow_accumulation_cm}cm Snow
+                    </span>
+                  </div>
+
+                  {pass.closure_reason && (
+                    <div
+                      style={{
+                        fontSize: '0.73rem',
+                        color: 'var(--accent-crimson)',
+                        background: 'var(--badge-critical-bg)',
+                        padding: '6px 8px',
+                        borderRadius: 'var(--radius-xs)',
+                        border: '1px solid var(--badge-critical-border)',
+                      }}
+                    >
+                      ⚠️ {pass.closure_reason}
+                    </div>
+                  )}
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '2px' }}>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-tertiary)' }}>
+                      Detachment: {pass.bro_detachment}
+                    </span>
+                    <button
+                      onClick={() => onTogglePass(pass.id, pass.status)}
+                      className="tactical-btn"
+                      style={{
+                        padding: '3px 8px',
+                        fontSize: '0.72rem',
+                        color: isBlocked ? 'var(--accent-emerald)' : 'var(--accent-crimson)',
+                        borderColor: isBlocked ? 'var(--badge-normal-border)' : 'var(--badge-critical-border)',
+                      }}
+                    >
+                      {isBlocked ? 'Mark Cleared (Open)' : 'Simulate Blizzard (Close)'}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
 
       {/* Forward Posts & Base Depots Directory */}
-      <div className="tactical-card" style={{ padding: '24px' }}>
-        <div style={{ marginBottom: '16px' }}>
-          <h2 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>
-            Northern Command XIV Corps — Tactical Locations Directory
-          </h2>
-          <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
-            Base depots, transit camps, and high-altitude forward posts with MGRS coordinates and elevation envelopes.
-          </p>
+      <div className="panel">
+        <div className="panel-header">
+          <div>
+            <div style={{ fontSize: '0.92rem', fontWeight: 600 }}>
+              Northern Command XIV Corps — Tactical Locations Directory
+            </div>
+            <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+              Base logistics depots, transit camps, and forward outposts with elevation envelopes and weather risk classifications.
+            </div>
+          </div>
+          <span className="elevation-tag">{locations.length} Operating Nodes</span>
         </div>
 
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
+        <div className="enterprise-table-container" style={{ border: 'none', borderRadius: 0 }}>
+          <table className="enterprise-table">
             <thead>
-              <tr
-                style={{
-                  borderBottom: '1px solid var(--border-prominent)',
-                  textAlign: 'left',
-                  color: 'var(--text-secondary)',
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.75rem',
-                }}
-              >
-                <th style={{ padding: '10px 12px' }}>NODE ID</th>
-                <th style={{ padding: '10px 12px' }}>FORMATION / POST NAME</th>
-                <th style={{ padding: '10px 12px' }}>SECTOR</th>
-                <th style={{ padding: '10px 12px' }}>ELEVATION</th>
-                <th style={{ padding: '10px 12px' }}>MGRS GRID</th>
-                <th style={{ padding: '10px 12px' }}>TROOP COUNT</th>
-                <th style={{ padding: '10px 12px' }}>AIR LIFT</th>
-                <th style={{ padding: '10px 12px' }}>WEATHER RISK</th>
+              <tr>
+                <th>Node Code</th>
+                <th>Formation / Post Name</th>
+                <th>Operating Sector</th>
+                <th>Elevation</th>
+                <th>MGRS Grid</th>
+                <th>Complement</th>
+                <th>Air Accessibility</th>
+                <th>Environmental Risk</th>
               </tr>
             </thead>
             <tbody>
               {locations.map((loc) => (
-                <tr
-                  key={loc.id}
-                  style={{
-                    borderBottom: '1px solid var(--border-subtle)',
-                    transition: 'background-color 0.15s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'var(--bg-surface-elevated)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                  }}
-                >
-                  <td style={{ padding: '10px 12px', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
+                <tr key={loc.id}>
+                  <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: '0.78rem' }}>
                     {loc.id}
                   </td>
-                  <td style={{ padding: '10px 12px', fontWeight: 600 }}>{loc.name}</td>
-                  <td style={{ padding: '10px 12px', color: 'var(--text-secondary)' }}>
+                  <td style={{ fontWeight: 600 }}>{loc.name}</td>
+                  <td style={{ color: 'var(--text-secondary)' }}>
                     {loc.sector.replace(/_/g, ' ')}
                   </td>
-                  <td style={{ padding: '10px 12px' }}>
+                  <td>
                     <span className="elevation-tag">{loc.elevation_m}m</span>
                   </td>
-                  <td style={{ padding: '10px 12px', fontFamily: 'var(--font-mono)', color: 'var(--text-tertiary)' }}>
+                  <td style={{ fontFamily: 'var(--font-mono)', color: 'var(--text-tertiary)', fontSize: '0.76rem' }}>
                     {loc.mgrs_grid || '—'}
                   </td>
-                  <td style={{ padding: '10px 12px', fontFamily: 'var(--font-mono)' }}>
+                  <td style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem' }}>
                     {loc.current_headcount} PAX
                   </td>
-                  <td style={{ padding: '10px 12px' }}>
+                  <td>
                     {loc.is_air_accessible ? (
-                      <span className="tactical-badge badge-cyan" style={{ fontSize: '0.68rem' }}>
+                      <span className="tactical-badge badge-info" style={{ fontSize: '0.68rem' }}>
                         HELI / ALG
                       </span>
                     ) : (
-                      <span style={{ color: 'var(--text-tertiary)', fontSize: '0.75rem' }}>ROAD ONLY</span>
+                      <span style={{ color: 'var(--text-tertiary)', fontSize: '0.74rem' }}>Surface Only</span>
                     )}
                   </td>
-                  <td style={{ padding: '10px 12px' }}>
+                  <td>
                     <span
                       className={`tactical-badge ${
                         loc.weather_risk_level === 'EXTREME'

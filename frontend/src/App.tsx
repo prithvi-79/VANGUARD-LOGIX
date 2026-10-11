@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { CommandHeader } from './components/CommandHeader';
 import { CommandBriefing } from './components/CommandBriefing';
 import { TacticalGISMap } from './components/TacticalGISMap';
@@ -41,7 +41,7 @@ import {
   FileCheck2,
 } from 'lucide-react';
 
-type TabView =
+export type TabView =
   | 'map'
   | 'briefing'
   | 'inventory'
@@ -55,6 +55,19 @@ type TabView =
   | 'analytics'
   | 'optimization';
 
+type DomainId = 'operations' | 'inventory' | 'planning' | 'contingency' | 'field_indents';
+
+interface NavDomain {
+  id: DomainId;
+  label: string;
+  tabs: Array<{
+    id: TabView;
+    label: string;
+    icon: React.ComponentType<{ size?: number; className?: string }>;
+    badge?: number | string;
+    badgeVariant?: 'critical' | 'warning' | 'normal' | 'info';
+  }>;
+}
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabView>('map');
@@ -70,6 +83,14 @@ export const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isDecisionFlowOpen, setIsDecisionFlowOpen] = useState<boolean>(false);
+
+  // Check URL hash on initial mount (e.g. #field for PWA direct link)
+  useEffect(() => {
+    const hash = window.location.hash.replace('#', '');
+    if (hash === 'field') {
+      setActiveTab('field');
+    }
+  }, []);
 
   const loadTheaterData = async () => {
     setIsLoading(true);
@@ -112,7 +133,7 @@ export const App: React.FC = () => {
       const isCurrentlyOpen = currentStatus === 'OPEN' || currentStatus === 'RESTRICTED_CONVOY';
       const newStatus = isCurrentlyOpen ? 'CLOSED_BLIZZARD' : 'OPEN';
       const reason = isCurrentlyOpen
-        ? 'Simulated blizzard: heavy snow accumulation exceeding 80cm and zero visibility'
+        ? 'Active blizzard: snow accumulation exceeding 80cm and visibility < 20m'
         : undefined;
 
       await api.updatePassStatus(passId, {
@@ -137,13 +158,91 @@ export const App: React.FC = () => {
     }
   };
 
-  // Badge counts
-  const criticalCount = inventory.filter((i) => i.status === 'CRITICAL').length;
-  const blockedPassCount = passes.filter((p) => !p.is_passable).length;
+  // Badge calculations
+  const criticalCount = useMemo(() => inventory.filter((i) => i.status === 'CRITICAL').length, [inventory]);
+  const blockedPassCount = useMemo(() => passes.filter((p) => !p.is_passable).length, [passes]);
+  const pendingIndentsCount = useMemo(() => indents.filter((i) => i.status === 'PENDING_APPROVAL').length, [indents]);
+
+  // Structured 5-domain navigation schema
+  const navDomains: NavDomain[] = useMemo(
+    () => [
+      {
+        id: 'operations',
+        label: 'Operations & Map',
+        tabs: [
+          { id: 'map', label: 'Theater Map & Routes', icon: Compass },
+          { id: 'briefing', label: 'Operational Overview', icon: LayoutDashboard },
+          {
+            id: 'passes',
+            label: 'Mountain Passes',
+            icon: Mountain,
+            badge: blockedPassCount > 0 ? `${blockedPassCount} Closed` : undefined,
+            badgeVariant: 'critical',
+          },
+          { id: 'fleet', label: 'Fleet & Altitude Rating', icon: Truck },
+        ],
+      },
+      {
+        id: 'inventory',
+        label: 'Supply & Stock',
+        tabs: [
+          {
+            id: 'inventory',
+            label: 'Supply Stock Ledgers',
+            icon: Boxes,
+            badge: criticalCount > 0 ? criticalCount : undefined,
+            badgeVariant: 'critical',
+          },
+          { id: 'analytics', label: 'Priority & Physics Engine', icon: Cpu },
+        ],
+      },
+      {
+        id: 'planning',
+        label: 'Demand & Dispatch',
+        tabs: [
+          { id: 'optimization', label: 'Demand Forecast & Fleet Dispatch', icon: Brain },
+        ],
+      },
+      {
+        id: 'contingency',
+        label: 'Contingency & Audit',
+        tabs: [
+          { id: 'disruption', label: 'Disruption Simulator', icon: Sliders },
+          { id: 'telemetry', label: 'Storage Telemetry & Leaks', icon: Activity },
+          { id: 'alerts', label: 'Operational Alerts', icon: Bell },
+        ],
+      },
+      {
+        id: 'field_indents',
+        label: 'Requisitions & Field Office',
+        tabs: [
+          {
+            id: 'indents',
+            label: 'IAF-Z-2096 Movement Orders',
+            icon: FileCheck2,
+            badge: pendingIndentsCount > 0 ? pendingIndentsCount : undefined,
+            badgeVariant: 'warning',
+          },
+          { id: 'field', label: 'Field Outpost Portal (Offline / हिन्दी)', icon: Smartphone },
+        ],
+      },
+    ],
+    [criticalCount, blockedPassCount, pendingIndentsCount]
+  );
+
+  // Determine current active domain
+  const activeDomain = useMemo(() => {
+    for (const d of navDomains) {
+      if (d.tabs.some((t) => t.id === activeTab)) {
+        return d;
+      }
+    }
+    return navDomains[0];
+  }, [navDomains, activeTab]);
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* Top Tactical Header */}
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-app)' }}>
+      {/* Top Header */}
       <CommandHeader
         dbStatus={dbStatus}
         onRefresh={loadTheaterData}
@@ -151,339 +250,117 @@ export const App: React.FC = () => {
         onOpenDecisionFlow={() => setIsDecisionFlowOpen(true)}
       />
 
-      {/* Navigation Tabs Bar */}
-      <div
+      {/* Primary Domain Navigation Ribbon */}
+      <nav
+        aria-label="Primary Navigation"
         style={{
           background: 'var(--bg-surface)',
           borderBottom: '1px solid var(--border-subtle)',
           padding: '0 24px',
           display: 'flex',
-          gap: '4px',
-          overflowX: 'auto',
+          justifyContent: 'space-between',
+          alignItems: 'center',
           position: 'sticky',
           top: '73px',
           zIndex: 40,
+          flexWrap: 'wrap',
+          gap: '8px',
         }}
       >
-        <button
-          onClick={() => setActiveTab('map')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '12px 16px',
-            background: 'transparent',
-            border: 'none',
-            borderBottom: activeTab === 'map' ? '3px solid var(--accent-cyan)' : '3px solid transparent',
-            color: activeTab === 'map' ? 'var(--accent-cyan)' : 'var(--text-secondary)',
-            fontWeight: activeTab === 'map' ? 700 : 500,
-            fontSize: '0.85rem',
-            cursor: 'pointer',
-            transition: 'all 0.15s ease',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          <Compass size={16} />
-          <span>Tactical GIS Sector Map</span>
-        </button>
+        {/* Domain Tabs (Carbon Product Tab Strip) */}
+        <div style={{ display: 'flex', gap: '0px', overflowX: 'auto', padding: '0' }}>
+          {navDomains.map((domain) => {
+            const isDomainActive = activeDomain.id === domain.id;
+            return (
+              <button
+                key={domain.id}
+                onClick={() => {
+                  if (!isDomainActive) {
+                    setActiveTab(domain.tabs[0].id);
+                  }
+                }}
+                style={{
+                  padding: '14px 18px',
+                  borderRadius: '0px',
+                  border: 'none',
+                  borderBottom: isDomainActive ? '2px solid var(--accent-primary)' : '2px solid transparent',
+                  background: 'transparent',
+                  color: isDomainActive ? 'var(--text-primary)' : 'var(--text-secondary)',
+                  fontWeight: isDomainActive ? 600 : 400,
+                  fontSize: '0.84rem',
+                  letterSpacing: '0.16px',
+                  cursor: 'pointer',
+                  transition: 'color 0.12s ease',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                <span>{domain.label}</span>
+              </button>
+            );
+          })}
+        </div>
 
-        <button
-          onClick={() => setActiveTab('briefing')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '12px 16px',
-            background: 'transparent',
-            border: 'none',
-            borderBottom: activeTab === 'briefing' ? '3px solid var(--accent-cyan)' : '3px solid transparent',
-            color: activeTab === 'briefing' ? 'var(--accent-cyan)' : 'var(--text-secondary)',
-            fontWeight: activeTab === 'briefing' ? 700 : 500,
-            fontSize: '0.85rem',
-            cursor: 'pointer',
-            transition: 'all 0.15s ease',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          <LayoutDashboard size={16} />
-          <span>Theater Overview & Briefing</span>
-        </button>
+        {/* Secondary Sub-View Actions for Active Domain */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 0', overflowX: 'auto' }}>
+          {activeDomain.tabs.map((tab) => {
+            const isTabActive = activeTab === tab.id;
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className="tactical-btn"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '6px 12px',
+                  fontSize: '0.78rem',
+                  borderRadius: '0px',
+                  background: isTabActive ? 'var(--accent-primary)' : 'var(--bg-surface-elevated)',
+                  borderColor: isTabActive ? 'var(--accent-primary)' : 'var(--border-subtle)',
+                  color: isTabActive ? 'var(--text-inverse)' : 'var(--text-primary)',
+                  fontWeight: isTabActive ? 600 : 400,
+                }}
+              >
+                <Icon size={14} />
+                <span>{tab.label}</span>
+                {tab.badge && (
+                  <span
+                    className={`tactical-badge ${
+                      tab.badgeVariant === 'critical'
+                        ? 'badge-critical'
+                        : tab.badgeVariant === 'warning'
+                        ? 'badge-warning'
+                        : 'badge-info'
+                    }`}
+                    style={{
+                      fontSize: '0.65rem',
+                      padding: '1px 5px',
+                      borderRadius: '0px',
+                      background: isTabActive ? 'rgba(0, 0, 0, 0.25)' : undefined,
+                      color: isTabActive ? '#ffffff' : undefined,
+                      borderColor: isTabActive ? 'transparent' : undefined,
+                    }}
+                  >
+                    {tab.badge}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </nav>
 
-        <button
-          onClick={() => setActiveTab('inventory')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '12px 16px',
-            background: 'transparent',
-            border: 'none',
-            borderBottom: activeTab === 'inventory' ? '3px solid var(--accent-cyan)' : '3px solid transparent',
-            color: activeTab === 'inventory' ? 'var(--accent-cyan)' : 'var(--text-secondary)',
-            fontWeight: activeTab === 'inventory' ? 700 : 500,
-            fontSize: '0.85rem',
-            cursor: 'pointer',
-            transition: 'all 0.15s ease',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          <Boxes size={16} />
-          <span>Inventory & DoS Ledgers</span>
-          {criticalCount > 0 && (
-            <span
-              style={{
-                background: '#ef4444',
-                color: '#ffffff',
-                fontSize: '0.65rem',
-                fontWeight: 800,
-                padding: '1px 6px',
-                borderRadius: '999px',
-                fontFamily: 'var(--font-mono)',
-              }}
-            >
-              {criticalCount}
-            </span>
-          )}
-        </button>
-
-        <button
-          onClick={() => setActiveTab('passes')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '12px 16px',
-            background: 'transparent',
-            border: 'none',
-            borderBottom: activeTab === 'passes' ? '3px solid var(--accent-cyan)' : '3px solid transparent',
-            color: activeTab === 'passes' ? 'var(--accent-cyan)' : 'var(--text-secondary)',
-            fontWeight: activeTab === 'passes' ? 700 : 500,
-            fontSize: '0.85rem',
-            cursor: 'pointer',
-            transition: 'all 0.15s ease',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          <Mountain size={16} />
-          <span>BRO Strategic Passes</span>
-          {blockedPassCount > 0 && (
-            <span
-              style={{
-                background: '#ef4444',
-                color: '#ffffff',
-                fontSize: '0.65rem',
-                fontWeight: 800,
-                padding: '1px 6px',
-                borderRadius: '999px',
-                fontFamily: 'var(--font-mono)',
-              }}
-            >
-              {blockedPassCount} Severed
-            </span>
-          )}
-        </button>
-
-        <button
-          onClick={() => setActiveTab('fleet')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '12px 16px',
-            background: 'transparent',
-            border: 'none',
-            borderBottom: activeTab === 'fleet' ? '3px solid var(--accent-cyan)' : '3px solid transparent',
-            color: activeTab === 'fleet' ? 'var(--accent-cyan)' : 'var(--text-secondary)',
-            fontWeight: activeTab === 'fleet' ? 700 : 500,
-            fontSize: '0.85rem',
-            cursor: 'pointer',
-            transition: 'all 0.15s ease',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          <Truck size={16} />
-          <span>Multimodal Fleet Readiness</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('indents')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '12px 16px',
-            background: 'transparent',
-            border: 'none',
-            borderBottom: activeTab === 'indents' ? '3px solid var(--accent-gold)' : '3px solid transparent',
-            color: activeTab === 'indents' ? 'var(--accent-gold)' : 'var(--text-secondary)',
-            fontWeight: activeTab === 'indents' ? 700 : 500,
-            fontSize: '0.85rem',
-            cursor: 'pointer',
-            transition: 'all 0.15s ease',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          <FileCheck2 size={16} />
-          <span>IAF-Z-2096 Indents & Orders</span>
-          {indents.length > 0 && (
-            <span
-              style={{
-                background: 'rgba(234, 179, 8, 0.2)',
-                color: 'var(--accent-gold)',
-                fontSize: '0.65rem',
-                fontWeight: 800,
-                padding: '1px 6px',
-                borderRadius: '999px',
-                fontFamily: 'var(--font-mono)',
-              }}
-            >
-              {indents.length}
-            </span>
-          )}
-        </button>
-
-        <button
-          onClick={() => setActiveTab('field')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '12px 16px',
-            background: 'transparent',
-            border: 'none',
-            borderBottom: activeTab === 'field' ? '3px solid var(--accent-emerald)' : '3px solid transparent',
-            color: activeTab === 'field' ? 'var(--accent-emerald)' : 'var(--text-secondary)',
-            fontWeight: activeTab === 'field' ? 700 : 500,
-            fontSize: '0.85rem',
-            cursor: 'pointer',
-            transition: 'all 0.15s ease',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          <Smartphone size={16} />
-          <span>Field PWA (Offline & हिन्दी)</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('disruption')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '12px 16px',
-            background: 'transparent',
-            border: 'none',
-            borderBottom: activeTab === 'disruption' ? '3px solid var(--accent-crimson)' : '3px solid transparent',
-            color: activeTab === 'disruption' ? 'var(--accent-crimson)' : 'var(--text-secondary)',
-            fontWeight: activeTab === 'disruption' ? 700 : 500,
-            fontSize: '0.85rem',
-            cursor: 'pointer',
-            transition: 'all 0.15s ease',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          <Sliders size={16} />
-          <span>What-If Disruption Simulator</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('telemetry')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '12px 16px',
-            background: 'transparent',
-            border: 'none',
-            borderBottom: activeTab === 'telemetry' ? '3px solid var(--accent-cyan)' : '3px solid transparent',
-            color: activeTab === 'telemetry' ? 'var(--accent-cyan)' : 'var(--text-secondary)',
-            fontWeight: activeTab === 'telemetry' ? 700 : 500,
-            fontSize: '0.85rem',
-            cursor: 'pointer',
-            transition: 'all 0.15s ease',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          <Activity size={16} />
-          <span>IoT Fuel & Cold-Chain Telemetry</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('alerts')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '12px 16px',
-            background: 'transparent',
-            border: 'none',
-            borderBottom: activeTab === 'alerts' ? '3px solid var(--accent-cyan)' : '3px solid transparent',
-            color: activeTab === 'alerts' ? 'var(--accent-cyan)' : 'var(--text-secondary)',
-            fontWeight: activeTab === 'alerts' ? 700 : 500,
-            fontSize: '0.85rem',
-            cursor: 'pointer',
-            transition: 'all 0.15s ease',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          <Bell size={16} />
-          <span>Operational Alerts Feed</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('analytics')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '12px 16px',
-            background: 'transparent',
-            border: 'none',
-            borderBottom: activeTab === 'analytics' ? '3px solid var(--accent-cyan)' : '3px solid transparent',
-            color: activeTab === 'analytics' ? 'var(--accent-cyan)' : 'var(--text-secondary)',
-            fontWeight: activeTab === 'analytics' ? 700 : 500,
-            fontSize: '0.85rem',
-            cursor: 'pointer',
-            transition: 'all 0.15s ease',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          <Cpu size={16} />
-          <span>Priority & Terrain Physics Engines</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('optimization')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '12px 16px',
-            background: 'transparent',
-            border: 'none',
-            borderBottom: activeTab === 'optimization' ? '3px solid var(--accent-gold)' : '3px solid transparent',
-            color: activeTab === 'optimization' ? 'var(--accent-gold)' : 'var(--text-secondary)',
-            fontWeight: activeTab === 'optimization' ? 700 : 500,
-            fontSize: '0.85rem',
-            cursor: 'pointer',
-            transition: 'all 0.15s ease',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          <Brain size={16} />
-          <span>Predictive ML & Fleet Optimizer</span>
-        </button>
-      </div>
-
-      {/* Main Body */}
-      <main style={{ flex: 1, padding: '24px', maxWidth: '1440px', margin: '0 auto', width: '100%' }}>
+      {/* Main Content Viewport */}
+      <main style={{ flex: 1, padding: '20px 24px', maxWidth: '1600px', margin: '0 auto', width: '100%' }}>
         {error ? (
           <div
-            className="tactical-card"
+            className="panel"
             style={{
               padding: '24px',
               border: '1px solid var(--accent-crimson)',
-              background: 'rgba(239, 68, 68, 0.08)',
+              background: 'var(--badge-critical-bg)',
               display: 'flex',
               alignItems: 'center',
               gap: '16px',
@@ -491,18 +368,18 @@ export const App: React.FC = () => {
           >
             <AlertCircle size={28} className="text-crimson" />
             <div>
-              <h3 style={{ fontWeight: 700, color: 'var(--accent-crimson)', margin: 0 }}>
-                Tactical Gateway Connection Error
+              <h3 style={{ fontWeight: 600, color: 'var(--accent-crimson)', margin: 0, fontSize: '1rem' }}>
+                Service Gateway Connection Error
               </h3>
               <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                {error}. Ensure the FastAPI backend server is running on port 8000.
+                {error}. Verify the backend API server is active on port 8000.
               </p>
               <button
                 onClick={loadTheaterData}
                 className="tactical-btn"
                 style={{ marginTop: '12px' }}
               >
-                <RefreshCw size={14} /> Retry Gateway Connection
+                <RefreshCw size={14} /> Reconnect Gateway
               </button>
             </div>
           </div>
@@ -513,16 +390,13 @@ export const App: React.FC = () => {
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              height: '420px',
-              gap: '16px',
+              height: '380px',
+              gap: '14px',
             }}
           >
-            <div
-              className="pulse-indicator"
-              style={{ width: '22px', height: '22px', background: 'var(--accent-cyan)' }}
-            />
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-              SYNCHRONIZING TACTICAL SECURE STREAM • NORTHERN COMMAND XIV CORPS...
+            <RefreshCw size={24} className="animate-spin text-sky" />
+            <div style={{ fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
+              Loading theater stock, road corridors, and pass conditions...
             </div>
           </div>
         ) : activeTab === 'map' ? (
@@ -598,34 +472,39 @@ export const App: React.FC = () => {
         )}
       </main>
 
-
       {/* Decision Flow Modal */}
       <DecisionFlowModal
         isOpen={isDecisionFlowOpen}
         onClose={() => setIsDecisionFlowOpen(false)}
       />
 
-      {/* Military Intranet Footer */}
+      {/* Carbon Inverted Footer */}
       <footer
         style={{
-          padding: '16px 24px',
-          borderTop: '1px solid var(--border-subtle)',
-          background: 'var(--bg-surface)',
+          padding: '28px 24px',
+          borderTop: '1px solid var(--footer-border)',
+          background: 'var(--footer-bg)',
+          color: 'var(--footer-text)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          fontSize: '0.75rem',
-          color: 'var(--text-tertiary)',
-          fontFamily: 'var(--font-mono)',
+          fontSize: '0.78rem',
+          letterSpacing: '0.16px',
           flexWrap: 'wrap',
-          gap: '8px',
+          gap: '12px',
         }}
       >
         <div>
-          VANGUARD-LOGIX • SMART INDIA HACKATHON 2026 (PS 26251) • MINISTRY OF DEFENCE
+          <span style={{ color: 'var(--footer-heading)', fontWeight: 600 }}>Vanguard Logistics Operations Platform</span>
+          <span style={{ margin: '0 8px', color: 'var(--footer-border)' }}>•</span>
+          <span>Northern Command XIV Corps</span>
+          <span style={{ margin: '0 8px', color: 'var(--footer-border)' }}>•</span>
+          <span>Directorate General of Supplies & Transport</span>
         </div>
-        <div>
-          SYNTHETIC DECISION SUPPORT • SEED: 26251 • DUAL-MODE SQLITE/POSTGRESQL
+        <div style={{ display: 'flex', gap: '16px', color: 'var(--footer-text)' }}>
+          <span>Deterministic Modeling Engine</span>
+          <span>•</span>
+          <span>Dual-Mode Architecture (PostgreSQL / SQLite)</span>
         </div>
       </footer>
     </div>
