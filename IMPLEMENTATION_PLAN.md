@@ -166,15 +166,18 @@ graph LR
 ---
 
 ## Phase 7: SIH Demonstration & Delivery Package
-**Target:** Flawless local demonstration package, jury walkthrough runbook, and presentation assets.
+**Target:** Flawless local demonstration package, jury walkthrough runbook, and presentation assets.  
+**Status:** **COMPLETED**
 
-- [ ] Create one-click launcher script (`demo.py` / `start.ps1`) for seamless zero-config startup.
-- [ ] Author production `README.md` with architectural diagrams, feature-to-requirement mapping, and quickstart instructions.
-- [ ] Create safe example environment file (`.env.example`).
-- [ ] Document SIH Jury Presentation Walkthrough:
+- [x] Create one-click launcher scripts (`run_dev.ps1`, `run_dev.bat`, `demo_launcher.py`) for seamless zero-config startup.
+- [x] Author production `README.md` with architectural diagrams, feature-to-requirement mapping, and quickstart instructions.
+- [x] Create safe example environment file (`.env.example`).
+- [x] Document SIH Jury Presentation Walkthrough (`DEMO_RUNBOOK.md`):
   - Step-by-step 3-minute click-path demonstrating core problem solution.
   - Replay of real mountain pass closure and automated air-bridge response.
   - Offline field voucher entry and live synchronization demonstration.
   - Forecast evaluation metrics and explainability breakdown.
-- [ ] Document known limitations and future military operational roadmap.
-- [ ] **Phase 7 Exit & Delivery:** Final project sign-off and Git release tag.
+  - What-If disruption wargaming simulation.
+  - IoT telemetry discrepancy leak detection demonstration.
+- [x] Document known limitations and future military operational roadmap (`LIMITATIONS_AND_FUTURE_ROADMAP.md`).
+- [x] **Phase 7 Exit & Delivery:** Final project sign-off and Git release tag.
