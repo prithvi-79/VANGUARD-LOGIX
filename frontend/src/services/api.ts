@@ -21,7 +21,15 @@ import type {
   QuantileForecastResponse,
   OptimizationResponse,
   DecisionExplanationReport,
+  DisruptionScenarioPreset,
+  DisruptionSimulationRequest,
+  DisruptionSimulationResponse,
+  TelemetryOverviewResponse,
+  TelemetryRecord,
+  DiscrepancyAlert,
+  MovementOrderResponse,
 } from '../types';
+
 
 const BASE_URL = '/api';
 
@@ -215,4 +223,50 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(data),
     }),
+
+  // Phase 5: Enhanced Indent Actions & Movement Orders
+  getIndentById: (indentId: string): Promise<IndentVoucher> =>
+    fetchJson(`${BASE_URL}/indents/voucher?indent_id=${encodeURIComponent(indentId)}`),
+
+  updateIndentStatus: (indentId: string, status: string, remarks?: string): Promise<IndentVoucher> =>
+    fetchJson(`${BASE_URL}/indents/status?indent_id=${encodeURIComponent(indentId)}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status, remarks }),
+    }),
+
+  getMovementOrder: (indentId: string): Promise<MovementOrderResponse> =>
+    fetchJson(`${BASE_URL}/indents/movement-order?indent_id=${encodeURIComponent(indentId)}`),
+
+  getMovementOrdersCsvUrl: (): string => `${BASE_URL}/indents/movement-orders/export-csv`,
+
+  // Phase 5: What-If Disruption Scenario Simulator
+  getDisruptionScenarios: (): Promise<DisruptionScenarioPreset[]> =>
+    fetchJson(`${BASE_URL}/disruption/scenarios`),
+
+  simulateDisruption: (data: DisruptionSimulationRequest): Promise<DisruptionSimulationResponse> =>
+    fetchJson(`${BASE_URL}/disruption/simulate`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  // Phase 5: IoT Telemetry & Sensor Discrepancy Detection
+  getTelemetryOverview: (): Promise<TelemetryOverviewResponse> =>
+    fetchJson(`${BASE_URL}/telemetry/overview`),
+
+  getLiveTelemetry: (): Promise<TelemetryRecord[]> =>
+    fetchJson(`${BASE_URL}/telemetry/live`),
+
+  getDiscrepancies: (): Promise<DiscrepancyAlert[]> =>
+    fetchJson(`${BASE_URL}/telemetry/discrepancies`),
+
+  simulateTelemetryAnomaly: (
+    locationId: string,
+    anomalyType: string,
+    severity = 'CRITICAL'
+  ): Promise<any> =>
+    fetchJson(`${BASE_URL}/telemetry/simulate-anomaly`, {
+      method: 'POST',
+      body: JSON.stringify({ location_id: locationId, anomaly_type: anomalyType, severity }),
+    }),
 };
+

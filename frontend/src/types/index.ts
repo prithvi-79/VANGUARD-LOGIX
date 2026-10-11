@@ -345,3 +345,134 @@ export interface DecisionExplanationReport {
   doctrine_compliance_ref: string;
   decision_disclaimer: string;
 }
+
+// Phase 5: What-If Disruption Scenario Types
+export interface DisruptionScenarioPreset {
+  id: string;
+  name: string;
+  code: string;
+  description: string;
+  severity: string;
+  default_temp_delta_c: number;
+  default_troop_surge_pct: number;
+  default_closed_passes: string[];
+  default_fleet_availability_pct: number;
+  tactical_rationale: string;
+}
+
+export interface DisruptionSimulationRequest {
+  scenario_id?: string;
+  temp_delta_c: number;
+  troop_surge_pct: number;
+  closed_pass_ids: string[];
+  fleet_availability_pct: number;
+}
+
+export interface LocationDisruptionDelta {
+  location_id: string;
+  location_name: string;
+  sector: string;
+  elevation_m: number;
+  headcount_baseline: number;
+  headcount_disrupted: number;
+  baseline_mean_dos: number;
+  disrupted_mean_dos: number;
+  delta_dos: number;
+  baseline_critical_items: number;
+  disrupted_critical_items: number;
+  emergency_deficit_kg: number;
+  isolation_status: string;
+  contingency_mode: string;
+}
+
+export interface StrategicResponseAction {
+  priority_level: string;
+  action_title: string;
+  target_formation_or_unit: string;
+  operational_order: string;
+  justification: string;
+}
+
+export interface DisruptionSimulationResponse {
+  scenario_id: string;
+  scenario_name: string;
+  temp_delta_c: number;
+  troop_surge_pct: number;
+  fleet_availability_pct: number;
+  closed_pass_count: number;
+  baseline_mean_dos: number;
+  disrupted_mean_dos: number;
+  dos_drop_pct: number;
+  baseline_stockout_events: number;
+  disrupted_stockout_events: number;
+  delta_stockout_events: number;
+  critical_outposts_baseline: number;
+  critical_outposts_disrupted: number;
+  delta_critical_outposts: number;
+  total_emergency_tonnage_kg: number;
+  mi17_sorties_required: number;
+  projected_transit_delay_hours: number;
+  location_deltas: LocationDisruptionDelta[];
+  response_actions: StrategicResponseAction[];
+}
+
+// Phase 5: IoT Telemetry & Sensor Types
+export interface TelemetryRecord {
+  id: string;
+  location_id: string;
+  location_name: string;
+  sensor_type: string;
+  reading_value: number;
+  unit: string;
+  status: 'NORMAL' | 'WARNING' | 'CRITICAL';
+  alert_message?: string;
+  timestamp: string;
+}
+
+export interface DiscrepancyAlert {
+  id: string;
+  location_id: string;
+  location_name: string;
+  supply_id: string;
+  supply_name: string;
+  supply_class: string;
+  physical_sensor_reading: number;
+  book_stock_quantity: number;
+  discrepancy_amount: number;
+  discrepancy_pct: number;
+  severity: 'CRITICAL' | 'WARNING' | 'MODERATE';
+  alert_type: string;
+  detection_message: string;
+  recommended_action: string;
+  timestamp: string;
+}
+
+export interface TelemetryOverviewResponse {
+  total_active_sensors: number;
+  sensors_normal: number;
+  sensors_warning: number;
+  sensors_critical: number;
+  readings: TelemetryRecord[];
+  active_discrepancies: DiscrepancyAlert[];
+}
+
+// Phase 5: Movement Orders
+export interface MovementOrderResponse {
+  voucher_id: string;
+  movement_order_number: string;
+  origin_depot_id: string;
+  destination_outpost_id: string;
+  priority_level: string;
+  assigned_vehicle_callsign: string;
+  vehicle_type: string;
+  convoy_commander: string;
+  authorized_officer: string;
+  departure_window: string;
+  estimated_arrival: string;
+  route_checkpoints: string[];
+  cargo_items: Array<Record<string, any>>;
+  total_cargo_weight_kg: number;
+  verification_hash: string;
+  security_classification: string;
+}
+

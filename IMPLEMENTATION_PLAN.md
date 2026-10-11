@@ -127,25 +127,27 @@ graph LR
 
 ## Phase 5: Integration, Military Workflows & Offline Field PWA
 **Target:** End-to-end tactical workflows, formal requisition indents, and offline field capability.
+**Status:** **COMPLETED**
 
-- [ ] Implement IAF-Z-2096 Military Requisition Indent workflow:
+- [x] Implement IAF-Z-2096 Military Requisition Indent workflow:
   - Requisition form capturing unit, formation, priority (`OP_IMMEDIATE`, `PRIORITY`, `ROUTINE`), officer service number, and justification.
   - Generation of unique voucher numbers with SHA-256 cryptographic verification hashes.
-  - Printable tactical dispatch slips and CSV movement orders export.
-- [ ] Implement Bilingual Offline Field PWA (`/field`):
+  - Printable tactical dispatch slips and CSV movement orders export (`/api/indents/movement-orders/export-csv`).
+- [x] Implement Bilingual Offline Field PWA (`/field`):
   - Lightweight stocktaking view supporting English and Hindi (हिंदी).
-  - Service Worker offline caching and local voucher storage (IndexedDB / LocalStorage).
+  - Service Worker offline caching (`sw.js`, `manifest.json`) and local voucher storage (LocalStorage).
   - Offline mode simulation toggle ("Simulate No Signal").
   - Idempotent batch synchronization endpoint (`POST /api/indents/sync`).
-- [ ] Implement What-If Disruption Simulator:
+- [x] Implement What-If Disruption Simulator:
   - 5 selectable disruption scenarios: `BASELINE`, `SEVERE_BLIZZARD`, `PASS_AVALANCHE_BLOCKAGE`, `TROOP_REINFORCEMENT_SURGE`, `AIRLIFT_CONTINGENCY`.
   - Interactive sliders for temperature drop, pass closures, and troop surges.
   - Before-and-after operational comparison table ($\Delta$ Stockouts, $\Delta$ DoS, $\Delta$ Lift Tonnage).
   - Recommended response action generator.
-- [ ] Implement IoT Sensor Telemetry Simulator:
+- [x] Implement IoT Sensor Telemetry Simulator:
   - Telemetry generation for fuel bladder temperatures, anti-waxing heaters, and cryo-cooler plasma chambers.
   - Discrepancy detection alerting on physical vs book stock differences (fuel leak/pilferage alerts).
-- [ ] **Phase 5 Checkpoint:** Verify complete end-to-end user workflows, update documentation, create commit.
+- [x] **Phase 5 Checkpoint:** Verify complete end-to-end user workflows, 55/55 pytest tests passing (100%), 0 build errors in 15.5s, update documentation, create commit.
+
 
 ---
 

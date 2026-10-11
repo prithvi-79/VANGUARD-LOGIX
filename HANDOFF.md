@@ -2,9 +2,9 @@
 
 **Project:** Indian Army — Predictive Logistics & Forward Supply Chain (SIH PS 26251)  
 **System Name:** VANGUARD-LOGIX  
-**Phase Completed:** Phase 4 (Predictive Demand Forecasting & Multimodal Optimization)  
-**Next Phase:** Phase 5 (Military Workflows, IAF-Z-2096 Indents & Offline Field PWA)  
-**Document Updated:** 2026-10-10  
+**Phase Completed:** Phase 5 (Military Workflows, IAF-Z-2096 Indents & Bilingual Offline Field PWA)  
+**Next Phase:** Phase 6 (Quality Assurance, Security & Performance Hardening)  
+**Document Updated:** 2026-10-11  
 
 ---
 
@@ -14,15 +14,15 @@ If execution is interrupted, or when opening a new conversation window / switchi
 
 ### Step 1: Verification Command
 Say:
-> **"RESUME PROJECT"** or **"PROCEED TO PHASE 5"**
+> **"RESUME PROJECT"** or **"PROCEED TO PHASE 6"**
 
 ### Step 2: Automated Recovery Sequence
 Antigravity will automatically:
 1. Read [`PROJECT_STATE.md`](file:///c:/Users/Admin/Desktop/project/PROJECT_STATE.md) and [`HANDOFF.md`](file:///c:/Users/Admin/Desktop/project/HANDOFF.md).
 2. Inspect the current workspace files in `c:\Users\Admin\Desktop\project`.
-3. Check the local Git status and recent commits (`ad56978`, `b5af309`, `0f05a63`, and Phase 4 commit).
-4. Confirm completed checkpoints (Phases 0, 1, 2, 3, 4).
-5. Advance directly to Phase 5 (IAF-Z-2096 military indents, bilingual offline field PWA, what-if disruption scenarios).
+3. Check the local Git status and recent commits (`ad56978`, `b5af309`, `0f05a63`, `6d64475`, and Phase 5 commit).
+4. Confirm completed checkpoints (Phases 0, 1, 2, 3, 4, 5).
+5. Advance directly to Phase 6 (automated tests suite, end-to-end verification, security checks, and performance benchmarks).
 
 ---
 
@@ -35,6 +35,7 @@ Antigravity will automatically:
 | **Phase 2** | Tactical GIS map, BRO pass monitor, fleet calculator, alerts | 0 build errors in 19s |
 | **Phase 3** | Pure DoS burn-down engine, 0–100 priority scoring, slope physics ($R_g$), REST APIs, UI analytics | 35/35 tests pass (100%), 0 build errors |
 | **Phase 4** | Quantile demand forecaster ($P_{10}/P_{50}/P_{90}$) with WAPE, CVRPTW fleet solver, explainability | 46/46 tests pass (100%), 0 build errors in 26s |
+| **Phase 5** | IAF-Z-2096 indents, movement orders CSV, bilingual offline PWA, What-If simulator, IoT telemetry | 55/55 tests pass (100%), 0 build errors in 15.5s |
 
 ---
 
@@ -51,12 +52,13 @@ Antigravity will automatically:
 
 ---
 
-## 4. Next Immediate Action for Phase 5
+## 4. Next Immediate Action for Phase 6
 Say:
-> **"PROCEED TO PHASE 5"**
+> **"PROCEED TO PHASE 6"**
 
-Phase 5 will implement:
-1. IAF-Z-2096 Military Requisition Indent workflow with requisition form, officer service numbers, priority tiers, and SHA-256 cryptographic verification hashes.
-2. Bilingual Offline Field PWA (`/field`) with English/Hindi (हिंदी) toggles, service worker caching, and offline batch sync (`/api/indents/sync`).
-3. What-If Disruption Scenario Simulator (blizzard, avalanche, troop surge, airlift contingency) with delta impact tables.
-4. IoT Fuel Bladder & Cold-Chain Telemetry Simulator with discrepancy alerts.
+Phase 6 will implement:
+1. End-to-end integration and API contract verification sweep.
+2. Strict Pydantic v2 input validation and error code consistency checks.
+3. Security boundary audit (CORS, uncommitted secrets, zero external dependencies).
+4. Full `TESTING.md` matrix update and benchmark verification.
+

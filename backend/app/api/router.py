@@ -16,6 +16,8 @@ from app.api.endpoints import (
     forecast,
     optimize,
     explain,
+    disruption,
+    telemetry,
 )
 
 api_router = APIRouter()
@@ -32,3 +34,6 @@ api_router.include_router(terrain.router)
 api_router.include_router(forecast.router)
 api_router.include_router(optimize.router)
 api_router.include_router(explain.router)
+api_router.include_router(disruption.router)
+api_router.include_router(telemetry.router)
+

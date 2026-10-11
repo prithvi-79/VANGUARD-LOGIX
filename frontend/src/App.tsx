@@ -9,6 +9,10 @@ import { OperationalAlerts } from './components/OperationalAlerts';
 import { DecisionFlowModal } from './components/DecisionFlowModal';
 import { StrategicIntelligence } from './components/StrategicIntelligence';
 import { PredictiveOptimization } from './components/PredictiveOptimization';
+import { DisruptionSimulator } from './components/DisruptionSimulator';
+import { TelemetryMonitor } from './components/TelemetryMonitor';
+import { FieldStockPWA } from './components/FieldStockPWA';
+import { MilitaryIndents } from './components/MilitaryIndents';
 import { api } from './services/api';
 import type {
   Location,
@@ -31,9 +35,26 @@ import {
   Bell,
   Cpu,
   Brain,
+  Sliders,
+  Activity,
+  Smartphone,
+  FileCheck2,
 } from 'lucide-react';
 
-type TabView = 'map' | 'briefing' | 'inventory' | 'passes' | 'fleet' | 'alerts' | 'analytics' | 'optimization';
+type TabView =
+  | 'map'
+  | 'briefing'
+  | 'inventory'
+  | 'passes'
+  | 'fleet'
+  | 'indents'
+  | 'field'
+  | 'disruption'
+  | 'telemetry'
+  | 'alerts'
+  | 'analytics'
+  | 'optimization';
+
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabView>('map');
@@ -285,6 +306,109 @@ export const App: React.FC = () => {
         </button>
 
         <button
+          onClick={() => setActiveTab('indents')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '12px 16px',
+            background: 'transparent',
+            border: 'none',
+            borderBottom: activeTab === 'indents' ? '3px solid var(--accent-gold)' : '3px solid transparent',
+            color: activeTab === 'indents' ? 'var(--accent-gold)' : 'var(--text-secondary)',
+            fontWeight: activeTab === 'indents' ? 700 : 500,
+            fontSize: '0.85rem',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <FileCheck2 size={16} />
+          <span>IAF-Z-2096 Indents & Orders</span>
+          {indents.length > 0 && (
+            <span
+              style={{
+                background: 'rgba(234, 179, 8, 0.2)',
+                color: 'var(--accent-gold)',
+                fontSize: '0.65rem',
+                fontWeight: 800,
+                padding: '1px 6px',
+                borderRadius: '999px',
+                fontFamily: 'var(--font-mono)',
+              }}
+            >
+              {indents.length}
+            </span>
+          )}
+        </button>
+
+        <button
+          onClick={() => setActiveTab('field')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '12px 16px',
+            background: 'transparent',
+            border: 'none',
+            borderBottom: activeTab === 'field' ? '3px solid var(--accent-emerald)' : '3px solid transparent',
+            color: activeTab === 'field' ? 'var(--accent-emerald)' : 'var(--text-secondary)',
+            fontWeight: activeTab === 'field' ? 700 : 500,
+            fontSize: '0.85rem',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <Smartphone size={16} />
+          <span>Field PWA (Offline & हिन्दी)</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('disruption')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '12px 16px',
+            background: 'transparent',
+            border: 'none',
+            borderBottom: activeTab === 'disruption' ? '3px solid var(--accent-crimson)' : '3px solid transparent',
+            color: activeTab === 'disruption' ? 'var(--accent-crimson)' : 'var(--text-secondary)',
+            fontWeight: activeTab === 'disruption' ? 700 : 500,
+            fontSize: '0.85rem',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <Sliders size={16} />
+          <span>What-If Disruption Simulator</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('telemetry')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '12px 16px',
+            background: 'transparent',
+            border: 'none',
+            borderBottom: activeTab === 'telemetry' ? '3px solid var(--accent-cyan)' : '3px solid transparent',
+            color: activeTab === 'telemetry' ? 'var(--accent-cyan)' : 'var(--text-secondary)',
+            fontWeight: activeTab === 'telemetry' ? 700 : 500,
+            fontSize: '0.85rem',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <Activity size={16} />
+          <span>IoT Fuel & Cold-Chain Telemetry</span>
+        </button>
+
+        <button
           onClick={() => setActiveTab('alerts')}
           style={{
             display: 'flex',
@@ -303,7 +427,7 @@ export const App: React.FC = () => {
           }}
         >
           <Bell size={16} />
-          <span>Operational Alerts & Indents</span>
+          <span>Operational Alerts Feed</span>
         </button>
 
         <button
@@ -434,6 +558,26 @@ export const App: React.FC = () => {
             vehicles={vehicles}
             locations={locations}
           />
+        ) : activeTab === 'indents' ? (
+          <MilitaryIndents
+            indents={indents}
+            onRefresh={loadTheaterData}
+          />
+        ) : activeTab === 'field' ? (
+          <FieldStockPWA
+            locations={locations}
+            supplies={supplies}
+            inventory={inventory}
+            onIndentCreated={loadTheaterData}
+          />
+        ) : activeTab === 'disruption' ? (
+          <DisruptionSimulator
+            passes={passes}
+          />
+        ) : activeTab === 'telemetry' ? (
+          <TelemetryMonitor
+            locations={locations}
+          />
         ) : activeTab === 'analytics' ? (
           <StrategicIntelligence
             locations={locations}
@@ -453,6 +597,7 @@ export const App: React.FC = () => {
           />
         )}
       </main>
+
 
       {/* Decision Flow Modal */}
       <DecisionFlowModal

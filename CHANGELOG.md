@@ -157,3 +157,38 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - **Verification & QA Benchmarks:**
   - Automated pytest suite: **46/46 tests passing in 20.26s (100% pass rate, 0 failures)**.
   - Frontend production build (`npm run build`): **0 TypeScript errors, 2,485 modules bundled in 26.27s**.
+
+---
+
+## [Phase 5: Military Workflows, IAF-Z-2096 Indents & Offline Field PWA] — 2026-10-11
+
+### Completed Milestones
+- **IAF-Z-2096 Military Requisition Workflow & Movement Orders (`backend/app/api/endpoints/indents.py`):**
+  - Extended formal IAF-Z-2096 voucher lifecycle (single lookup, status transition to `APPROVED` / `DISPATCHED`, SHA-256 cryptographic non-repudiation verification).
+  - Implemented military convoy movement order generator (`GET /api/indents/{id}/movement-order`) with route checkpoints, authorized officers, convoy commander attribution, and RESTRICTED security classification.
+  - Implemented CSV Movement Orders export (`GET /api/indents/movement-orders/export-csv`) producing formatted dispatch sheets for convoy drivers.
+- **What-If Disruption Scenario Simulator (`backend/app/services/disruption.py` & `endpoints/disruption.py`):**
+  - Pure deterministic simulation engine with 5 defense presets (`BASELINE`, `SEVERE_BLIZZARD`, `PASS_AVALANCHE_BLOCKAGE`, `TROOP_REINFORCEMENT_SURGE`, `AIRLIFT_CONTINGENCY`).
+  - Interactive adjustment of sub-zero temperature drops (to -35°C), troop headcount surges (+60%), pass choke-point severances, and fleet availability degradation.
+  - Multi-attribute operational delta calculations: Mean DoS drop %, stockout events delta ($\Delta$), emergency tonnage deficit, required IAF Mi-17 V5 tactical airlift sorties, and route transit delay hours.
+  - Automated strategic response directives generator (air-bridge scheduling, BRO rotary clearance tasking, fuel conservation protocol).
+- **IoT Cold-Chain & Fuel Bladder Telemetry Simulator (`backend/app/services/telemetry.py` & `endpoints/telemetry.py`):**
+  - Deterministic real-time sensor streams: 50kL Arctic Diesel bladder volume & levels, anti-waxing heating blankets (+4.5°C), Class II medical plasma cryo-chambers (-24°C), and pass weather stations.
+  - Automated book-stock vs physical sensor discrepancy detection flagging leaks, bladder punctures, and siphon pilferage (-2,150L / -14.8% anomaly).
+  - Medical cold-chain temperature excursion alerts for compromised cryo-coolers (> -18°C).
+  - Dynamic anomaly injection endpoint (`POST /api/telemetry/simulate-anomaly`) for live jury demonstrations.
+- **Bilingual Offline Field PWA (`FieldStockPWA.tsx`):**
+  - Full bilingual localization in English and Hindi (`हिंदी`) with comprehensive translation dictionary (`translations.ts`).
+  - Resilient offline capability for Himalayan VSAT shadow zones: Service Worker caching (`public/sw.js`), PWA manifest (`public/manifest.json`), and offline local storage queue (`localStorage`).
+  - "Simulate No Signal" toggle with live signal badge (🟢 ऑनलाइन / 🔴 ऑफलाइन).
+  - Local client-side SHA-256 voucher signing via Web Crypto API.
+  - Idempotent batch synchronization trigger (`POST /api/indents/sync`) reconciling queued offline vouchers with server.
+- **Tactical Frontend Dashboards:**
+  - `MilitaryIndents.tsx`: Voucher ledger, status transitions, printable formal tactical dispatch slip (`window.print()`), and CSV export button.
+  - `DisruptionSimulator.tsx`: 5 preset cards, interactive stress sliders, before-and-after operational comparison cards, and outpost vulnerability matrix.
+  - `TelemetryMonitor.tsx`: Live sensor feed, gauge bars, discrepancy alarms panel, and simulated leak injector.
+  - Integrated into top command navigation tabs bar in `App.tsx`.
+- **Verification & QA Benchmarks:**
+  - Automated pytest suite: **55/55 tests passing in 11.02s (100% pass rate, 0 failures)**.
+  - Frontend production build (`npm run build`): **0 TypeScript errors, 2,490 modules bundled in 15.50s**.
+

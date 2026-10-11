@@ -53,3 +53,28 @@ class IndentBatchSyncResponse(BaseModel):
     rejected_count: int
     vouchers: List[IndentResponse]
     sync_status: str
+
+
+class IndentStatusUpdate(BaseModel):
+    status: str  # PENDING_APPROVAL, APPROVED, DISPATCHED, REJECTED, DELIVERED
+    remarks: Optional[str] = None
+
+
+class MovementOrderResponse(BaseModel):
+    voucher_id: str
+    movement_order_number: str
+    origin_depot_id: str
+    destination_outpost_id: str
+    priority_level: str
+    assigned_vehicle_callsign: str
+    vehicle_type: str
+    convoy_commander: str
+    authorized_officer: str
+    departure_window: str
+    estimated_arrival: str
+    route_checkpoints: List[str]
+    cargo_items: List[Dict[str, Any]]
+    total_cargo_weight_kg: float
+    verification_hash: str
+    security_classification: str = "RESTRICTED — OPERATIONAL"
+
