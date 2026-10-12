@@ -5,9 +5,10 @@ import type { Vehicle, Location } from '../types';
 interface FleetReadinessProps {
   vehicles: Vehicle[];
   locations: Location[];
+  onNavigate?: (tab: any, context?: any) => void;
 }
 
-export const FleetReadiness: React.FC<FleetReadinessProps> = ({ vehicles, locations }) => {
+export const FleetReadiness: React.FC<FleetReadinessProps> = ({ vehicles, locations, onNavigate }) => {
   const [selectedMode, setSelectedMode] = useState<string>('ALL');
   const [calcAltitude, setCalcAltitude] = useState<number>(4500); // meters MSL
 
@@ -27,6 +28,48 @@ export const FleetReadiness: React.FC<FleetReadinessProps> = ({ vehicles, locati
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      {/* SaaS Page Header & Breadcrumbs */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+            {onNavigate && (
+              <>
+                <button
+                  onClick={() => onNavigate('briefing')}
+                  style={{ background: 'transparent', border: 'none', color: 'var(--accent-primary)', cursor: 'pointer', padding: 0, fontSize: 'inherit' }}
+                >
+                  Dashboard
+                </button>
+                <span>/</span>
+              </>
+            )}
+            <span>Fleet Readiness & Altitude De-Rating</span>
+          </div>
+
+          <h1 style={{ fontSize: '1.45rem', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
+            Multimodal Fleet Readiness & High-Altitude Physics
+          </h1>
+          <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+            Operational transport inventory (4x4, 6x6, tracked, rotary aircraft) with dynamic engine power de-rating above 3,000m MSL.
+          </p>
+        </div>
+
+        {onNavigate && (
+          <button
+            onClick={() => onNavigate('optimization')}
+            className="tactical-btn"
+            style={{
+              background: 'var(--accent-primary)',
+              color: 'var(--text-inverse)',
+              borderColor: 'var(--accent-primary)',
+              fontWeight: 600,
+            }}
+          >
+            <Truck size={14} />
+            <span>Open Convoy Route Solver</span>
+          </button>
+        )}
+      </div>
       {/* High-Altitude Payload De-Rating Interactive Calculator */}
       <div className="panel">
         <div className="panel-header">

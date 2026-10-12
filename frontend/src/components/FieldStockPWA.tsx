@@ -20,6 +20,7 @@ interface FieldStockPWAProps {
   supplies: SupplyItem[];
   inventory: InventoryRecord[];
   onIndentCreated?: () => void;
+  onNavigate?: (tab: any, context?: any) => void;
 }
 
 interface QueuedVoucher {
@@ -49,6 +50,7 @@ export const FieldStockPWA: React.FC<FieldStockPWAProps> = ({
   supplies,
   inventory,
   onIndentCreated,
+  onNavigate,
 }) => {
   const [lang, setLang] = useState<Language>('en');
   const t = translations[lang];
@@ -219,7 +221,32 @@ export const FieldStockPWA: React.FC<FieldStockPWAProps> = ({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      {/* Top Field Banner */}
+      {/* SaaS Page Header & Breadcrumbs */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+            {onNavigate && (
+              <>
+                <button
+                  onClick={() => onNavigate('briefing')}
+                  style={{ background: 'transparent', border: 'none', color: 'var(--accent-primary)', cursor: 'pointer', padding: 0, fontSize: 'inherit' }}
+                >
+                  Dashboard
+                </button>
+                <span>/</span>
+              </>
+            )}
+            <span>Field Outpost Portal (Offline PWA)</span>
+          </div>
+
+          <h1 style={{ fontSize: '1.45rem', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
+            Forward Outpost Inventory Portal & Offline Indenting
+          </h1>
+          <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+            Resilient lightweight field auditing for DDN/VSAT shadow zones with local tamper-evident caching and bilingual support (English / हिन्दी).
+          </p>
+        </div>
+      </div>
       <div className="panel">
         <div
           className="panel-header"

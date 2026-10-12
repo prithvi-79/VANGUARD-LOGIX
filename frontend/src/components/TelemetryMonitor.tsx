@@ -13,9 +13,10 @@ import type {
 
 interface TelemetryMonitorProps {
   locations?: Location[];
+  onNavigate?: (tab: any, context?: any) => void;
 }
 
-export const TelemetryMonitor: React.FC<TelemetryMonitorProps> = ({ locations = [] }) => {
+export const TelemetryMonitor: React.FC<TelemetryMonitorProps> = ({ locations = [], onNavigate }) => {
   const [overview, setOverview] = useState<TelemetryOverviewResponse | null>(null);
   const [selectedSensorType, setSelectedSensorType] = useState<string>('ALL');
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -72,7 +73,32 @@ export const TelemetryMonitor: React.FC<TelemetryMonitorProps> = ({ locations = 
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      {/* Top Banner */}
+      {/* SaaS Page Header & Breadcrumbs */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+            {onNavigate && (
+              <>
+                <button
+                  onClick={() => onNavigate('briefing')}
+                  style={{ background: 'transparent', border: 'none', color: 'var(--accent-primary)', cursor: 'pointer', padding: 0, fontSize: 'inherit' }}
+                >
+                  Dashboard
+                </button>
+                <span>/</span>
+              </>
+            )}
+            <span>Storage Sensors & Cold-Chain Telemetry</span>
+          </div>
+
+          <h1 style={{ fontSize: '1.45rem', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
+            Bulk Fuel Storage Sensors & Cold-Chain Cryo-Telemetry
+          </h1>
+          <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+            Real-time IoT sensor streams tracking arctic fuel bladder levels, anti-waxing heating blankets, and medical plasma temperatures.
+          </p>
+        </div>
+      </div>
       <div className="panel">
         <div
           className="panel-header"

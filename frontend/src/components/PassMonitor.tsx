@@ -12,12 +12,14 @@ interface PassMonitorProps {
   passes: StrategicPass[];
   routes: Route[];
   onTogglePass: (passId: string, currentStatus: string) => Promise<void>;
+  onNavigate?: (tab: any, context?: any) => void;
 }
 
 export const PassMonitor: React.FC<PassMonitorProps> = ({
   passes,
   routes,
   onTogglePass,
+  onNavigate,
 }) => {
   const [updatingPassId, setUpdatingPassId] = useState<string | null>(null);
 
@@ -35,6 +37,47 @@ export const PassMonitor: React.FC<PassMonitorProps> = ({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      {/* SaaS Page Header & Breadcrumbs */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+            {onNavigate && (
+              <>
+                <button
+                  onClick={() => onNavigate('briefing')}
+                  style={{ background: 'transparent', border: 'none', color: 'var(--accent-primary)', cursor: 'pointer', padding: 0, fontSize: 'inherit' }}
+                >
+                  Dashboard
+                </button>
+                <span>/</span>
+              </>
+            )}
+            <span>Mountain Pass Transit Monitor</span>
+          </div>
+
+          <h1 style={{ fontSize: '1.45rem', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
+            Strategic Mountain Pass Transit & Snow Clearance
+          </h1>
+          <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+            Border Roads Organisation (BRO Projects Himank & Beacon) real-time pass condition feeds, snow accumulation, and convoy corridor clearance.
+          </p>
+        </div>
+
+        {onNavigate && (
+          <button
+            onClick={() => onNavigate('disruption')}
+            className="tactical-btn"
+            style={{
+              background: 'var(--accent-primary)',
+              color: 'var(--text-inverse)',
+              borderColor: 'var(--accent-primary)',
+              fontWeight: 600,
+            }}
+          >
+            <span>Simulate Pass Disruptions</span>
+          </button>
+        )}
+      </div>
       {/* Top Banner */}
       <div className="panel">
         <div className="panel-header">

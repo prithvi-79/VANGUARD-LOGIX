@@ -14,6 +14,7 @@ import { DisruptionSimulator } from './components/DisruptionSimulator';
 import { TelemetryMonitor } from './components/TelemetryMonitor';
 import { FieldStockPWA } from './components/FieldStockPWA';
 import { MilitaryIndents } from './components/MilitaryIndents';
+import { QuickSearchModal } from './components/QuickSearchModal';
 import { api } from './services/api';
 import type {
   Location,
@@ -33,46 +34,40 @@ import {
   Boxes,
   Mountain,
   Truck,
-  Bell,
-  Cpu,
-  Brain,
+  TrendingUp,
   Sliders,
   Activity,
   Smartphone,
   FileCheck2,
+  Bell,
 } from 'lucide-react';
 
 export type TabView =
-  | 'map'
   | 'briefing'
+  | 'map'
   | 'inventory'
-  | 'passes'
+  | 'optimization'
   | 'fleet'
-  | 'indents'
-  | 'field'
+  | 'passes'
   | 'disruption'
+  | 'indents'
   | 'telemetry'
   | 'alerts'
-  | 'analytics'
-  | 'optimization';
+  | 'field'
+  | 'analytics';
 
-type DomainId = 'operations' | 'inventory' | 'planning' | 'contingency' | 'field_indents';
-
-interface NavDomain {
-  id: DomainId;
+interface NavItem {
+  id: TabView;
   label: string;
-  tabs: Array<{
-    id: TabView;
-    label: string;
-    icon: React.ComponentType<{ size?: number; className?: string }>;
-    badge?: number | string;
-    badgeVariant?: 'critical' | 'warning' | 'normal' | 'info';
-  }>;
+  icon: React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>;
+  badge?: number | string;
+  badgeVariant?: 'critical' | 'warning' | 'normal' | 'info';
 }
 
 export const App: React.FC = () => {
   const { theme } = useTheme();
-  const [activeTab, setActiveTab] = useState<TabView>('map');
+  // Default to executive dashboard so first-time users immediately understand the platform posture
+  const [activeTab, setActiveTab] = useState<TabView>('briefing');
   const [locations, setLocations] = useState<Location[]>([]);
   const [passes, setPasses] = useState<StrategicPass[]>([]);
   const [routes, setRoutes] = useState<Route[]>([]);
@@ -85,13 +80,26 @@ export const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isDecisionFlowOpen, setIsDecisionFlowOpen] = useState<boolean>(false);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
 
-  // Check URL hash on initial mount (e.g. #field for PWA direct link)
+  // Check URL hash on initial mount (e.g. #field for direct link)
   useEffect(() => {
     const hash = window.location.hash.replace('#', '');
     if (hash === 'field') {
       setActiveTab('field');
     }
+  }, []);
+
+  // Global keyboard shortcut for search (Ctrl+K or Cmd+K)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsSearchModalOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   const loadTheaterData = async () => {
@@ -160,87 +168,85 @@ export const App: React.FC = () => {
     }
   };
 
+  const handleNavigate = (tab: TabView, _context?: any) => {
+    setActiveTab(tab);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   // Badge calculations
   const criticalCount = useMemo(() => inventory.filter((i) => i.status === 'CRITICAL').length, [inventory]);
   const blockedPassCount = useMemo(() => passes.filter((p) => !p.is_passable).length, [passes]);
   const pendingIndentsCount = useMemo(() => indents.filter((i) => i.status === 'PENDING_APPROVAL').length, [indents]);
 
-  // Structured 5-domain navigation schema
-  const navDomains: NavDomain[] = useMemo(
+  // Clean, single-tier, commercial SaaS navigation items
+  const primaryNavItems: NavItem[] = useMemo(
     () => [
       {
-        id: 'operations',
-        label: 'Operations & Map',
-        tabs: [
-          { id: 'map', label: 'Theater Map & Routes', icon: Compass },
-          { id: 'briefing', label: 'Operational Overview', icon: LayoutDashboard },
-          {
-            id: 'passes',
-            label: 'Mountain Passes',
-            icon: Mountain,
-            badge: blockedPassCount > 0 ? `${blockedPassCount} Closed` : undefined,
-            badgeVariant: 'critical',
-          },
-          { id: 'fleet', label: 'Fleet & Altitude Rating', icon: Truck },
-        ],
+        id: 'briefing',
+        label: 'Dashboard',
+        icon: LayoutDashboard,
+      },
+      {
+        id: 'map',
+        label: 'Corridor Map',
+        icon: Compass,
       },
       {
         id: 'inventory',
-        label: 'Supply & Stock',
-        tabs: [
-          {
-            id: 'inventory',
-            label: 'Supply Stock Ledgers',
-            icon: Boxes,
-            badge: criticalCount > 0 ? criticalCount : undefined,
-            badgeVariant: 'critical',
-          },
-          { id: 'analytics', label: 'Priority & Physics Engine', icon: Cpu },
-        ],
+        label: 'Inventory',
+        icon: Boxes,
+        badge: criticalCount > 0 ? `${criticalCount} Critical` : undefined,
+        badgeVariant: 'critical',
       },
       {
-        id: 'planning',
-        label: 'Demand & Dispatch',
-        tabs: [
-          { id: 'optimization', label: 'Demand Forecast & Fleet Dispatch', icon: Brain },
-        ],
+        id: 'optimization',
+        label: 'Forecasting & Dispatch',
+        icon: TrendingUp,
       },
       {
-        id: 'contingency',
-        label: 'Contingency & Audit',
-        tabs: [
-          { id: 'disruption', label: 'Disruption Simulator', icon: Sliders },
-          { id: 'telemetry', label: 'Storage Telemetry & Leaks', icon: Activity },
-          { id: 'alerts', label: 'Operational Alerts', icon: Bell },
-        ],
+        id: 'fleet',
+        label: 'Fleet & Altitude',
+        icon: Truck,
       },
       {
-        id: 'field_indents',
-        label: 'Requisitions & Field Office',
-        tabs: [
-          {
-            id: 'indents',
-            label: 'IAF-Z-2096 Movement Orders',
-            icon: FileCheck2,
-            badge: pendingIndentsCount > 0 ? pendingIndentsCount : undefined,
-            badgeVariant: 'warning',
-          },
-          { id: 'field', label: 'Field Outpost Portal (Offline / हिन्दी)', icon: Smartphone },
-        ],
+        id: 'passes',
+        label: 'Mountain Passes',
+        icon: Mountain,
+        badge: blockedPassCount > 0 ? `${blockedPassCount} Closed` : undefined,
+        badgeVariant: 'critical',
+      },
+      {
+        id: 'disruption',
+        label: 'Disruption Simulator',
+        icon: Sliders,
+      },
+      {
+        id: 'indents',
+        label: 'Requisitions',
+        icon: FileCheck2,
+        badge: pendingIndentsCount > 0 ? `${pendingIndentsCount} Pending` : undefined,
+        badgeVariant: 'warning',
+      },
+      {
+        id: 'telemetry',
+        label: 'Sensors & Telemetry',
+        icon: Activity,
+      },
+      {
+        id: 'alerts',
+        label: 'Alerts',
+        icon: Bell,
+        badge: criticalCount + blockedPassCount > 0 ? criticalCount + blockedPassCount : undefined,
+        badgeVariant: 'critical',
+      },
+      {
+        id: 'field',
+        label: 'Field Portal (Offline)',
+        icon: Smartphone,
       },
     ],
     [criticalCount, blockedPassCount, pendingIndentsCount]
   );
-
-  // Determine current active domain
-  const activeDomain = useMemo(() => {
-    for (const d of navDomains) {
-      if (d.tabs.some((t) => t.id === activeTab)) {
-        return d;
-      }
-    }
-    return navDomains[0];
-  }, [navDomains, activeTab]);
 
   return (
     <div
@@ -256,108 +262,78 @@ export const App: React.FC = () => {
         transition: 'background-color 0.15s ease, color 0.15s ease',
       }}
     >
-      {/* Top Header */}
+      {/* Top Global Command Header */}
       <CommandHeader
         dbStatus={dbStatus}
         onRefresh={loadTheaterData}
         isLoading={isLoading}
         onOpenDecisionFlow={() => setIsDecisionFlowOpen(true)}
+        onOpenSearch={() => setIsSearchModalOpen(true)}
+        onNavigateHome={() => handleNavigate('briefing')}
+        criticalCount={criticalCount}
+        blockedPassCount={blockedPassCount}
       />
 
-      {/* Primary Domain Navigation Ribbon */}
+      {/* Primary Navigation Ribbon (Single-tier, scannable, intuitive) */}
       <nav
-        aria-label="Primary Navigation"
+        aria-label="Primary Platform Navigation"
         style={{
           background: 'var(--bg-surface)',
           borderBottom: '1px solid var(--border-subtle)',
           padding: '0 24px',
           display: 'flex',
-          justifyContent: 'space-between',
           alignItems: 'center',
           position: 'sticky',
-          top: '73px',
+          top: 0,
           zIndex: 40,
-          flexWrap: 'wrap',
-          gap: '8px',
+          overflowX: 'auto',
+          scrollbarWidth: 'none',
         }}
       >
-        {/* Domain Tabs (Carbon Product Tab Strip) */}
-        <div style={{ display: 'flex', gap: '0px', overflowX: 'auto', padding: '0' }}>
-          {navDomains.map((domain) => {
-            const isDomainActive = activeDomain.id === domain.id;
+        <div style={{ display: 'flex', gap: '0px', width: '100%' }}>
+          {primaryNavItems.map((item) => {
+            const isActive = activeTab === item.id;
+            const Icon = item.icon;
             return (
               <button
-                key={domain.id}
-                onClick={() => {
-                  if (!isDomainActive) {
-                    setActiveTab(domain.tabs[0].id);
-                  }
-                }}
-                style={{
-                  padding: '14px 18px',
-                  borderRadius: '0px',
-                  border: 'none',
-                  borderBottom: isDomainActive ? '2px solid var(--accent-primary)' : '2px solid transparent',
-                  background: 'transparent',
-                  color: isDomainActive ? 'var(--text-primary)' : 'var(--text-secondary)',
-                  fontWeight: isDomainActive ? 600 : 400,
-                  fontSize: '0.84rem',
-                  letterSpacing: '0.16px',
-                  cursor: 'pointer',
-                  transition: 'color 0.12s ease',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                <span>{domain.label}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Secondary Sub-View Actions for Active Domain */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 0', overflowX: 'auto' }}>
-          {activeDomain.tabs.map((tab) => {
-            const isTabActive = activeTab === tab.id;
-            const Icon = tab.icon;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className="tactical-btn"
+                key={item.id}
+                onClick={() => handleNavigate(item.id)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '6px',
-                  padding: '6px 12px',
-                  fontSize: '0.78rem',
+                  gap: '8px',
+                  padding: '13px 16px',
                   borderRadius: '0px',
-                  background: isTabActive ? 'var(--accent-primary)' : 'var(--bg-surface-elevated)',
-                  borderColor: isTabActive ? 'var(--accent-primary)' : 'var(--border-subtle)',
-                  color: isTabActive ? 'var(--text-inverse)' : 'var(--text-primary)',
-                  fontWeight: isTabActive ? 600 : 400,
+                  border: 'none',
+                  borderBottom: isActive ? '3px solid var(--accent-primary)' : '3px solid transparent',
+                  background: isActive ? 'var(--bg-surface-elevated)' : 'transparent',
+                  color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)',
+                  fontWeight: isActive ? 600 : 400,
+                  fontSize: '0.84rem',
+                  letterSpacing: '0.12px',
+                  cursor: 'pointer',
+                  transition: 'all 0.1s ease',
+                  whiteSpace: 'nowrap',
                 }}
               >
-                <Icon size={14} />
-                <span>{tab.label}</span>
-                {tab.badge && (
+                <Icon size={15} style={{ color: isActive ? 'var(--accent-primary)' : 'var(--text-tertiary)' }} />
+                <span>{item.label}</span>
+                {item.badge && (
                   <span
                     className={`tactical-badge ${
-                      tab.badgeVariant === 'critical'
+                      item.badgeVariant === 'critical'
                         ? 'badge-critical'
-                        : tab.badgeVariant === 'warning'
+                        : item.badgeVariant === 'warning'
                         ? 'badge-warning'
                         : 'badge-info'
                     }`}
                     style={{
-                      fontSize: '0.65rem',
+                      fontSize: '0.64rem',
                       padding: '1px 5px',
                       borderRadius: '0px',
-                      background: isTabActive ? 'rgba(0, 0, 0, 0.25)' : undefined,
-                      color: isTabActive ? '#ffffff' : undefined,
-                      borderColor: isTabActive ? 'transparent' : undefined,
                     }}
                   >
-                    {tab.badge}
+                    {item.badge}
                   </span>
                 )}
               </button>
@@ -367,7 +343,7 @@ export const App: React.FC = () => {
       </nav>
 
       {/* Main Content Viewport */}
-      <main style={{ flex: 1, padding: '20px 24px', maxWidth: '1600px', margin: '0 auto', width: '100%' }}>
+      <main style={{ flex: 1, padding: '24px', maxWidth: '1600px', margin: '0 auto', width: '100%' }}>
         {error ? (
           <div
             className="panel"
@@ -383,17 +359,17 @@ export const App: React.FC = () => {
             <AlertCircle size={28} className="text-crimson" />
             <div>
               <h3 style={{ fontWeight: 600, color: 'var(--accent-crimson)', margin: 0, fontSize: '1rem' }}>
-                Service Gateway Connection Error
+                Tactical Gateway Connection Error
               </h3>
               <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                {error}. Verify the backend API server is active on port 8000.
+                {error}. Ensure the FastAPI server is active on port 8000.
               </p>
               <button
                 onClick={loadTheaterData}
                 className="tactical-btn"
                 style={{ marginTop: '12px' }}
               >
-                <RefreshCw size={14} /> Reconnect Gateway
+                <RefreshCw size={14} /> Reconnect Server
               </button>
             </div>
           </div>
@@ -410,17 +386,9 @@ export const App: React.FC = () => {
           >
             <RefreshCw size={24} className="animate-spin text-sky" />
             <div style={{ fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
-              Loading theater stock, road corridors, and pass conditions...
+              Loading Northern Command stock ledgers, road corridors, and pass conditions...
             </div>
           </div>
-        ) : activeTab === 'map' ? (
-          <TacticalGISMap
-            locations={locations}
-            routes={routes}
-            passes={passes}
-            inventory={inventory}
-            onTogglePass={handleTogglePass}
-          />
         ) : activeTab === 'briefing' ? (
           <CommandBriefing
             locations={locations}
@@ -429,27 +397,41 @@ export const App: React.FC = () => {
             inventory={inventory}
             indents={indents}
             onTogglePass={handleTogglePass}
+            onNavigate={handleNavigate}
+          />
+        ) : activeTab === 'map' ? (
+          <TacticalGISMap
+            locations={locations}
+            routes={routes}
+            passes={passes}
+            inventory={inventory}
+            onTogglePass={handleTogglePass}
+            onNavigate={handleNavigate}
           />
         ) : activeTab === 'inventory' ? (
           <InventoryRegisters
             inventory={inventory}
             locations={locations}
+            onNavigate={handleNavigate}
           />
         ) : activeTab === 'passes' ? (
           <PassMonitor
             passes={passes}
             routes={routes}
             onTogglePass={handleTogglePass}
+            onNavigate={handleNavigate}
           />
         ) : activeTab === 'fleet' ? (
           <FleetReadiness
             vehicles={vehicles}
             locations={locations}
+            onNavigate={handleNavigate}
           />
         ) : activeTab === 'indents' ? (
           <MilitaryIndents
             indents={indents}
             onRefresh={loadTheaterData}
+            onNavigate={handleNavigate}
           />
         ) : activeTab === 'field' ? (
           <FieldStockPWA
@@ -457,24 +439,29 @@ export const App: React.FC = () => {
             supplies={supplies}
             inventory={inventory}
             onIndentCreated={loadTheaterData}
+            onNavigate={handleNavigate}
           />
         ) : activeTab === 'disruption' ? (
           <DisruptionSimulator
             passes={passes}
+            onNavigate={handleNavigate}
           />
         ) : activeTab === 'telemetry' ? (
           <TelemetryMonitor
             locations={locations}
+            onNavigate={handleNavigate}
           />
         ) : activeTab === 'analytics' ? (
           <StrategicIntelligence
             locations={locations}
             supplies={supplies}
+            onNavigate={handleNavigate}
           />
         ) : activeTab === 'optimization' ? (
           <PredictiveOptimization
             locations={locations}
             supplies={supplies}
+            onNavigate={handleNavigate}
           />
         ) : (
           <OperationalAlerts
@@ -482,6 +469,7 @@ export const App: React.FC = () => {
             passes={passes}
             indents={indents}
             locations={locations}
+            onNavigate={handleNavigate}
           />
         )}
       </main>
@@ -492,33 +480,44 @@ export const App: React.FC = () => {
         onClose={() => setIsDecisionFlowOpen(false)}
       />
 
-      {/* Carbon Inverted Footer */}
+      {/* Quick Command Search Modal (Ctrl + K) */}
+      <QuickSearchModal
+        isOpen={isSearchModalOpen}
+        onClose={() => setIsSearchModalOpen(false)}
+        onNavigate={handleNavigate}
+        locations={locations}
+        passes={passes}
+        supplies={supplies}
+      />
+
+      {/* Modern SaaS Footer */}
       <footer
         style={{
-          padding: '28px 24px',
-          borderTop: '1px solid var(--footer-border)',
-          background: 'var(--footer-bg)',
-          color: 'var(--footer-text)',
+          padding: '24px',
+          borderTop: '1px solid var(--border-subtle)',
+          background: 'var(--bg-surface)',
+          color: 'var(--text-secondary)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           fontSize: '0.78rem',
-          letterSpacing: '0.16px',
           flexWrap: 'wrap',
           gap: '12px',
         }}
       >
-        <div>
-          <span style={{ color: 'var(--footer-heading)', fontWeight: 600 }}>Vanguard Logistics Operations Platform</span>
-          <span style={{ margin: '0 8px', color: 'var(--footer-border)' }}>•</span>
-          <span>Northern Command XIV Corps</span>
-          <span style={{ margin: '0 8px', color: 'var(--footer-border)' }}>•</span>
-          <span>Directorate General of Supplies & Transport</span>
-        </div>
-        <div style={{ display: 'flex', gap: '16px', color: 'var(--footer-text)' }}>
-          <span>Deterministic Modeling Engine</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>VANGUARD-LOGIX</span>
           <span>•</span>
-          <span>Dual-Mode Architecture (PostgreSQL / SQLite)</span>
+          <span>Indian Army Predictive Logistics Engine</span>
+          <span>•</span>
+          <span>Northern Command XIV Corps (HQ Leh)</span>
+        </div>
+        <div style={{ display: 'flex', gap: '16px', color: 'var(--text-tertiary)' }}>
+          <span>Deterministic Seeding (seed=26251)</span>
+          <span>•</span>
+          <span>Dual Architecture (PostgreSQL / SQLite)</span>
+          <span>•</span>
+          <span>WCAG AA Compliant</span>
         </div>
       </footer>
     </div>

@@ -13,9 +13,10 @@ import type { IndentVoucher, MovementOrderResponse } from '../types';
 interface MilitaryIndentsProps {
   indents: IndentVoucher[];
   onRefresh: () => void;
+  onNavigate?: (tab: any, context?: any) => void;
 }
 
-export const MilitaryIndents: React.FC<MilitaryIndentsProps> = ({ indents, onRefresh }) => {
+export const MilitaryIndents: React.FC<MilitaryIndentsProps> = ({ indents, onRefresh, onNavigate }) => {
   const [selectedVoucher, setSelectedVoucher] = useState<IndentVoucher | null>(null);
   const [activeMovementOrder, setActiveMovementOrder] = useState<MovementOrderResponse | null>(null);
   const [isDispatchModalOpen, setIsDispatchModalOpen] = useState<boolean>(false);
@@ -70,49 +71,53 @@ export const MilitaryIndents: React.FC<MilitaryIndentsProps> = ({ indents, onRef
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      {/* Top Banner */}
-      <div className="panel">
-        <div
-          className="panel-header"
-          style={{
-            flexWrap: 'wrap',
-            gap: '12px',
-          }}
-        >
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <h2 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 600 }}>
-                IAF-Z-2096 Indent Management & Movement Orders
-              </h2>
-              <span className="tactical-badge badge-normal">
-                Standard Compliant
-              </span>
-            </div>
-            <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '2px', maxWidth: '850px' }}>
-              Army supply requisition vouchers featuring cryptographic SHA-256 integrity verification, officer credentials, movement order generation, and CSV export.
-            </div>
+      {/* SaaS Page Header & Breadcrumbs */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+            {onNavigate && (
+              <>
+                <button
+                  onClick={() => onNavigate('briefing')}
+                  style={{ background: 'transparent', border: 'none', color: 'var(--accent-primary)', cursor: 'pointer', padding: 0, fontSize: 'inherit' }}
+                >
+                  Dashboard
+                </button>
+                <span>/</span>
+              </>
+            )}
+            <span>Requisitions & Movement Orders</span>
           </div>
 
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <a
-              href={api.getMovementOrdersCsvUrl()}
-              download="vanguard_movement_orders.csv"
-              className="tactical-btn"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                textDecoration: 'none',
-                background: 'var(--accent-primary)',
-                color: 'var(--text-inverse)',
-                borderColor: 'var(--accent-primary)',
-                fontSize: '0.75rem',
-                padding: '5px 12px',
-              }}
-            >
-              <Download size={13} /> Export Movement Orders (CSV)
-            </a>
-          </div>
+          <h1 style={{ fontSize: '1.45rem', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
+            IAF-Z-2096 Indent Requisitions & Movement Orders
+          </h1>
+          <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+            Indian Army supply requisition vouchers featuring SHA-256 cryptographic hashes, officer authorization credentials, and dispatch manifests.
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <a
+            href={api.getMovementOrdersCsvUrl()}
+            download="vanguard_movement_orders.csv"
+            className="tactical-btn"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              textDecoration: 'none',
+              background: 'var(--accent-primary)',
+              color: 'var(--text-inverse)',
+              borderColor: 'var(--accent-primary)',
+              fontSize: '0.78rem',
+              padding: '6px 14px',
+              fontWeight: 600,
+            }}
+          >
+            <Download size={14} />
+            <span>Export Movement Orders (CSV)</span>
+          </a>
         </div>
       </div>
 

@@ -19,11 +19,13 @@ import type {
 
 interface DisruptionSimulatorProps {
   passes: StrategicPass[];
+  onNavigate?: (tab: any, context?: any) => void;
 }
 
-export const DisruptionSimulator: React.FC<DisruptionSimulatorProps> = ({ passes }) => {
+export const DisruptionSimulator: React.FC<DisruptionSimulatorProps> = ({ passes, onNavigate }) => {
   const [scenarios, setScenarios] = useState<DisruptionScenarioPreset[]>([]);
   const [selectedScenarioId, setSelectedScenarioId] = useState<string>('BASELINE');
+  const [showPhysicsGuide, setShowPhysicsGuide] = useState<boolean>(false);
 
   // Interactive Sliders & Toggles
   const [tempDelta, setTempDelta] = useState<number>(0.0);
@@ -117,38 +119,90 @@ export const DisruptionSimulator: React.FC<DisruptionSimulatorProps> = ({ passes
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      {/* Top Banner */}
-      <div className="panel">
-        <div
-          className="panel-header"
-          style={{
-            flexWrap: 'wrap',
-            gap: '12px',
-          }}
-        >
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <h2 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 600 }}>
-                Disruption & Contingency Scenario Simulator
-              </h2>
-              <span className={`tactical-badge ${isLoading ? 'badge-warning' : 'badge-normal'}`}>
-                {isLoading ? 'Recalculating...' : 'Ready'}
-              </span>
-            </div>
-            <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '2px', maxWidth: '850px' }}>
-              Stress-test forward logistics under extreme winter conditions, pass blockages, troop reinforcement surges, and fleet de-rating with quantified impact metrics.
-            </div>
+      {/* SaaS Page Header & Breadcrumbs */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+            {onNavigate && (
+              <>
+                <button
+                  onClick={() => onNavigate('briefing')}
+                  style={{ background: 'transparent', border: 'none', color: 'var(--accent-primary)', cursor: 'pointer', padding: 0, fontSize: 'inherit' }}
+                >
+                  Dashboard
+                </button>
+                <span>/</span>
+              </>
+            )}
+            <span>Disruption & Contingency Simulator</span>
           </div>
 
+          <h1 style={{ fontSize: '1.45rem', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
+            What-If Disruption & Supply Resilience Simulator
+          </h1>
+          <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+            Stress-test forward logistics under extreme winter conditions, pass blockages, troop reinforcement surges, and fleet de-rating with quantified impact metrics.
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <span className={`tactical-badge ${isLoading ? 'badge-warning' : 'badge-normal'}`}>
+            {isLoading ? 'Recalculating...' : 'Ready'}
+          </span>
+          <button
+            onClick={() => setShowPhysicsGuide(!showPhysicsGuide)}
+            className="tactical-btn"
+            style={{ fontSize: '0.76rem', padding: '6px 12px' }}
+          >
+            <ShieldAlert size={14} />
+            <span>{showPhysicsGuide ? 'Hide Guide' : 'How Scenarios Work'}</span>
+          </button>
           <button
             onClick={handleResetToBaseline}
             className="tactical-btn"
-            style={{ fontSize: '0.75rem', padding: '5px 12px' }}
+            style={{ fontSize: '0.76rem', padding: '6px 12px' }}
           >
-            <RotateCcw size={13} /> Reset to Baseline
+            <RotateCcw size={13} />
+            <span>Reset Baseline</span>
           </button>
         </div>
       </div>
+
+      {/* Progressive Disclosure Guide (Collapsible) */}
+      {showPhysicsGuide && (
+        <div
+          className="panel"
+          style={{
+            padding: '16px 20px',
+            background: 'var(--bg-surface-elevated)',
+            borderLeft: '4px solid var(--accent-primary)',
+          }}
+        >
+          <div style={{ fontWeight: 600, fontSize: '0.88rem', color: 'var(--text-primary)', marginBottom: '6px' }}>
+            How What-If Disruption Physics Calculate Forward Post Impact
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '14px', fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+            <div>
+              <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: '2px' }}>
+                1. Sub-Zero Fuel Burn Surge
+              </div>
+              For every 5°C drop below -20°C, bukhari space heating and vehicle anti-freeze requirements surge non-linearly (+18% to +45% fuel consumption).
+            </div>
+            <div>
+              <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: '2px' }}>
+                2. Mountain Pass Severance
+              </div>
+              When Zoji La or Khardung La closes, road travel time spikes by 14 to 36 hours or requires emergency multi-modal air-bridges (Mi-17 V5 tactical airlift).
+            </div>
+            <div>
+              <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: '2px' }}>
+                3. Surge Troops (PAX)
+              </div>
+              Troop reinforcement surges directly increase daily pack ration burn (DRDO 4,088 kcal/man/day scale) and drinking water heating requirements.
+            </div>
+          </div>
+        </div>
+      )}
 
       {error && (
         <div className="panel" style={{ padding: '14px 16px', borderLeft: '4px solid var(--accent-crimson)' }}>

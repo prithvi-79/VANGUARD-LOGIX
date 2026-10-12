@@ -18,11 +18,13 @@ import {
 interface StrategicIntelligenceProps {
   locations: Location[];
   supplies: SupplyItem[];
+  onNavigate?: (tab: any, context?: any) => void;
 }
 
 export const StrategicIntelligence: React.FC<StrategicIntelligenceProps> = ({
   locations,
   supplies,
+  onNavigate,
 }) => {
   const [activeSubTab, setActiveSubTab] = useState<'priority' | 'burndown' | 'terrain'>('priority');
 
@@ -152,7 +154,32 @@ export const StrategicIntelligence: React.FC<StrategicIntelligenceProps> = ({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      {/* Sub-Navigation Header */}
+      {/* SaaS Page Header & Breadcrumbs */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+            {onNavigate && (
+              <>
+                <button
+                  onClick={() => onNavigate('briefing')}
+                  style={{ background: 'transparent', border: 'none', color: 'var(--accent-primary)', cursor: 'pointer', padding: 0, fontSize: 'inherit' }}
+                >
+                  Dashboard
+                </button>
+                <span>/</span>
+              </>
+            )}
+            <span>Stock Priority & Depletion Trajectory</span>
+          </div>
+
+          <h1 style={{ fontSize: '1.45rem', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
+            Replenishment Priority Queue & Burn-Down Trajectories
+          </h1>
+          <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+            Multi-attribute 0–100 urgency scoring, Days-of-Supply depletion curves, and mountain road physics modeling.
+          </p>
+        </div>
+      </div>
       <div className="panel">
         <div
           className="panel-header"

@@ -14,6 +14,7 @@ interface OperationalAlertsProps {
   passes: StrategicPass[];
   indents: IndentVoucher[];
   locations: Location[];
+  onNavigate?: (tab: any, context?: any) => void;
 }
 
 export const OperationalAlerts: React.FC<OperationalAlertsProps> = ({
@@ -21,8 +22,22 @@ export const OperationalAlerts: React.FC<OperationalAlertsProps> = ({
   passes,
   indents,
   locations,
+  onNavigate,
 }) => {
   const [filterSeverity, setFilterSeverity] = useState<string>('ALL');
+
+  const handleAlertAction = (category: string) => {
+    if (!onNavigate) return;
+    if (category === 'INVENTORY_SHORTAGE') {
+      onNavigate('optimization');
+    } else if (category === 'ROUTE_SEVERED') {
+      onNavigate('disruption');
+    } else if (category === 'REQUISITION_PENDING') {
+      onNavigate('indents');
+    } else {
+      onNavigate('inventory');
+    }
+  };
 
   // Generate tactical alert items from current state
   const alerts = [];
@@ -98,6 +113,33 @@ export const OperationalAlerts: React.FC<OperationalAlertsProps> = ({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      {/* SaaS Page Header & Breadcrumbs */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+            {onNavigate && (
+              <>
+                <button
+                  onClick={() => onNavigate('briefing')}
+                  style={{ background: 'transparent', border: 'none', color: 'var(--accent-primary)', cursor: 'pointer', padding: 0, fontSize: 'inherit' }}
+                >
+                  Dashboard
+                </button>
+                <span>/</span>
+              </>
+            )}
+            <span>Operational Alerts & Directives</span>
+          </div>
+
+          <h1 style={{ fontSize: '1.45rem', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
+            Operational Alerts & Field Directive Triage
+          </h1>
+          <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+            Automated alerts triggered by burn-rate threshold violations, mountain pass status changes, and pending IAF-Z-2096 vouchers.
+          </p>
+        </div>
+      </div>
+
       {/* Alert Stats Ribbon */}
       <div className="panel">
         <div
@@ -210,24 +252,27 @@ export const OperationalAlerts: React.FC<OperationalAlertsProps> = ({
                       {alert.message}
                     </p>
 
-                    <div
+                    <button
+                      onClick={() => handleAlertAction(alert.category)}
+                      className="tactical-btn"
                       style={{
                         marginTop: '8px',
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: '6px',
-                        padding: '3px 8px',
-                        borderRadius: 'var(--radius-sm)',
-                        background: 'var(--bg-surface-elevated)',
-                        border: '1px solid var(--border-subtle)',
-                        fontSize: '0.72rem',
+                        padding: '4px 10px',
+                        fontSize: '0.74rem',
                         color: 'var(--accent-primary)',
-                        fontFamily: 'var(--font-mono)',
+                        borderColor: 'var(--border-prominent)',
+                        background: 'var(--bg-surface-elevated)',
+                        cursor: 'pointer',
+                        fontWeight: 600,
                       }}
+                      title="Navigate directly to tool to resolve this operational directive"
                     >
-                      <ArrowRight size={11} />
-                      {alert.action}
-                    </div>
+                      <ArrowRight size={12} />
+                      <span>{alert.action}</span>
+                    </button>
                   </div>
                 </div>
 

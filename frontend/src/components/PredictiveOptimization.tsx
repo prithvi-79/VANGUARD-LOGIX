@@ -18,13 +18,24 @@ import {
 interface PredictiveOptimizationProps {
   locations: Location[];
   supplies: SupplyItem[];
+  onNavigate?: (tab: any, context?: any) => void;
+  initialSubTab?: 'forecast' | 'optimizer' | 'explain';
 }
 
 export const PredictiveOptimization: React.FC<PredictiveOptimizationProps> = ({
   locations,
   supplies,
+  onNavigate,
+  initialSubTab = 'forecast',
 }) => {
-  const [activeTab, setActiveTab] = useState<'forecast' | 'optimizer' | 'explain'>('forecast');
+  const [activeTab, setActiveTab] = useState<'forecast' | 'optimizer' | 'explain'>(initialSubTab);
+  const [showHelpGuide, setShowHelpGuide] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (initialSubTab) {
+      setActiveTab(initialSubTab);
+    }
+  }, [initialSubTab]);
 
   // Forecaster State
   const [selectedLocId, setSelectedLocId] = useState<string>('LOC-KUMAR');
@@ -98,68 +109,134 @@ export const PredictiveOptimization: React.FC<PredictiveOptimizationProps> = ({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      {/* Top Header Card */}
-      <div className="panel">
-        <div
-          className="panel-header"
-          style={{
-            flexWrap: 'wrap',
-            gap: '12px',
-          }}
-        >
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <h2 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 600 }}>
-                Demand Forecasting & Multimodal Routing
-              </h2>
-            </div>
-            <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
-              Probabilistic consumption estimation, capacity-constrained convoy routing, and decision audit traces.
-            </div>
+      {/* SaaS Page Header & Breadcrumbs */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+            {onNavigate && (
+              <>
+                <button
+                  onClick={() => onNavigate('briefing')}
+                  style={{ background: 'transparent', border: 'none', color: 'var(--accent-primary)', cursor: 'pointer', padding: 0, fontSize: 'inherit' }}
+                >
+                  Dashboard
+                </button>
+                <span>/</span>
+              </>
+            )}
+            <span>Demand Forecasting & Route Optimization</span>
           </div>
 
-          {/* Tab Switcher */}
-          <div style={{ display: 'flex', gap: '4px' }}>
-            <button
-              onClick={() => setActiveTab('forecast')}
-              className="tactical-btn"
-              style={{
-                fontSize: '0.75rem',
-                padding: '4px 10px',
-                background: activeTab === 'forecast' ? 'var(--accent-primary)' : 'transparent',
-                color: activeTab === 'forecast' ? 'var(--text-inverse)' : 'var(--text-secondary)',
-                borderColor: activeTab === 'forecast' ? 'var(--accent-primary)' : 'var(--border-subtle)',
-              }}
-            >
-              <TrendingUp size={13} /> Demand Forecasts (P10 / P50 / P90)
-            </button>
-            <button
-              onClick={() => setActiveTab('optimizer')}
-              className="tactical-btn"
-              style={{
-                fontSize: '0.75rem',
-                padding: '4px 10px',
-                background: activeTab === 'optimizer' ? 'var(--accent-primary)' : 'transparent',
-                color: activeTab === 'optimizer' ? 'var(--text-inverse)' : 'var(--text-secondary)',
-                borderColor: activeTab === 'optimizer' ? 'var(--accent-primary)' : 'var(--border-subtle)',
-              }}
-            >
-              <Truck size={13} /> Route Solver
-            </button>
-            <button
-              onClick={() => setActiveTab('explain')}
-              className="tactical-btn"
-              style={{
-                fontSize: '0.75rem',
-                padding: '4px 10px',
-                background: activeTab === 'explain' ? 'var(--accent-primary)' : 'transparent',
-                color: activeTab === 'explain' ? 'var(--text-inverse)' : 'var(--text-secondary)',
-                borderColor: activeTab === 'explain' ? 'var(--accent-primary)' : 'var(--border-subtle)',
-              }}
-            >
-              <HelpCircle size={13} /> Decision Audit & Rationale
-            </button>
+          <h1 style={{ fontSize: '1.45rem', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
+            Demand Forecasting & Multimodal Convoy Routing
+          </h1>
+          <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+            Probabilistic consumption forecasting (P10/P50/P90 quantile curves), high-altitude vehicle load solver, and explainability audit traces.
+          </p>
+        </div>
+
+        <button
+          onClick={() => setShowHelpGuide(!showHelpGuide)}
+          className="tactical-btn"
+          style={{ fontSize: '0.76rem', padding: '6px 12px' }}
+        >
+          <HelpCircle size={14} />
+          <span>{showHelpGuide ? 'Hide Methodology Guide' : 'How Calculations Work'}</span>
+        </button>
+      </div>
+
+      {/* Progressive Disclosure Guide (Collapsible) */}
+      {showHelpGuide && (
+        <div
+          className="panel"
+          style={{
+            padding: '16px 20px',
+            background: 'var(--bg-surface-elevated)',
+            borderLeft: '4px solid var(--accent-primary)',
+          }}
+        >
+          <div style={{ fontWeight: 600, fontSize: '0.88rem', color: 'var(--text-primary)', marginBottom: '6px' }}>
+            Understanding the Quantile & Multimodal Solver Engines
           </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '14px', fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+            <div>
+              <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: '2px' }}>
+                1. Quantile Forecasts (P10 / P50 / P90)
+              </div>
+              Instead of a single point forecast, the model outputs 3 curves: P10 is lean baseline burn, P50 is expected demand, and P90 provides the surge buffer for extreme blizzard/freeze conditions.
+            </div>
+            <div>
+              <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: '2px' }}>
+                2. High-Altitude Payload De-Rating
+              </div>
+              Above 3,000m MSL, lower atmospheric pressure de-rates vehicle engine torque and helicopter lift capacity by 15% to 30%, preventing dangerous overloadings in mountain passes.
+            </div>
+            <div>
+              <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: '2px' }}>
+                3. Daylight Transit Windows
+              </div>
+              Mountain convoys are constrained between 0600 and 1700 hrs to avoid freezing black ice and zero-visibility blizzards.
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Sub-Mode Navigation Ribbon */}
+      <div className="panel" style={{ padding: '4px 6px' }}>
+        <div style={{ display: 'flex', gap: '4px', overflowX: 'auto' }}>
+          <button
+            onClick={() => setActiveTab('forecast')}
+            className="tactical-btn"
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              fontSize: '0.82rem',
+              padding: '10px 14px',
+              background: activeTab === 'forecast' ? 'var(--accent-primary)' : 'transparent',
+              color: activeTab === 'forecast' ? 'var(--text-inverse)' : 'var(--text-primary)',
+              borderColor: activeTab === 'forecast' ? 'var(--accent-primary)' : 'transparent',
+              fontWeight: activeTab === 'forecast' ? 600 : 400,
+            }}
+          >
+            <TrendingUp size={15} />
+            <span>1. Demand Forecasting (7d / 14d / 30d Quantiles)</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('optimizer')}
+            className="tactical-btn"
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              fontSize: '0.82rem',
+              padding: '10px 14px',
+              background: activeTab === 'optimizer' ? 'var(--accent-primary)' : 'transparent',
+              color: activeTab === 'optimizer' ? 'var(--text-inverse)' : 'var(--text-primary)',
+              borderColor: activeTab === 'optimizer' ? 'var(--accent-primary)' : 'transparent',
+              fontWeight: activeTab === 'optimizer' ? 600 : 400,
+            }}
+          >
+            <Truck size={15} />
+            <span>2. Fleet Load & Convoy Solver (CVRPTW)</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('explain')}
+            className="tactical-btn"
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              fontSize: '0.82rem',
+              padding: '10px 14px',
+              background: activeTab === 'explain' ? 'var(--accent-primary)' : 'transparent',
+              color: activeTab === 'explain' ? 'var(--text-inverse)' : 'var(--text-primary)',
+              borderColor: activeTab === 'explain' ? 'var(--accent-primary)' : 'transparent',
+              fontWeight: activeTab === 'explain' ? 600 : 400,
+            }}
+          >
+            <HelpCircle size={15} />
+            <span>3. Decision Explanation & Audit Rationale</span>
+          </button>
         </div>
       </div>
 
