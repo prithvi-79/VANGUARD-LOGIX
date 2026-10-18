@@ -31,7 +31,7 @@ import type {
 } from '../types';
 
 
-const BASE_URL = 'https://vanguard-logix.onrender.com';
+const BASE_URL = 'https://vanguard-logix.onrender.com/api';
 
 async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
   const res = await fetch(url, {
